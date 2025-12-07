@@ -1,3 +1,10 @@
+## [1.1.3](https://github.com/MaximSrour/is-it-ready/compare/v1.1.2...v1.1.3) (2025-12-07)
+
+
+### Bug Fixes
+
+* add loose command for Type Checking step ([ccb67bd](https://github.com/MaximSrour/is-it-ready/commit/ccb67bdb91e712f0c88498c9a4721caf9b6ad9bc))
+
 ## [1.1.2](https://github.com/MaximSrour/is-it-ready/compare/v1.1.1...v1.1.2) (2025-12-07)
 
 

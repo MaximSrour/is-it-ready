@@ -17,6 +17,7 @@ exports.stepConfig = [
         label: "Type Checking",
         tool: "TypeScript",
         command: "npm run type-check",
+        looseCommand: "npm run type-check:loose",
     },
     {
         label: "Tests",
