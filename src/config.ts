@@ -10,13 +10,12 @@ export const stepConfig: StepConfig[] = [
     label: "Linting",
     tool: "ESLint",
     command: "npm run lint",
-    supportsLoose: true,
+    looseCommand: "npm run lint:loose",
   },
   {
     label: "Type Checking",
     tool: "TypeScript",
     command: "npm run type-check",
-    supportsLoose: true,
   },
   {
     label: "Tests",
@@ -27,7 +26,7 @@ export const stepConfig: StepConfig[] = [
     label: "Inventory",
     tool: "Knip",
     command: "npm run knip",
-    supportsLoose: true,
+    looseCommand: "npm run knip:loose",
   },
   {
     label: "Package Health",

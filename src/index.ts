@@ -23,20 +23,15 @@ import {
 const args = process.argv.slice(2);
 const isLooseMode = args.includes("--loose");
 
-const steps: Step[] = stepConfig.map((config) => ({
-  label: decorateLabel(
-    config.label,
-    config.supportsLoose ?? false,
-    isLooseMode
-  ),
-  tool: config.tool,
-  command: selectCommand(
-    config.command,
-    config.supportsLoose ?? false,
-    isLooseMode
-  ),
-  parseFailure: parserMap[config.tool],
-}));
+const steps: Step[] = stepConfig.map((config) => {
+  const supportsLoose = Boolean(config.looseCommand);
+  return {
+    label: decorateLabel(config.label, supportsLoose, isLooseMode),
+    tool: config.tool,
+    command: selectCommand(config.command, config.looseCommand, isLooseMode),
+    parseFailure: parserMap[config.tool],
+  };
+});
 
 const tableHeaders = ["Label", "Tool", "Results", "Time"];
 

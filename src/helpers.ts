@@ -22,55 +22,24 @@ export const decorateLabel = (
 };
 
 /**
- * Picks the correct command to execute, adding the :loose suffix if needed.
+ * Picks the correct command to execute, preferring the loose command when requested.
  *
  * @param {string} baseCommand - command configured for the step
- * @param {boolean} supportsLoose - whether the step supports loose mode
+ * @param {string | undefined} looseCommand - loose-mode variant of the command
  * @param {boolean} isLooseMode - whether the current run is in loose mode
  *
  * @returns {string} - command to execute for the step
  */
 export const selectCommand = (
   baseCommand: string,
-  supportsLoose: boolean,
+  looseCommand: string | undefined,
   isLooseMode: boolean
 ) => {
-  if (isLooseMode && supportsLoose) {
-    return appendLooseSuffix(baseCommand);
+  if (isLooseMode && looseCommand) {
+    return looseCommand;
   }
 
   return baseCommand;
-};
-
-/**
- * Appends the :loose suffix to the appropriate part of the command.
- *
- * @param {string} command - original command string
- *
- * @returns {string} - command with :loose suffix added
- */
-const appendLooseSuffix = (command: string) => {
-  const npmRunMatch = command.match(/^(npm\s+run\s+)(\S+)(.*)$/);
-  if (npmRunMatch) {
-    const [, prefix, script, suffix] = npmRunMatch;
-    if (script.endsWith(":loose")) {
-      return command;
-    }
-    return `${prefix}${script}:loose${suffix}`;
-  }
-
-  const parts = command.trim().split(/\s+/);
-  if (parts.length === 0) {
-    return command;
-  }
-
-  const lastIndex = parts.length - 1;
-  if (parts[lastIndex].endsWith(":loose")) {
-    return command;
-  }
-
-  parts[lastIndex] = `${parts[lastIndex]}:loose`;
-  return parts.join(" ");
 };
 
 /**

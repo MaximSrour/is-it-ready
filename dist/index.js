@@ -11,12 +11,15 @@ const parsers_1 = require("./parsers");
 const render_1 = require("./render");
 const args = process.argv.slice(2);
 const isLooseMode = args.includes("--loose");
-const steps = config_1.stepConfig.map((config) => ({
-    label: (0, helpers_1.decorateLabel)(config.label, config.supportsLoose ?? false, isLooseMode),
-    tool: config.tool,
-    command: (0, helpers_1.selectCommand)(config.command, config.supportsLoose ?? false, isLooseMode),
-    parseFailure: parsers_1.parserMap[config.tool],
-}));
+const steps = config_1.stepConfig.map((config) => {
+    const supportsLoose = Boolean(config.looseCommand);
+    return {
+        label: (0, helpers_1.decorateLabel)(config.label, supportsLoose, isLooseMode),
+        tool: config.tool,
+        command: (0, helpers_1.selectCommand)(config.command, config.looseCommand, isLooseMode),
+        parseFailure: parsers_1.parserMap[config.tool],
+    };
+});
 const tableHeaders = ["Label", "Tool", "Results", "Time"];
 const icons = {
     pending: "  ",

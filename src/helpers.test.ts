@@ -25,27 +25,19 @@ describe("decorateLabel", () => {
 
 describe("selectCommand", () => {
   it("returns base command when loose mode disabled", () => {
-    expect(selectCommand("npm run lint", true, false)).toBe("npm run lint");
-  });
-
-  it("appends :loose to npm run scripts", () => {
-    const command = "npm run lint -- --cache";
-    expect(selectCommand(command, true, true)).toBe(
-      "npm run lint:loose -- --cache"
+    expect(selectCommand("npm run lint", "npm run lint:loose", false)).toBe(
+      "npm run lint"
     );
   });
 
-  it("leaves npm command untouched if already loose", () => {
-    const command = "npm run lint:loose -- --cache";
-    expect(selectCommand(command, true, true)).toBe(command);
+  it("returns loose command when loose mode enabled", () => {
+    expect(selectCommand("npm run lint", "npm run lint:loose", true)).toBe(
+      "npm run lint:loose"
+    );
   });
 
-  it("appends :loose to the final token for non-npm commands", () => {
-    expect(selectCommand("pnpm lint", true, true)).toBe("pnpm lint:loose");
-  });
-
-  it("returns base command when loose mode unsupported", () => {
-    expect(selectCommand("npm run lint", false, true)).toBe("npm run lint");
+  it("returns base command when no loose command provided", () => {
+    expect(selectCommand("npm run lint", undefined, true)).toBe("npm run lint");
   });
 });
 

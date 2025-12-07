@@ -8,7 +8,7 @@ export type StepConfig = {
   label: string;
   tool: ToolName;
   command: string;
-  supportsLoose?: boolean;
+  looseCommand?: string;
 };
 
 export type Step = {

@@ -9,15 +9,15 @@
  */
 export declare const decorateLabel: (label: string, supportsLoose: boolean, isLooseMode: boolean) => string;
 /**
- * Picks the correct command to execute, adding the :loose suffix if needed.
+ * Picks the correct command to execute, preferring the loose command when requested.
  *
  * @param {string} baseCommand - command configured for the step
- * @param {boolean} supportsLoose - whether the step supports loose mode
+ * @param {string | undefined} looseCommand - loose-mode variant of the command
  * @param {boolean} isLooseMode - whether the current run is in loose mode
  *
  * @returns {string} - command to execute for the step
  */
-export declare const selectCommand: (baseCommand: string, supportsLoose: boolean, isLooseMode: boolean) => string;
+export declare const selectCommand: (baseCommand: string, looseCommand: string | undefined, isLooseMode: boolean) => string;
 /**
  * Executes the provided command via spawnSync after basic validation.
  *
