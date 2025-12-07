@@ -1,5 +1,10 @@
 import { type ParsedFailure, type ToolName } from "parsers/types";
 
+export type RunOptions = {
+  isLooseMode: boolean;
+  isSilentMode: boolean;
+};
+
 export type StepState = "pending" | "running" | "success" | "failure";
 
 export type StepStatus = { state: StepState; message: string };

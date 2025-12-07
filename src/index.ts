@@ -8,6 +8,7 @@ import { stepConfig } from "./config";
 import {
   decorateLabel,
   formatDuration,
+  getRunOptions,
   runCommand,
   selectCommand,
   stripAnsi,
@@ -16,21 +17,24 @@ import { parserMap } from "./parsers";
 import { renderTable } from "./render";
 import {
   type FailureDetails,
+  type RunOptions,
   type Step,
   type StepState,
   type StepStatus,
 } from "./types";
 
-const args = process.argv.slice(2);
-const isLooseMode = args.includes("--loose");
-const isSilentMode = args.includes("--silent");
+const runOptions = getRunOptions();
 
 const steps: Step[] = stepConfig.map((config) => {
   const supportsLoose = Boolean(config.looseCommand);
   return {
-    label: decorateLabel(config.label, supportsLoose, isLooseMode),
+    label: decorateLabel(config.label, supportsLoose, runOptions.isLooseMode),
     tool: config.tool,
-    command: selectCommand(config.command, config.looseCommand, isLooseMode),
+    command: selectCommand(
+      config.command,
+      config.looseCommand,
+      runOptions.isLooseMode
+    ),
     parseFailure: parserMap[config.tool],
   };
 });
@@ -63,18 +67,18 @@ void main().catch((error) => {
 });
 
 async function main() {
-  render();
+  render(runOptions);
   await Promise.all(steps.map((step, index) => executeStep(step, index)));
   suiteFinished = true;
   suiteDurationMs = Date.now() - suiteStartTime;
-  render();
-  printFailureDetails(failures);
+  render(runOptions);
+  printFailureDetails(failures, runOptions);
   process.exit(failures.length > 0 ? 1 : 0);
 }
 
 function updateStatus(index: number, state: StepState, message: string) {
   statuses[index] = { state, message };
-  render();
+  render(runOptions);
 }
 
 function recordIssueCounts(parsedFailure?: ParsedFailure | null) {
@@ -92,7 +96,7 @@ function recordIssueCounts(parsedFailure?: ParsedFailure | null) {
   totalWarnings += warnings;
 }
 
-function render() {
+function render(runOptions: RunOptions) {
   if (process.stdout.isTTY) {
     console.clear();
   }
@@ -101,7 +105,7 @@ function render() {
       " — Validating your code quality"
   );
   console.log();
-  if (isLooseMode) {
+  if (runOptions.isLooseMode) {
     console.log(
       "(* indicates loose mode; some rules are disabled or set to warnings)\n"
     );
@@ -210,9 +214,12 @@ async function executeStep(step: Step, index: number) {
  *
  * @param {FailureDetails[]} failures - Array of failure details to print
  */
-function printFailureDetails(failures: FailureDetails[]) {
+function printFailureDetails(
+  failures: FailureDetails[],
+  runOptions: RunOptions
+) {
   if (failures.length > 0) {
-    if (isSilentMode) {
+    if (runOptions.isSilentMode) {
       console.log("\nSome checks failed. Run without --silent to see details.");
       return;
     }
