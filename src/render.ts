@@ -1,3 +1,5 @@
+import chalk from "chalk";
+
 import { stripAnsi } from "./helpers";
 import { type BorderChars, type BorderLevel } from "./types";
 
@@ -30,12 +32,15 @@ export const renderTable = (
   );
 
   const topBorder = renderBorder(columnWidths, "top");
-  const headerRow = renderRow(headers, columnWidths);
+  const headerRow = renderRow(
+    headers.map((header) => chalk.bold(header)),
+    columnWidths
+  );
   const headerSeparator = renderBorder(columnWidths, "middle");
   const bodyRows = rows.map((row) => renderRow(row, columnWidths)).join("\n");
   const footerSection = footerRow
     ? `\n${renderBorder(columnWidths, "middle")}\n${renderRow(
-        footerRow,
+        footerRow.map((footer) => chalk.bold(footer)),
         columnWidths
       )}`
     : "";
