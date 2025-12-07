@@ -8,29 +8,33 @@ import { stepConfig } from "./config";
 import {
   decorateLabel,
   formatDuration,
+  getRunOptions,
   runCommand,
   selectCommand,
   stripAnsi,
 } from "./helpers";
 import { parserMap } from "./parsers";
-import { renderTable } from "./render";
+import { colorStatusMessage, printFailureDetails, renderTable } from "./render";
 import {
   type FailureDetails,
+  type RunOptions,
   type Step,
   type StepState,
   type StepStatus,
 } from "./types";
 
-const args = process.argv.slice(2);
-const isLooseMode = args.includes("--loose");
-const isSilentMode = args.includes("--silent");
+const runOptions = getRunOptions();
 
 const steps: Step[] = stepConfig.map((config) => {
   const supportsLoose = Boolean(config.looseCommand);
   return {
-    label: decorateLabel(config.label, supportsLoose, isLooseMode),
+    label: decorateLabel(config.label, supportsLoose, runOptions.isLooseMode),
     tool: config.tool,
-    command: selectCommand(config.command, config.looseCommand, isLooseMode),
+    command: selectCommand(
+      config.command,
+      config.looseCommand,
+      runOptions.isLooseMode
+    ),
     parseFailure: parserMap[config.tool],
   };
 });
@@ -63,18 +67,18 @@ void main().catch((error) => {
 });
 
 async function main() {
-  render();
+  render(runOptions);
   await Promise.all(steps.map((step, index) => executeStep(step, index)));
   suiteFinished = true;
   suiteDurationMs = Date.now() - suiteStartTime;
-  render();
-  printFailureDetails(failures);
+  render(runOptions);
+  printFailureDetails(failures, runOptions);
   process.exit(failures.length > 0 ? 1 : 0);
 }
 
 function updateStatus(index: number, state: StepState, message: string) {
   statuses[index] = { state, message };
-  render();
+  render(runOptions);
 }
 
 function recordIssueCounts(parsedFailure?: ParsedFailure | null) {
@@ -92,7 +96,7 @@ function recordIssueCounts(parsedFailure?: ParsedFailure | null) {
   totalWarnings += warnings;
 }
 
-function render() {
+function render(runOptions: RunOptions) {
   if (process.stdout.isTTY) {
     console.clear();
   }
@@ -101,7 +105,7 @@ function render() {
       " — Validating your code quality"
   );
   console.log();
-  if (isLooseMode) {
+  if (runOptions.isLooseMode) {
     console.log(
       "(* indicates loose mode; some rules are disabled or set to warnings)\n"
     );
@@ -203,60 +207,4 @@ async function executeStep(step: Step, index: number) {
 
     recordIssueCounts();
   }
-}
-
-/**
- * Prints detailed information about failed steps.
- *
- * @param {FailureDetails[]} failures - Array of failure details to print
- */
-function printFailureDetails(failures: FailureDetails[]) {
-  if (failures.length > 0) {
-    if (isSilentMode) {
-      console.log("\nSome checks failed. Run without --silent to see details.");
-      return;
-    }
-
-    console.log("\nDetails:");
-    failures.forEach((failure) => {
-      const headline = formatFailureHeadline(failure);
-      console.log(`\n${headline}`);
-      console.log(failure.rawOutput || failure.output || "(no output)");
-    });
-  }
-}
-
-function colorStatusMessage(message: string, state: StepState) {
-  if (!message) {
-    return "";
-  }
-  if (state === "failure") {
-    return chalk.red(message);
-  }
-  if (state === "success") {
-    return chalk.white(message);
-  }
-  return message;
-}
-
-function formatFailureHeadline(failure: FailureDetails) {
-  const breakdownParts: string[] = [];
-  if (typeof failure.errors === "number") {
-    breakdownParts.push(
-      chalk.red(`${failure.errors} error${failure.errors === 1 ? "" : "s"}`)
-    );
-  }
-  if (typeof failure.warnings === "number") {
-    breakdownParts.push(
-      `${failure.warnings} warning${failure.warnings === 1 ? "" : "s"}`
-    );
-  }
-  const detail =
-    breakdownParts.length > 0
-      ? breakdownParts.join(", ")
-      : (failure.summary ?? "See output");
-  const labelText = chalk.blue.underline(failure.label);
-  const commandText = chalk.yellow(failure.command);
-  const detailText = chalk.red(detail);
-  return `${labelText} - ${failure.tool} [${commandText}] (${detailText})`;
 }
