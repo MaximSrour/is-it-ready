@@ -2,13 +2,25 @@
   "name": "is-it-ready",
   "author": "Maxim Srour",
   "version": "0.1.0",
-  "description": "Checks if your code is meeting all code quality gates before submitting a merge request.",
-  "keywords": [],
+  "description": "CLI that runs your project's formatting, linting, tests, inventory, and security checks in one dashboard.",
+  "keywords": [
+    "cli",
+    "checks",
+    "lint",
+    "prettier",
+    "typescript",
+    "vitest",
+    "knip",
+    "audit"
+  ],
   "license": "MIT",
   "type": "commonjs",
   "main": "dist/index.js",
+  "files": [
+    "dist"
+  ],
   "bin": {
-    "is-it-ready": "./dist/index.js"
+    "is-it-ready": "dist/index.js"
   },
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
