@@ -8,6 +8,10 @@ on:
     branches:
       - master
 
+permissions:
+  contents: write
+  packages: write
+
 jobs:
   validate:
     uses: ./.github/workflows/validate.yml
