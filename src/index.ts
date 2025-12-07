@@ -117,7 +117,7 @@ function render() {
   }
   const rows = steps.map((step, idx) => {
     const status = statuses[idx];
-    const message = status.state === "pending" ? "" : (status.message ?? "");
+    const message = status.state === "pending" ? "" : status.message;
     return [
       `${icons[status.state]} ${step.label}`,
       step.tool,

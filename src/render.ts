@@ -1,6 +1,6 @@
 import { type BorderLevel, type BorderChars } from "./types";
 
-export const BORDER_CHARS: Record<BorderLevel, BorderChars> = {
+const BORDER_CHARS: Record<BorderLevel, BorderChars> = {
   top: { left: "┌", mid: "┬", right: "┐", fill: "─" },
   middle: { left: "├", mid: "┼", right: "┤", fill: "─" },
   bottom: { left: "└", mid: "┴", right: "┘", fill: "─" },
@@ -71,7 +71,7 @@ export const renderBorder = (
  */
 export const renderRow = (row: string[], columnWidths: number[]) => {
   const paddedCells = row.map((cell, idx) => {
-    return padCell(cell ?? "", columnWidths[idx]);
+    return padCell(cell, columnWidths[idx]);
   });
 
   return `│ ${paddedCells.join(" │ ")} │`;
@@ -108,7 +108,7 @@ export const getDisplayWidth = (value: string) => {
   }
 
   const segmenter =
-    typeof Intl !== "undefined" && Intl.Segmenter
+    typeof Intl !== "undefined"
       ? new Intl.Segmenter(undefined, { granularity: "grapheme" })
       : null;
 

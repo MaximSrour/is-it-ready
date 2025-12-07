@@ -183,11 +183,10 @@ export const parseNpmAudit = (output): ParsedFailure | undefined => {
       return undefined;
     }
     const breakdown = summary[2]
-      ?.split(/,\s*/)
+      .split(/,\s*/)
       .map((part) => part.trim())
       .filter(Boolean);
-    const detail =
-      breakdown && breakdown.length > 0 ? ` (${breakdown.join(", ")})` : "";
+    const detail = breakdown.length > 0 ? ` (${breakdown.join(", ")})` : "";
     return {
       message: `Failed - ${total} vulnerabilit${
         total === 1 ? "y" : "ies"
