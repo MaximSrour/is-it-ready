@@ -25,6 +25,7 @@
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "clean": "rm -rf dist",
+    "release": "semantic-release",
     "knip": "knip",
     "knip:loose": "KNIP_MODE=loose knip",
     "knip:fix": "knip --fix",
@@ -42,6 +43,8 @@
     "chalk": "^4.1.2"
   },
   "devDependencies": {
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/git": "^10.0.1",
     "@trivago/prettier-plugin-sort-imports": "^6.0.0",
     "@types/node": "^24.10.1",
     "@typescript-eslint/eslint-plugin": "^8.48.1",
@@ -52,6 +55,7 @@
     "eslint-plugin-unused-imports": "^4.3.0",
     "knip": "^5.71.0",
     "prettier": "^3.7.4",
+    "semantic-release": "^25.0.2",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.48.1",
