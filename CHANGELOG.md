@@ -1,3 +1,12 @@
+## [1.0.1](https://github.com/MaximSrour/is-it-ready/compare/v1.0.0...v1.0.1) (2025-12-07)
+
+
+### Bug Fixes
+
+* add silent mode option to suppress detailed failure messages ([004d86c](https://github.com/MaximSrour/is-it-ready/commit/004d86c6b8ee8f51d50a8f8f098e849bc70bddb5))
+* Merge pull request [#5](https://github.com/MaximSrour/is-it-ready/issues/5) from MaximSrour/enhance-printing ([a2e6cb9](https://github.com/MaximSrour/is-it-ready/commit/a2e6cb988b8c7ae5db6421cf3682399d0319e61f))
+* updated the header information ([701cd83](https://github.com/MaximSrour/is-it-ready/commit/701cd835ee99ce5796dee012a51e7a519e715eb3))
+
 # 1.0.0 (2025-12-07)
 
 

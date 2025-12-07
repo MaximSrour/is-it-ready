@@ -5,12 +5,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const chalk_1 = __importDefault(require("chalk"));
+const package_json_1 = __importDefault(require("../package.json"));
 const config_1 = require("./config");
 const helpers_1 = require("./helpers");
 const parsers_1 = require("./parsers");
 const render_1 = require("./render");
 const args = process.argv.slice(2);
 const isLooseMode = args.includes("--loose");
+const isSilentMode = args.includes("--silent");
 const steps = config_1.stepConfig.map((config) => {
     const supportsLoose = Boolean(config.looseCommand);
     return {
@@ -90,7 +92,9 @@ function render() {
     if (process.stdout.isTTY) {
         console.clear();
     }
-    console.log("Running project checks:\n");
+    console.log(chalk_1.default.bold(`${package_json_1.default.name} v${package_json_1.default.version}`) +
+        " — Validating your code quality");
+    console.log();
     if (isLooseMode) {
         console.log("(* indicates loose mode; some rules are disabled or set to warnings)\n");
     }
@@ -136,6 +140,10 @@ function render() {
  */
 function printFailureDetails(failures) {
     if (failures.length > 0) {
+        if (isSilentMode) {
+            console.log("\nSome checks failed. Run without --silent to see details.");
+            return;
+        }
         console.log("\nDetails:");
         failures.forEach((failure) => {
             const headline = formatFailureHeadline(failure);
