@@ -1,3 +1,10 @@
+## [1.0.2](https://github.com/MaximSrour/is-it-ready/compare/v1.0.1...v1.0.2) (2025-12-07)
+
+
+### Bug Fixes
+
+* resolve incorrect package root dir ([e028fde](https://github.com/MaximSrour/is-it-ready/commit/e028fdee98aafb55972196417e17e80f5a99cc47))
+
 ## [1.0.1](https://github.com/MaximSrour/is-it-ready/compare/v1.0.0...v1.0.1) (2025-12-07)
 
 
