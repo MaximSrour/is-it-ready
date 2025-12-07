@@ -1,6 +1,10 @@
 #!/usr/bin/env node
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+const chalk_1 = __importDefault(require("chalk"));
 const config_1 = require("./config");
 const helpers_1 = require("./helpers");
 const parsers_1 = require("./parsers");
@@ -13,7 +17,7 @@ const steps = config_1.stepConfig.map((config) => ({
     command: (0, helpers_1.selectCommand)(config.command, config.supportsLoose ?? false, isLooseMode),
     parseFailure: parsers_1.parserMap[config.tool],
 }));
-const tableHeaders = ["Label", "Tool", "Status", "Time"];
+const tableHeaders = ["Label", "Tool", "Results", "Time"];
 const icons = {
     pending: "  ",
     running: "⏳",
@@ -35,7 +39,8 @@ steps.forEach((step, index) => {
     const startTime = Date.now();
     const result = (0, helpers_1.runCommand)(step.command);
     durations[index] = Date.now() - startTime;
-    const combined = (0, helpers_1.stripAnsi)([result.stdout, result.stderr].filter(Boolean).join("\n"));
+    const rawCombined = [result.stdout, result.stderr].filter(Boolean).join("\n");
+    const combined = (0, helpers_1.stripAnsi)(rawCombined);
     const parsedFailure = step.parseFailure?.(combined);
     if (result.status === 0 && !parsedFailure) {
         updateStatus(index, "success", "Passed");
@@ -43,13 +48,22 @@ steps.forEach((step, index) => {
     else {
         const detail = parsedFailure?.message ?? "Failed - see output below for details";
         updateStatus(index, "failure", detail);
-        failures.push({ label: step.label, output: combined.trim() });
+        failures.push({
+            label: step.label,
+            tool: step.tool,
+            command: step.command,
+            errors: parsedFailure?.errors ?? undefined,
+            warnings: parsedFailure?.warnings ?? undefined,
+            summary: parsedFailure?.message ?? undefined,
+            output: combined.trim(),
+            rawOutput: rawCombined.trim() || combined.trim(),
+        });
         recordIssueCounts(parsedFailure);
     }
 });
 suiteFinished = true;
 render();
-// printFailureDetails();
+printFailureDetails(failures);
 process.exit(failures.length > 0 ? 1 : 0);
 function updateStatus(index, state, message) {
     statuses[index] = { state, message };
@@ -79,7 +93,9 @@ function render() {
     }
     const rows = steps.map((step, idx) => {
         const status = statuses[idx];
-        const message = status.state === "pending" ? "" : status.message;
+        const message = status.state === "pending"
+            ? ""
+            : colorStatusMessage(status.message, status.state);
         return [
             `${icons[status.state]} ${step.label}`,
             step.tool,
@@ -115,12 +131,41 @@ function render() {
  *
  * @param {FailureDetails[]} failures - Array of failure details to print
  */
-function _printFailureDetails(failures) {
+function printFailureDetails(failures) {
     if (failures.length > 0) {
         console.log("\nDetails:");
-        failures.forEach(({ label, output }) => {
-            console.log(`\n--- ${label} ---`);
-            console.log(output || "(no output)");
+        failures.forEach((failure) => {
+            const headline = formatFailureHeadline(failure);
+            console.log(`\n${headline}`);
+            console.log(failure.rawOutput || failure.output || "(no output)");
         });
     }
+}
+function colorStatusMessage(message, state) {
+    if (!message) {
+        return "";
+    }
+    if (state === "failure") {
+        return chalk_1.default.red(message);
+    }
+    if (state === "success") {
+        return chalk_1.default.white(message);
+    }
+    return message;
+}
+function formatFailureHeadline(failure) {
+    const breakdownParts = [];
+    if (typeof failure.errors === "number") {
+        breakdownParts.push(chalk_1.default.red(`${failure.errors} error${failure.errors === 1 ? "" : "s"}`));
+    }
+    if (typeof failure.warnings === "number") {
+        breakdownParts.push(`${failure.warnings} warning${failure.warnings === 1 ? "" : "s"}`);
+    }
+    const detail = breakdownParts.length > 0
+        ? breakdownParts.join(", ")
+        : (failure.summary ?? "See output");
+    const labelText = chalk_1.default.blue.underline(failure.label);
+    const commandText = chalk_1.default.yellow(failure.command);
+    const detailText = chalk_1.default.red(detail);
+    return `${labelText} - ${failure.tool} [${commandText}] (${detailText})`;
 }

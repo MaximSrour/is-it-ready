@@ -78,6 +78,11 @@ const runCommand = (command) => {
     const finalCommand = (0, exports.addSilentFlag)(trimmed);
     return (0, child_process_1.spawnSync)(finalCommand, {
         encoding: "utf-8",
+        env: {
+            ...process.env,
+            FORCE_COLOR: process.env.FORCE_COLOR ?? "1",
+            npm_config_color: process.env.npm_config_color ?? "always",
+        },
         shell: true,
     });
 };

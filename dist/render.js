@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.isFullWidthCodePoint = exports.getDisplayWidth = exports.padCell = exports.renderRow = exports.renderBorder = exports.renderTable = void 0;
+const helpers_1 = require("./helpers");
 const BORDER_CHARS = {
     top: { left: "┌", mid: "┬", right: "┐", fill: "─" },
     middle: { left: "├", mid: "┼", right: "┤", fill: "─" },
@@ -84,13 +85,14 @@ const getDisplayWidth = (value) => {
     if (!value) {
         return 0;
     }
+    const cleanValue = (0, helpers_1.stripAnsi)(value);
     const segmenter = typeof Intl !== "undefined"
         ? new Intl.Segmenter(undefined, { granularity: "grapheme" })
         : null;
     const emojiRegex = /\p{Extended_Pictographic}/u;
     const graphemes = segmenter
-        ? Array.from(segmenter.segment(value), (seg) => seg.segment)
-        : Array.from(value);
+        ? Array.from(segmenter.segment(cleanValue), (seg) => seg.segment)
+        : Array.from(cleanValue);
     return graphemes.reduce((total, grapheme) => {
         const codePoint = grapheme.codePointAt(0);
         if ((0, exports.isFullWidthCodePoint)(codePoint) || emojiRegex.test(grapheme)) {

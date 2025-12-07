@@ -1,0 +1,12 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.parserMap = exports.getParser = void 0;
+require("./eslint/parser");
+require("./knip/parser");
+require("./npm-audit/parser");
+require("./prettier/parser");
+require("./typescript/parser");
+require("./vitest/parser");
+var registry_1 = require("./registry");
+Object.defineProperty(exports, "getParser", { enumerable: true, get: function () { return registry_1.getParser; } });
+Object.defineProperty(exports, "parserMap", { enumerable: true, get: function () { return registry_1.parserMap; } });
