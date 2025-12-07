@@ -17,7 +17,7 @@ const pluginImportConfig = {
 };
 
 export default defineConfig([
-  globalIgnores(["prettier.config.cjs", "eslint.config.mjs"]),
+  globalIgnores(["prettier.config.cjs", "eslint.config.mjs", "knip.config.js"]),
   tseslint.configs.recommendedTypeChecked,
   {
     languageOptions: {

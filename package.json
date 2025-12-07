@@ -6,8 +6,13 @@
   "keywords": [],
   "license": "MIT",
   "type": "commonjs",
-  "main": "src/index.ts",
+  "main": "dist/index.js",
+  "bin": {
+    "is-it-ready": "./dist/index.js"
+  },
   "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "clean": "rm -rf dist",
     "knip": "knip",
     "knip:loose": "KNIP_MODE=loose knip",
     "knip:fix": "knip --fix",
