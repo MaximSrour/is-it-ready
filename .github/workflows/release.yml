@@ -1,25 +1,10 @@
 name: Release
 
 on:
-  pull_request:
-    branches:
-      - master
-  push:
-    branches:
-      - master
+  workflow_call:
 
 jobs:
-  pr-validate:
-    if: github.event_name == 'pull_request'
-    uses: ./.github/workflows/validate.yml
-
-  validate:
-    if: github.event_name == 'push'
-    uses: ./.github/workflows/validate.yml
-
   release:
-    if: github.event_name == 'push'
-    needs: validate
     runs-on: ubuntu-latest
     permissions:
       contents: write
