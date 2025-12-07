@@ -1,3 +1,10 @@
+## [1.1.1](https://github.com/MaximSrour/is-it-ready/compare/v1.1.0...v1.1.1) (2025-12-07)
+
+
+### Bug Fixes
+
+* enhance table rendering with bold headers and footers ([482dad0](https://github.com/MaximSrour/is-it-ready/commit/482dad008b949c8ad009a132db5877d2a8211bae))
+
 # [1.1.0](https://github.com/MaximSrour/is-it-ready/compare/v1.0.2...v1.1.0) (2025-12-07)
 
 

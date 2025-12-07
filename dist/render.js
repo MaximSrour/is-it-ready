@@ -1,6 +1,10 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.isFullWidthCodePoint = exports.getDisplayWidth = exports.padCell = exports.renderRow = exports.renderBorder = exports.renderTable = void 0;
+const chalk_1 = __importDefault(require("chalk"));
 const helpers_1 = require("./helpers");
 const BORDER_CHARS = {
     top: { left: "┌", mid: "┬", right: "┐", fill: "─" },
@@ -19,11 +23,11 @@ const BORDER_CHARS = {
 const renderTable = (headers, rows, footerRow) => {
     const columnWidths = headers.map((header, idx) => Math.max((0, exports.getDisplayWidth)(header), ...rows.map((row) => (0, exports.getDisplayWidth)(row[idx] ?? "")), footerRow ? (0, exports.getDisplayWidth)(footerRow[idx] ?? "") : 0));
     const topBorder = (0, exports.renderBorder)(columnWidths, "top");
-    const headerRow = (0, exports.renderRow)(headers, columnWidths);
+    const headerRow = (0, exports.renderRow)(headers.map((header) => chalk_1.default.bold(header)), columnWidths);
     const headerSeparator = (0, exports.renderBorder)(columnWidths, "middle");
     const bodyRows = rows.map((row) => (0, exports.renderRow)(row, columnWidths)).join("\n");
     const footerSection = footerRow
-        ? `\n${(0, exports.renderBorder)(columnWidths, "middle")}\n${(0, exports.renderRow)(footerRow, columnWidths)}`
+        ? `\n${(0, exports.renderBorder)(columnWidths, "middle")}\n${(0, exports.renderRow)(footerRow.map((footer) => chalk_1.default.bold(footer)), columnWidths)}`
         : "";
     const bottomBorder = (0, exports.renderBorder)(columnWidths, "bottom");
     return `${topBorder}\n${headerRow}\n${headerSeparator}\n${bodyRows}${footerSection}\n${bottomBorder}`;
