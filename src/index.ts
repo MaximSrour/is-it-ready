@@ -3,6 +3,7 @@
 import chalk from "chalk";
 import { type ParsedFailure } from "parsers/types";
 
+import pkg from "../package.json";
 import { stepConfig } from "./config";
 import {
   decorateLabel,
@@ -22,6 +23,7 @@ import {
 
 const args = process.argv.slice(2);
 const isLooseMode = args.includes("--loose");
+const isSilentMode = args.includes("--silent");
 
 const steps: Step[] = stepConfig.map((config) => {
   const supportsLoose = Boolean(config.looseCommand);
@@ -116,7 +118,11 @@ function render() {
   if (process.stdout.isTTY) {
     console.clear();
   }
-  console.log("Running project checks:\n");
+  console.log(
+    chalk.bold(`${pkg.name} v${pkg.version}`) +
+      " — Validating your code quality"
+  );
+  console.log();
   if (isLooseMode) {
     console.log(
       "(* indicates loose mode; some rules are disabled or set to warnings)\n"
@@ -172,6 +178,11 @@ function render() {
  */
 function printFailureDetails(failures: FailureDetails[]) {
   if (failures.length > 0) {
+    if (isSilentMode) {
+      console.log("\nSome checks failed. Run without --silent to see details.");
+      return;
+    }
+
     console.log("\nDetails:");
     failures.forEach((failure) => {
       const headline = formatFailureHeadline(failure);
