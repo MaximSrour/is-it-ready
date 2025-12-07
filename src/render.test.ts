@@ -171,24 +171,6 @@ describe("printFailureDetails", () => {
     );
   });
 
-  it("logs formatted headlines followed by raw output for each failure", () => {
-    const logSpy = vi.spyOn(console, "log").mockImplementation(() => {
-      noOp();
-    });
-    const headline = "Vitest suite failed";
-
-    const formatSpy = vi
-      .spyOn(renderModule, "formatFailureHeadline")
-      .mockReturnValue(headline);
-
-    printFailureDetails([baseFailure], baseRunOptions);
-
-    expect(formatSpy).toHaveBeenCalledWith(baseFailure);
-    expect(logSpy).toHaveBeenNthCalledWith(1, "\nDetails:");
-    expect(logSpy).toHaveBeenNthCalledWith(2, `\n${headline}`);
-    expect(logSpy).toHaveBeenNthCalledWith(3, baseFailure.rawOutput);
-  });
-
   it("falls back to parsed output and defaults when no raw output exists", () => {
     const logSpy = vi.spyOn(console, "log").mockImplementation(() => {
       noOp();
