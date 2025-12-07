@@ -1,3 +1,18 @@
+# [1.1.0](https://github.com/MaximSrour/is-it-ready/compare/v1.0.2...v1.1.0) (2025-12-07)
+
+
+### Bug Fixes
+
+* add permissions section for CI workflow ([6be1851](https://github.com/MaximSrour/is-it-ready/commit/6be1851060b68c6acbfb0c4b254e5922b96681ee))
+* ensure secrets are inherited in release job of CI workflow ([96fa278](https://github.com/MaximSrour/is-it-ready/commit/96fa278ee16005266b58daa2cc7fa4323c2aff2a))
+* restructure CI workflow and remove redundant validation jobs ([fca856b](https://github.com/MaximSrour/is-it-ready/commit/fca856baa26d4e2033f8a2faed04625184adf6bc))
+* update permissions for validate job in release workflow ([77fa6e6](https://github.com/MaximSrour/is-it-ready/commit/77fa6e619e5edc0100aa2fb518ca2727ab9156f3))
+
+
+### Features
+
+* add CI workflows for master branch and pull requests ([ded5d74](https://github.com/MaximSrour/is-it-ready/commit/ded5d746099206b2f554428a058cab7919769e7f))
+
 ## [1.0.2](https://github.com/MaximSrour/is-it-ready/compare/v1.0.1...v1.0.2) (2025-12-07)
 
 
