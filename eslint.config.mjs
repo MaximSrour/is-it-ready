@@ -47,6 +47,10 @@ export default defineConfig([
       "@typescript-eslint/array-type": ["warn", { default: "array" }],
       "@typescript-eslint/ban-ts-comment": "error",
       "@typescript-eslint/consistent-indexed-object-style": ["warn", "record"],
+      "@typescript-eslint/consistent-type-imports": [
+        "warn",
+        { prefer: "type-imports", fixStyle: "inline-type-imports" },
+      ],
       "@typescript-eslint/no-empty-object-type": "error",
       "@typescript-eslint/no-unsafe-function-type": "error",
       "@typescript-eslint/no-wrapper-object-types": "error",

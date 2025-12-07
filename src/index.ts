@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+import { type ParsedFailure } from "parsers/types";
+
 import { stepConfig } from "./config";
 import {
   decorateLabel,
@@ -12,7 +14,6 @@ import { parserMap } from "./parsers";
 import { renderTable } from "./render";
 import {
   type FailureDetails,
-  type ParsedFailure,
   type Step,
   type StepState,
   type StepStatus,

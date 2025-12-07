@@ -1,0 +1,38 @@
+import { describe, expect, it } from "vitest";
+
+import { type ParserFunction, getParser } from "..";
+import "./parser";
+
+const resolveParser = (name: string): ParserFunction => {
+  const parser = getParser(name);
+
+  if (!parser) {
+    throw new Error(`Parser "${name}" not registered`);
+  }
+
+  return parser;
+};
+
+const parseVitest = resolveParser("Vitest");
+
+describe("parseVitest", () => {
+  it("reports file and test failures", () => {
+    const output = "Test Files 1 failed | Tests 2 failed";
+
+    expect(parseVitest(output)).toEqual({
+      message: "Failed - 2 tests failed in 1 file",
+      errors: 3,
+    });
+  });
+
+  it("handles only test failures", () => {
+    expect(parseVitest("Tests 5 failed")).toEqual({
+      message: "Failed - 5 tests failed",
+      errors: 5,
+    });
+  });
+
+  it("returns undefined when success", () => {
+    expect(parseVitest("Test Files 0 failed | Tests 0 failed")).toBeUndefined();
+  });
+});

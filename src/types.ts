@@ -1,10 +1,4 @@
-export type ToolName =
-  | "Prettier"
-  | "ESLint"
-  | "TypeScript"
-  | "Vitest"
-  | "Knip"
-  | "npm audit";
+import { type ParsedFailure, type ToolName } from "parsers/types";
 
 export type StepState = "pending" | "running" | "success" | "failure";
 
@@ -22,12 +16,6 @@ export type Step = {
   tool: ToolName;
   command: string;
   parseFailure?: (output: string) => ParsedFailure | undefined;
-};
-
-export type ParsedFailure = {
-  message: string;
-  errors?: number;
-  warnings?: number;
 };
 
 export type FailureDetails = {

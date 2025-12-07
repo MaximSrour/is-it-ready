@@ -1,0 +1,47 @@
+import { describe, expect, it } from "vitest";
+
+import { type ParserFunction, getParser } from "..";
+import "./parser";
+
+const resolveParser = (name: string): ParserFunction => {
+  const parser = getParser(name);
+
+  if (!parser) {
+    throw new Error(`Parser "${name}" not registered`);
+  }
+
+  return parser;
+};
+
+const parseNpmAudit = resolveParser("npm audit");
+
+describe("parseNpmAudit", () => {
+  it("reports vulnerability count with breakdown", () => {
+    const output = [
+      "13 vulnerabilities (6 moderate, 7 high)",
+      "0 vulnerabilities require manual review.",
+    ].join("\n");
+
+    expect(parseNpmAudit(output)).toEqual({
+      message: "Failed - 13 vulnerabilities (6 moderate, 7 high)",
+      errors: 13,
+    });
+  });
+
+  it("returns undefined when no vulnerabilities", () => {
+    expect(parseNpmAudit("found 0 vulnerabilities")).toBeUndefined();
+  });
+
+  it("parses summary without 'found' prefix", () => {
+    const output = [
+      "# npm audit report",
+      "cross-spawn  <6.0.6",
+      "13 vulnerabilities (6 moderate, 7 high)",
+    ].join("\n");
+
+    expect(parseNpmAudit(output)).toEqual({
+      message: "Failed - 13 vulnerabilities (6 moderate, 7 high)",
+      errors: 13,
+    });
+  });
+});
