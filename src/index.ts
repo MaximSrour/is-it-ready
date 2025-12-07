@@ -160,7 +160,7 @@ function render() {
  *
  * @param {FailureDetails[]} failures - Array of failure details to print
  */
-function printFailureDetails(failures: FailureDetails[]) {
+function _printFailureDetails(failures: FailureDetails[]) {
   if (failures.length > 0) {
     console.log("\nDetails:");
     failures.forEach(({ label, output }) => {

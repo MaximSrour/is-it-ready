@@ -1,6 +1,6 @@
 import { type ParsedFailure, type ToolName } from "./types";
 
-export const parsePrettier = (output): ParsedFailure | undefined => {
+export const parsePrettier = (output: string): ParsedFailure | undefined => {
   const summaryPatterns = [
     /(\d+)\s+files?\s+(?:are|is)\s+not\s+formatted/i,
     /(\d+)\s+files?\s+with\s+code\s+style\s+issues?/i,
@@ -18,19 +18,23 @@ export const parsePrettier = (output): ParsedFailure | undefined => {
   return undefined;
 };
 
-const formatPrettierCount = (count): ParsedFailure | undefined => {
+const formatPrettierCount = (
+  count: number | string
+): ParsedFailure | undefined => {
   const value = Number(count);
   if (!Number.isFinite(value) || value <= 0) {
     return { message: "Failed", errors: 1 };
   }
+
   const label = value === 1 ? "file" : "files";
+
   return {
     message: `Failed - ${value} ${label} with formatting issues`,
     errors: value,
   };
 };
 
-export const parseEslint = (output): ParsedFailure | undefined => {
+export const parseEslint = (output: string): ParsedFailure | undefined => {
   const summary = output.match(
     /(\d+)\s+problems?\s+\((\d+)\s+errors?(?:,\s+(\d+)\s+warnings?)?/i
   );
@@ -62,7 +66,7 @@ export const parseEslint = (output): ParsedFailure | undefined => {
   };
 };
 
-export const parseTypeCheck = (output): ParsedFailure | undefined => {
+export const parseTypeCheck = (output: string): ParsedFailure | undefined => {
   const summary = output.match(
     /Found\s+(\d+)\s+errors?\s+in\s+(\d+)\s+files?/i
   );
@@ -86,7 +90,7 @@ export const parseTypeCheck = (output): ParsedFailure | undefined => {
       return undefined;
     }
     const files = new Set(
-      errorLines.map((match) => match[1]?.trim()).filter(Boolean)
+      errorLines.map((match) => match[1].trim()).filter(Boolean)
     );
     const fileCount = files.size;
     const fileLabel = fileCount === 1 ? "file" : "files";
@@ -106,7 +110,7 @@ export const parseTypeCheck = (output): ParsedFailure | undefined => {
   };
 };
 
-export const parseVitest = (output): ParsedFailure | undefined => {
+export const parseVitest = (output: string): ParsedFailure | undefined => {
   const fileFailures = output.match(/Test Files\s+(\d+)\s+failed/i);
   const testFailures = output.match(/Tests\s+(\d+)\s+failed/i);
   if (!fileFailures && !testFailures) {
@@ -135,9 +139,7 @@ export const parseVitest = (output): ParsedFailure | undefined => {
     ? `${fileCount} file${fileCount === 1 ? "" : "s"}`
     : "";
   const messageBody =
-    testPart && filePart
-      ? `${testPart} in ${filePart}`
-      : (testPart ?? `${filePart} failed`);
+    testPart && filePart ? `${testPart} in ${filePart}` : testPart;
 
   return {
     message: `Failed - ${messageBody}`,
@@ -145,7 +147,7 @@ export const parseVitest = (output): ParsedFailure | undefined => {
   };
 };
 
-export const parseKnip = (output): ParsedFailure | undefined => {
+export const parseKnip = (output: string): ParsedFailure | undefined => {
   const sectionPattern =
     /^(?:Unused|Unlisted|Unresolved|Duplicate|Configuration)\b[^\n]*\((\d+)\)/gim;
   let total = 0;
@@ -173,7 +175,7 @@ export const parseKnip = (output): ParsedFailure | undefined => {
   };
 };
 
-export const parseNpmAudit = (output): ParsedFailure | undefined => {
+export const parseNpmAudit = (output: string): ParsedFailure | undefined => {
   const summaryRegex =
     /(?:found\s+)?(\d+)\s+vulnerabilities?(?:\s+\(([^)]+)\))?/gi;
   const summary = summaryRegex.exec(output);
