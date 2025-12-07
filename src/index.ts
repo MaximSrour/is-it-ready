@@ -14,7 +14,11 @@ import {
   stripAnsi,
 } from "./helpers";
 import { parserMap } from "./parsers";
-import { colorStatusMessage, renderTable } from "./render";
+import {
+  colorStatusMessage,
+  formatFailureHeadline,
+  renderTable,
+} from "./render";
 import {
   type FailureDetails,
   type RunOptions,
@@ -231,26 +235,4 @@ function printFailureDetails(
       console.log(failure.rawOutput || failure.output || "(no output)");
     });
   }
-}
-
-function formatFailureHeadline(failure: FailureDetails) {
-  const breakdownParts: string[] = [];
-  if (typeof failure.errors === "number") {
-    breakdownParts.push(
-      chalk.red(`${failure.errors} error${failure.errors === 1 ? "" : "s"}`)
-    );
-  }
-  if (typeof failure.warnings === "number") {
-    breakdownParts.push(
-      `${failure.warnings} warning${failure.warnings === 1 ? "" : "s"}`
-    );
-  }
-  const detail =
-    breakdownParts.length > 0
-      ? breakdownParts.join(", ")
-      : (failure.summary ?? "See output");
-  const labelText = chalk.blue.underline(failure.label);
-  const commandText = chalk.yellow(failure.command);
-  const detailText = chalk.red(detail);
-  return `${labelText} - ${failure.tool} [${commandText}] (${detailText})`;
 }

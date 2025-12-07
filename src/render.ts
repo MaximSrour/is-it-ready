@@ -1,7 +1,12 @@
 import chalk from "chalk";
 
 import { stripAnsi } from "./helpers";
-import { type BorderChars, type BorderLevel, type StepState } from "./types";
+import {
+  type BorderChars,
+  type BorderLevel,
+  type FailureDetails,
+  type StepState,
+} from "./types";
 
 const BORDER_CHARS: Record<BorderLevel, BorderChars> = {
   top: { left: "┌", mid: "┬", right: "┐", fill: "─" },
@@ -189,4 +194,41 @@ export const colorStatusMessage = (message: string, state: StepState) => {
   }
 
   return message;
+};
+
+/**
+ * Builds a formatted string summarizing failure details for display.
+ *
+ * @param {FailureDetails} failure - metadata describing the failed step
+ *
+ * @returns {string} - decorated headline containing label, tool, command, and breakdown
+ */
+export const formatFailureHeadline = (failure: FailureDetails) => {
+  const breakdownParts: string[] = [];
+
+  if (typeof failure.errors === "number") {
+    breakdownParts.push(
+      chalk.red(`${failure.errors} error${failure.errors === 1 ? "" : "s"}`)
+    );
+  }
+
+  if (typeof failure.warnings === "number") {
+    breakdownParts.push(
+      chalk.yellow(
+        `${failure.warnings} warning${failure.warnings === 1 ? "" : "s"}`
+      )
+    );
+  }
+
+  const detail =
+    breakdownParts.length > 0
+      ? breakdownParts.join(", ")
+      : (failure.summary ?? "See output");
+
+  const labelText = chalk.blue.underline(failure.label);
+  const toolText = failure.tool;
+  const commandText = chalk.yellow(failure.command);
+  const detailText = chalk.red(detail);
+
+  return `${labelText} - ${toolText} [${commandText}] (${detailText})`;
 };
