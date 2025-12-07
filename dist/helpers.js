@@ -34,29 +34,37 @@ const selectCommand = (baseCommand, looseCommand, isLooseMode) => {
     return baseCommand;
 };
 exports.selectCommand = selectCommand;
-/**
- * Executes the provided command via spawnSync after basic validation.
- *
- * @param {string} command - command string to execute
- *
- * @returns {ReturnType<typeof spawnSync>} - child process result
- *
- * @throws when the command is empty
- */
-const runCommand = (command) => {
+const runCommand = async (command) => {
     const trimmed = command.trim();
     if (!trimmed) {
         throw new Error("No command configured for this step");
     }
     const finalCommand = (0, exports.addSilentFlag)(trimmed);
-    return (0, child_process_1.spawnSync)(finalCommand, {
-        encoding: "utf-8",
-        env: {
-            ...process.env,
-            FORCE_COLOR: process.env.FORCE_COLOR ?? "1",
-            npm_config_color: process.env.npm_config_color ?? "always",
-        },
-        shell: true,
+    return new Promise((resolve, reject) => {
+        const child = (0, child_process_1.spawn)(finalCommand, {
+            env: {
+                ...process.env,
+                FORCE_COLOR: process.env.FORCE_COLOR ?? "1",
+                npm_config_color: process.env.npm_config_color ?? "always",
+            },
+            shell: true,
+        });
+        let stdout = "";
+        let stderr = "";
+        child.stdout.setEncoding("utf-8");
+        child.stderr.setEncoding("utf-8");
+        child.stdout.on("data", (chunk) => {
+            stdout += chunk;
+        });
+        child.stderr.on("data", (chunk) => {
+            stderr += chunk;
+        });
+        child.on("error", (error) => {
+            reject(error);
+        });
+        child.on("close", (status) => {
+            resolve({ status, stdout, stderr });
+        });
     });
 };
 exports.runCommand = runCommand;

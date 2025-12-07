@@ -38,38 +38,22 @@ const failures = [];
 let totalErrors = 0;
 let totalWarnings = 0;
 let suiteFinished = false;
-render();
-steps.forEach((step, index) => {
-    updateStatus(index, "running", "Running...");
-    const startTime = Date.now();
-    const result = (0, helpers_1.runCommand)(step.command);
-    durations[index] = Date.now() - startTime;
-    const rawCombined = [result.stdout, result.stderr].filter(Boolean).join("\n");
-    const combined = (0, helpers_1.stripAnsi)(rawCombined);
-    const parsedFailure = step.parseFailure?.(combined);
-    if (result.status === 0 && !parsedFailure) {
-        updateStatus(index, "success", "Passed");
-    }
-    else {
-        const detail = parsedFailure?.message ?? "Failed - see output below for details";
-        updateStatus(index, "failure", detail);
-        failures.push({
-            label: step.label,
-            tool: step.tool,
-            command: step.command,
-            errors: parsedFailure?.errors ?? undefined,
-            warnings: parsedFailure?.warnings ?? undefined,
-            summary: parsedFailure?.message ?? undefined,
-            output: combined.trim(),
-            rawOutput: rawCombined.trim() || combined.trim(),
-        });
-        recordIssueCounts(parsedFailure);
-    }
+const suiteStartTime = Date.now();
+let suiteDurationMs = null;
+void main().catch((error) => {
+    console.error(chalk_1.default.red("Unexpected error while running steps."));
+    console.error(error);
+    process.exit(1);
 });
-suiteFinished = true;
-render();
-printFailureDetails(failures);
-process.exit(failures.length > 0 ? 1 : 0);
+async function main() {
+    render();
+    await Promise.all(steps.map((step, index) => executeStep(step, index)));
+    suiteFinished = true;
+    suiteDurationMs = Date.now() - suiteStartTime;
+    render();
+    printFailureDetails(failures);
+    process.exit(failures.length > 0 ? 1 : 0);
+}
 function updateStatus(index, state, message) {
     statuses[index] = { state, message };
     render();
@@ -116,7 +100,9 @@ function render() {
             ? icons.success
             : icons.failure
         : icons.running;
-    const overallDurationMs = durations.reduce((total, current) => (total ?? 0) + (current ?? 0), 0);
+    const overallDurationMs = suiteFinished
+        ? (suiteDurationMs ?? 0)
+        : Date.now() - suiteStartTime;
     const breakdownParts = [];
     if (totalErrors > 0) {
         breakdownParts.push(`${totalErrors} error${totalErrors === 1 ? "" : "s"}`);
@@ -132,6 +118,54 @@ function render() {
         (0, helpers_1.formatDuration)(overallDurationMs),
     ];
     console.log((0, render_1.renderTable)(tableHeaders, rows, overallRow));
+}
+async function executeStep(step, index) {
+    updateStatus(index, "running", "Running...");
+    const startTime = Date.now();
+    try {
+        const result = await (0, helpers_1.runCommand)(step.command);
+        durations[index] = Date.now() - startTime;
+        const rawCombined = [result.stdout, result.stderr]
+            .filter(Boolean)
+            .join("\n");
+        const combined = (0, helpers_1.stripAnsi)(rawCombined);
+        const parsedFailure = step.parseFailure?.(combined);
+        if (result.status === 0 && !parsedFailure) {
+            updateStatus(index, "success", "Passed");
+            return;
+        }
+        const detail = parsedFailure?.message ?? "Failed - see output below for details";
+        updateStatus(index, "failure", detail);
+        failures.push({
+            label: step.label,
+            tool: step.tool,
+            command: step.command,
+            errors: parsedFailure?.errors ?? undefined,
+            warnings: parsedFailure?.warnings ?? undefined,
+            summary: parsedFailure?.message ?? undefined,
+            output: combined.trim(),
+            rawOutput: rawCombined.trim() || combined.trim(),
+        });
+        recordIssueCounts(parsedFailure);
+    }
+    catch (error) {
+        durations[index] = Date.now() - startTime;
+        const message = error instanceof Error
+            ? error.message
+            : typeof error === "string"
+                ? error
+                : "Failed to execute command";
+        updateStatus(index, "failure", message);
+        failures.push({
+            label: step.label,
+            tool: step.tool,
+            command: step.command,
+            summary: message,
+            output: message,
+            rawOutput: message,
+        });
+        recordIssueCounts();
+    }
 }
 /**
  * Prints detailed information about failed steps.

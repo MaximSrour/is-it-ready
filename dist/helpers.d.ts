@@ -19,15 +19,20 @@ export declare const decorateLabel: (label: string, supportsLoose: boolean, isLo
  */
 export declare const selectCommand: (baseCommand: string, looseCommand: string | undefined, isLooseMode: boolean) => string;
 /**
- * Executes the provided command via spawnSync after basic validation.
+ * Executes the provided command asynchronously after validating it.
  *
  * @param {string} command - command string to execute
  *
- * @returns {ReturnType<typeof spawnSync>} - child process result
+ * @returns {Promise<CommandResult>} - child process result
  *
  * @throws when the command is empty
  */
-export declare const runCommand: (command: string) => import("child_process").SpawnSyncReturns<string>;
+type CommandResult = {
+    status: number | null;
+    stdout: string;
+    stderr: string;
+};
+export declare const runCommand: (command: string) => Promise<CommandResult>;
 /**
  * Ensures npm run commands are executed with --silent to reduce noise.
  *
@@ -52,3 +57,4 @@ export declare const stripAnsi: (value: string) => string;
  * @returns {string} - formatted duration string
  */
 export declare const formatDuration: (durationMs: number | null) => string;
+export {};
