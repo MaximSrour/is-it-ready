@@ -1,13 +1,5 @@
 #!/usr/bin/env node
 
-import { parserMap } from "./parsers";
-import {
-  type StepState,
-  type StepStatus,
-  type ParsedFailure,
-  type Step,
-  type FailureDetails,
-} from "./types";
 import { stepConfig } from "./config";
 import {
   decorateLabel,
@@ -16,7 +8,15 @@ import {
   selectCommand,
   stripAnsi,
 } from "./helpers";
+import { parserMap } from "./parsers";
 import { renderTable } from "./render";
+import {
+  type FailureDetails,
+  type ParsedFailure,
+  type Step,
+  type StepState,
+  type StepStatus,
+} from "./types";
 
 const args = process.argv.slice(2);
 const isLooseMode = args.includes("--loose");

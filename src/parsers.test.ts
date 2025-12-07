@@ -1,11 +1,12 @@
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
+
 import {
-  parsePrettier,
   parseEslint,
-  parseTypeCheck,
-  parseVitest,
   parseKnip,
   parseNpmAudit,
+  parsePrettier,
+  parseTypeCheck,
+  parseVitest,
 } from "./parsers";
 
 describe("parsePrettier", () => {

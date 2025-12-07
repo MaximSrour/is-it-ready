@@ -1,4 +1,4 @@
-import { type BorderLevel, type BorderChars } from "./types";
+import { type BorderChars, type BorderLevel } from "./types";
 
 const BORDER_CHARS: Record<BorderLevel, BorderChars> = {
   top: { left: "┌", mid: "┬", right: "┐", fill: "─" },
