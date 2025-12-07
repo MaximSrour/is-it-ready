@@ -1,4 +1,5 @@
-import { describe, expect, it } from "vitest";
+import chalk from "chalk";
+import { beforeEach, describe, expect, it } from "vitest";
 
 import {
   colorStatusMessage,
@@ -60,6 +61,10 @@ describe("isFullWidthCodePoint", () => {
 });
 
 describe("colorStatusMessage", () => {
+  beforeEach(() => {
+    chalk.level = 1;
+  });
+
   it("returns empty string when message missing", () => {
     expect(colorStatusMessage("", "pending")).toBe("");
   });
