@@ -1,4 +1,4 @@
-import { spawnSync } from "child_process";
+import { spawn } from "child_process";
 
 /**
  * Adds the loose-mode indicator to step labels when required.
@@ -43,29 +43,58 @@ export const selectCommand = (
 };
 
 /**
- * Executes the provided command via spawnSync after basic validation.
+ * Executes the provided command asynchronously after validating it.
  *
  * @param {string} command - command string to execute
  *
- * @returns {ReturnType<typeof spawnSync>} - child process result
+ * @returns {Promise<CommandResult>} - child process result
  *
  * @throws when the command is empty
  */
-export const runCommand = (command: string) => {
+type CommandResult = {
+  status: number | null;
+  stdout: string;
+  stderr: string;
+};
+
+export const runCommand = async (command: string): Promise<CommandResult> => {
   const trimmed = command.trim();
   if (!trimmed) {
     throw new Error("No command configured for this step");
   }
 
   const finalCommand = addSilentFlag(trimmed);
-  return spawnSync(finalCommand, {
-    encoding: "utf-8",
-    env: {
-      ...process.env,
-      FORCE_COLOR: process.env.FORCE_COLOR ?? "1",
-      npm_config_color: process.env.npm_config_color ?? "always",
-    },
-    shell: true,
+  return new Promise((resolve, reject) => {
+    const child = spawn(finalCommand, {
+      env: {
+        ...process.env,
+        FORCE_COLOR: process.env.FORCE_COLOR ?? "1",
+        npm_config_color: process.env.npm_config_color ?? "always",
+      },
+      shell: true,
+    });
+
+    let stdout = "";
+    let stderr = "";
+
+    child.stdout.setEncoding("utf-8");
+    child.stderr.setEncoding("utf-8");
+
+    child.stdout.on("data", (chunk) => {
+      stdout += chunk;
+    });
+
+    child.stderr.on("data", (chunk) => {
+      stderr += chunk;
+    });
+
+    child.on("error", (error) => {
+      reject(error);
+    });
+
+    child.on("close", (status) => {
+      resolve({ status, stdout, stderr });
+    });
   });
 };
 

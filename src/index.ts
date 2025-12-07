@@ -53,46 +53,24 @@ const failures: FailureDetails[] = [];
 let totalErrors = 0;
 let totalWarnings = 0;
 let suiteFinished = false;
+const suiteStartTime = Date.now();
+let suiteDurationMs: number | null = null;
 
-render();
-
-steps.forEach((step, index) => {
-  updateStatus(index, "running", "Running...");
-  const startTime = Date.now();
-  const result = runCommand(step.command);
-  durations[index] = Date.now() - startTime;
-  const rawCombined = [result.stdout, result.stderr].filter(Boolean).join("\n");
-  const combined = stripAnsi(rawCombined);
-  const parsedFailure = step.parseFailure?.(combined);
-
-  if (result.status === 0 && !parsedFailure) {
-    updateStatus(index, "success", "Passed");
-  } else {
-    const detail =
-      parsedFailure?.message ?? "Failed - see output below for details";
-    updateStatus(index, "failure", detail);
-
-    failures.push({
-      label: step.label,
-      tool: step.tool,
-      command: step.command,
-      errors: parsedFailure?.errors ?? undefined,
-      warnings: parsedFailure?.warnings ?? undefined,
-      summary: parsedFailure?.message ?? undefined,
-      output: combined.trim(),
-      rawOutput: rawCombined.trim() || combined.trim(),
-    });
-
-    recordIssueCounts(parsedFailure);
-  }
+void main().catch((error) => {
+  console.error(chalk.red("Unexpected error while running steps."));
+  console.error(error);
+  process.exit(1);
 });
 
-suiteFinished = true;
-render();
-
-printFailureDetails(failures);
-
-process.exit(failures.length > 0 ? 1 : 0);
+async function main() {
+  render();
+  await Promise.all(steps.map((step, index) => executeStep(step, index)));
+  suiteFinished = true;
+  suiteDurationMs = Date.now() - suiteStartTime;
+  render();
+  printFailureDetails(failures);
+  process.exit(failures.length > 0 ? 1 : 0);
+}
 
 function updateStatus(index: number, state: StepState, message: string) {
   statuses[index] = { state, message };
@@ -147,10 +125,9 @@ function render() {
       ? icons.success
       : icons.failure
     : icons.running;
-  const overallDurationMs = durations.reduce(
-    (total, current) => (total ?? 0) + (current ?? 0),
-    0
-  );
+  const overallDurationMs = suiteFinished
+    ? (suiteDurationMs ?? 0)
+    : Date.now() - suiteStartTime;
   const breakdownParts = [];
   if (totalErrors > 0) {
     breakdownParts.push(`${totalErrors} error${totalErrors === 1 ? "" : "s"}`);
@@ -169,6 +146,63 @@ function render() {
     formatDuration(overallDurationMs),
   ];
   console.log(renderTable(tableHeaders, rows, overallRow));
+}
+
+async function executeStep(step: Step, index: number) {
+  updateStatus(index, "running", "Running...");
+  const startTime = Date.now();
+
+  try {
+    const result = await runCommand(step.command);
+    durations[index] = Date.now() - startTime;
+    const rawCombined = [result.stdout, result.stderr]
+      .filter(Boolean)
+      .join("\n");
+    const combined = stripAnsi(rawCombined);
+    const parsedFailure = step.parseFailure?.(combined);
+
+    if (result.status === 0 && !parsedFailure) {
+      updateStatus(index, "success", "Passed");
+      return;
+    }
+
+    const detail =
+      parsedFailure?.message ?? "Failed - see output below for details";
+    updateStatus(index, "failure", detail);
+
+    failures.push({
+      label: step.label,
+      tool: step.tool,
+      command: step.command,
+      errors: parsedFailure?.errors ?? undefined,
+      warnings: parsedFailure?.warnings ?? undefined,
+      summary: parsedFailure?.message ?? undefined,
+      output: combined.trim(),
+      rawOutput: rawCombined.trim() || combined.trim(),
+    });
+
+    recordIssueCounts(parsedFailure);
+  } catch (error) {
+    durations[index] = Date.now() - startTime;
+    const message =
+      error instanceof Error
+        ? error.message
+        : typeof error === "string"
+          ? error
+          : "Failed to execute command";
+    updateStatus(index, "failure", message);
+
+    failures.push({
+      label: step.label,
+      tool: step.tool,
+      command: step.command,
+      summary: message,
+      output: message,
+      rawOutput: message,
+    });
+
+    recordIssueCounts();
+  }
 }
 
 /**
