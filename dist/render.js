@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.isFullWidthCodePoint = exports.getDisplayWidth = exports.padCell = exports.renderRow = exports.renderBorder = exports.renderTable = void 0;
+exports.printFailureDetails = exports.formatFailureHeadline = exports.colorStatusMessage = exports.isFullWidthCodePoint = exports.getDisplayWidth = exports.padCell = exports.renderRow = exports.renderBorder = exports.renderTable = void 0;
 const chalk_1 = __importDefault(require("chalk"));
 const helpers_1 = require("./helpers");
 const BORDER_CHARS = {
@@ -137,3 +137,67 @@ const isFullWidthCodePoint = (codePoint) => {
             (codePoint >= 0x20000 && codePoint <= 0x3fffd)));
 };
 exports.isFullWidthCodePoint = isFullWidthCodePoint;
+/**
+ * Colors a status message based on the step state.
+ *
+ * @param {string} message - The status message to color.
+ * @param {StepState} state - The state of the step ("pending", "running", "success", "failure").
+ *
+ * @returns {string} - The colored status message.
+ */
+const colorStatusMessage = (message, state) => {
+    if (!message) {
+        return "";
+    }
+    if (state === "failure") {
+        return chalk_1.default.red(message);
+    }
+    return message;
+};
+exports.colorStatusMessage = colorStatusMessage;
+/**
+ * Builds a formatted string summarizing failure details for display.
+ *
+ * @param {FailureDetails} failure - metadata describing the failed step
+ *
+ * @returns {string} - decorated headline containing label, tool, command, and breakdown
+ */
+const formatFailureHeadline = (failure) => {
+    const breakdownParts = [];
+    if (typeof failure.errors === "number") {
+        breakdownParts.push(chalk_1.default.red(`${failure.errors} error${failure.errors === 1 ? "" : "s"}`));
+    }
+    if (typeof failure.warnings === "number") {
+        breakdownParts.push(chalk_1.default.yellow(`${failure.warnings} warning${failure.warnings === 1 ? "" : "s"}`));
+    }
+    const detail = breakdownParts.length > 0
+        ? breakdownParts.join(", ")
+        : (failure.summary ?? "See output");
+    const labelText = chalk_1.default.blue.underline(failure.label);
+    const toolText = failure.tool;
+    const commandText = chalk_1.default.yellow(failure.command);
+    const detailText = chalk_1.default.red(detail);
+    return `${labelText} - ${toolText} [${commandText}] (${detailText})`;
+};
+exports.formatFailureHeadline = formatFailureHeadline;
+/**
+ * Prints detailed information about failed steps.
+ *
+ * @param {FailureDetails[]} failures - Array of failure details to print
+ * @param {RunOptions} runOptions - Options that influenced the run
+ */
+const printFailureDetails = (failures, runOptions) => {
+    if (failures.length > 0) {
+        if (runOptions.isSilentMode) {
+            console.log("\nSome checks failed. Run without --silent to see details.");
+            return;
+        }
+        console.log("\nDetails:");
+        failures.forEach((failure) => {
+            const headline = (0, exports.formatFailureHeadline)(failure);
+            console.log(`\n${headline}`);
+            console.log(failure.rawOutput || failure.output || "(no output)");
+        });
+    }
+};
+exports.printFailureDetails = printFailureDetails;

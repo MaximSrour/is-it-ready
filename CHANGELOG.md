@@ -1,3 +1,14 @@
+## [1.1.4](https://github.com/MaximSrour/is-it-ready/compare/v1.1.3...v1.1.4) (2025-12-07)
+
+
+### Bug Fixes
+
+* create a no op function ([87d083a](https://github.com/MaximSrour/is-it-ready/commit/87d083a37deeb581bf4f547779f255d88793d84f))
+* implement getRunOptions to parse command-line arguments for run modes ([ae6d325](https://github.com/MaximSrour/is-it-ready/commit/ae6d3251a072d470101a31ef67e40909105af319))
+* refactor colorStatusMessage function and add tests for its behavior ([3528fde](https://github.com/MaximSrour/is-it-ready/commit/3528fde80520b20203a1e6855e3fcaa96a669ff7))
+* removed problematic test (can be readded another time) ([80873d3](https://github.com/MaximSrour/is-it-ready/commit/80873d3b6fcf129d30302af28b674d9901c8969d))
+* update test runner to force color on ([8bfe88b](https://github.com/MaximSrour/is-it-ready/commit/8bfe88b611f812e501bdd0573b796cba844d0147))
+
 ## [1.1.3](https://github.com/MaximSrour/is-it-ready/compare/v1.1.2...v1.1.3) (2025-12-07)
 
 

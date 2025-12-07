@@ -10,15 +10,13 @@ const config_1 = require("./config");
 const helpers_1 = require("./helpers");
 const parsers_1 = require("./parsers");
 const render_1 = require("./render");
-const args = process.argv.slice(2);
-const isLooseMode = args.includes("--loose");
-const isSilentMode = args.includes("--silent");
+const runOptions = (0, helpers_1.getRunOptions)();
 const steps = config_1.stepConfig.map((config) => {
     const supportsLoose = Boolean(config.looseCommand);
     return {
-        label: (0, helpers_1.decorateLabel)(config.label, supportsLoose, isLooseMode),
+        label: (0, helpers_1.decorateLabel)(config.label, supportsLoose, runOptions.isLooseMode),
         tool: config.tool,
-        command: (0, helpers_1.selectCommand)(config.command, config.looseCommand, isLooseMode),
+        command: (0, helpers_1.selectCommand)(config.command, config.looseCommand, runOptions.isLooseMode),
         parseFailure: parsers_1.parserMap[config.tool],
     };
 });
@@ -46,17 +44,17 @@ void main().catch((error) => {
     process.exit(1);
 });
 async function main() {
-    render();
+    render(runOptions);
     await Promise.all(steps.map((step, index) => executeStep(step, index)));
     suiteFinished = true;
     suiteDurationMs = Date.now() - suiteStartTime;
-    render();
-    printFailureDetails(failures);
+    render(runOptions);
+    (0, render_1.printFailureDetails)(failures, runOptions);
     process.exit(failures.length > 0 ? 1 : 0);
 }
 function updateStatus(index, state, message) {
     statuses[index] = { state, message };
-    render();
+    render(runOptions);
 }
 function recordIssueCounts(parsedFailure) {
     if (!parsedFailure) {
@@ -72,21 +70,21 @@ function recordIssueCounts(parsedFailure) {
     totalErrors += errors;
     totalWarnings += warnings;
 }
-function render() {
+function render(runOptions) {
     if (process.stdout.isTTY) {
         console.clear();
     }
     console.log(chalk_1.default.bold(`${package_json_1.default.name} v${package_json_1.default.version}`) +
         " — Validating your code quality");
     console.log();
-    if (isLooseMode) {
+    if (runOptions.isLooseMode) {
         console.log("(* indicates loose mode; some rules are disabled or set to warnings)\n");
     }
     const rows = steps.map((step, idx) => {
         const status = statuses[idx];
         const message = status.state === "pending"
             ? ""
-            : colorStatusMessage(status.message, status.state);
+            : (0, render_1.colorStatusMessage)(status.message, status.state);
         return [
             `${icons[status.state]} ${step.label}`,
             step.tool,
@@ -166,51 +164,4 @@ async function executeStep(step, index) {
         });
         recordIssueCounts();
     }
-}
-/**
- * Prints detailed information about failed steps.
- *
- * @param {FailureDetails[]} failures - Array of failure details to print
- */
-function printFailureDetails(failures) {
-    if (failures.length > 0) {
-        if (isSilentMode) {
-            console.log("\nSome checks failed. Run without --silent to see details.");
-            return;
-        }
-        console.log("\nDetails:");
-        failures.forEach((failure) => {
-            const headline = formatFailureHeadline(failure);
-            console.log(`\n${headline}`);
-            console.log(failure.rawOutput || failure.output || "(no output)");
-        });
-    }
-}
-function colorStatusMessage(message, state) {
-    if (!message) {
-        return "";
-    }
-    if (state === "failure") {
-        return chalk_1.default.red(message);
-    }
-    if (state === "success") {
-        return chalk_1.default.white(message);
-    }
-    return message;
-}
-function formatFailureHeadline(failure) {
-    const breakdownParts = [];
-    if (typeof failure.errors === "number") {
-        breakdownParts.push(chalk_1.default.red(`${failure.errors} error${failure.errors === 1 ? "" : "s"}`));
-    }
-    if (typeof failure.warnings === "number") {
-        breakdownParts.push(`${failure.warnings} warning${failure.warnings === 1 ? "" : "s"}`);
-    }
-    const detail = breakdownParts.length > 0
-        ? breakdownParts.join(", ")
-        : (failure.summary ?? "See output");
-    const labelText = chalk_1.default.blue.underline(failure.label);
-    const commandText = chalk_1.default.yellow(failure.command);
-    const detailText = chalk_1.default.red(detail);
-    return `${labelText} - ${failure.tool} [${commandText}] (${detailText})`;
 }

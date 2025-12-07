@@ -1,4 +1,4 @@
-import { type BorderLevel } from "./types";
+import { type BorderLevel, type FailureDetails, type RunOptions, type StepState } from "./types";
 /**
  * Renders a table with borders, headers, rows, and an optional footer.
  *
@@ -53,3 +53,27 @@ export declare const getDisplayWidth: (value: string) => number;
  * @returns {boolean} - True if the code point is full-width, false otherwise.
  */
 export declare const isFullWidthCodePoint: (codePoint?: number | null) => boolean;
+/**
+ * Colors a status message based on the step state.
+ *
+ * @param {string} message - The status message to color.
+ * @param {StepState} state - The state of the step ("pending", "running", "success", "failure").
+ *
+ * @returns {string} - The colored status message.
+ */
+export declare const colorStatusMessage: (message: string, state: StepState) => string;
+/**
+ * Builds a formatted string summarizing failure details for display.
+ *
+ * @param {FailureDetails} failure - metadata describing the failed step
+ *
+ * @returns {string} - decorated headline containing label, tool, command, and breakdown
+ */
+export declare const formatFailureHeadline: (failure: FailureDetails) => string;
+/**
+ * Prints detailed information about failed steps.
+ *
+ * @param {FailureDetails[]} failures - Array of failure details to print
+ * @param {RunOptions} runOptions - Options that influenced the run
+ */
+export declare const printFailureDetails: (failures: FailureDetails[], runOptions: RunOptions) => void;
