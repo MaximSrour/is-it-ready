@@ -14,11 +14,7 @@ import {
   stripAnsi,
 } from "./helpers";
 import { parserMap } from "./parsers";
-import {
-  colorStatusMessage,
-  formatFailureHeadline,
-  renderTable,
-} from "./render";
+import { colorStatusMessage, printFailureDetails, renderTable } from "./render";
 import {
   type FailureDetails,
   type RunOptions,
@@ -210,29 +206,5 @@ async function executeStep(step: Step, index: number) {
     });
 
     recordIssueCounts();
-  }
-}
-
-/**
- * Prints detailed information about failed steps.
- *
- * @param {FailureDetails[]} failures - Array of failure details to print
- */
-function printFailureDetails(
-  failures: FailureDetails[],
-  runOptions: RunOptions
-) {
-  if (failures.length > 0) {
-    if (runOptions.isSilentMode) {
-      console.log("\nSome checks failed. Run without --silent to see details.");
-      return;
-    }
-
-    console.log("\nDetails:");
-    failures.forEach((failure) => {
-      const headline = formatFailureHeadline(failure);
-      console.log(`\n${headline}`);
-      console.log(failure.rawOutput || failure.output || "(no output)");
-    });
   }
 }

@@ -5,6 +5,7 @@ import {
   type BorderChars,
   type BorderLevel,
   type FailureDetails,
+  type RunOptions,
   type StepState,
 } from "./types";
 
@@ -231,4 +232,30 @@ export const formatFailureHeadline = (failure: FailureDetails) => {
   const detailText = chalk.red(detail);
 
   return `${labelText} - ${toolText} [${commandText}] (${detailText})`;
+};
+
+/**
+ * Prints detailed information about failed steps.
+ *
+ * @param {FailureDetails[]} failures - Array of failure details to print
+ * @param {RunOptions} runOptions - Options that influenced the run
+ */
+export const printFailureDetails = (
+  failures: FailureDetails[],
+  runOptions: RunOptions
+) => {
+  if (failures.length > 0) {
+    if (runOptions.isSilentMode) {
+      console.log("\nSome checks failed. Run without --silent to see details.");
+      return;
+    }
+
+    console.log("\nDetails:");
+
+    failures.forEach((failure) => {
+      const headline = formatFailureHeadline(failure);
+      console.log(`\n${headline}`);
+      console.log(failure.rawOutput || failure.output || "(no output)");
+    });
+  }
 };

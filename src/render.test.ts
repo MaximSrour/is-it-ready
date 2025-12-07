@@ -1,12 +1,14 @@
 import chalk from "chalk";
-import { beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
+import * as renderModule from "./render";
 import {
   colorStatusMessage,
   formatFailureHeadline,
   getDisplayWidth,
   isFullWidthCodePoint,
   padCell,
+  printFailureDetails,
   renderBorder,
   renderRow,
 } from "./render";
@@ -95,6 +97,10 @@ describe("formatFailureHeadline", () => {
     chalk.level = 1;
   });
 
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   it("includes colored breakdown when errors and warnings present", () => {
     const failure = { ...baseFailure, errors: 2, warnings: 1 };
     const result = formatFailureHeadline(failure);
@@ -127,5 +133,70 @@ describe("formatFailureHeadline", () => {
     )}] (${detail})`;
 
     expect(result).toBe(expected);
+  });
+});
+
+describe("printFailureDetails", () => {
+  const baseFailure: FailureDetails = {
+    label: "Tests",
+    tool: "Vitest",
+    command: "npm test",
+    output: "parsed output",
+    rawOutput: "raw output",
+  };
+  const baseRunOptions = { isLooseMode: false, isSilentMode: false };
+
+  beforeEach(() => {
+    chalk.level = 1;
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it("prints a hint when silent mode suppresses failure details", () => {
+    const logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+
+    printFailureDetails([baseFailure], {
+      ...baseRunOptions,
+      isSilentMode: true,
+    });
+
+    expect(logSpy).toHaveBeenCalledTimes(1);
+    expect(logSpy).toHaveBeenCalledWith(
+      "\nSome checks failed. Run without --silent to see details."
+    );
+  });
+
+  it("logs formatted headlines followed by raw output for each failure", () => {
+    const logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+    const headline = "Vitest suite failed";
+
+    const formatSpy = vi
+      .spyOn(renderModule, "formatFailureHeadline")
+      .mockReturnValue(headline);
+
+    printFailureDetails([baseFailure], baseRunOptions);
+
+    expect(formatSpy).toHaveBeenCalledWith(baseFailure);
+    expect(logSpy).toHaveBeenNthCalledWith(1, "\nDetails:");
+    expect(logSpy).toHaveBeenNthCalledWith(2, `\n${headline}`);
+    expect(logSpy).toHaveBeenNthCalledWith(3, baseFailure.rawOutput);
+  });
+
+  it("falls back to parsed output and defaults when no raw output exists", () => {
+    const logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+    vi.spyOn(renderModule, "formatFailureHeadline").mockReturnValue("failed");
+
+    const failureWithoutRaw = { ...baseFailure, rawOutput: "" };
+    const failureWithoutOutputs = { ...baseFailure, rawOutput: "", output: "" };
+
+    printFailureDetails(
+      [failureWithoutRaw, failureWithoutOutputs],
+      baseRunOptions
+    );
+
+    expect(logSpy).toHaveBeenNthCalledWith(3, failureWithoutRaw.output);
+    expect(logSpy).toHaveBeenNthCalledWith(5, "(no output)");
   });
 });
