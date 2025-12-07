@@ -22,6 +22,7 @@ import {
 
 const args = process.argv.slice(2);
 const isLooseMode = args.includes("--loose");
+const isSilentMode = args.includes("--silent");
 
 const steps: Step[] = stepConfig.map((config) => {
   const supportsLoose = Boolean(config.looseCommand);
@@ -172,6 +173,11 @@ function render() {
  */
 function printFailureDetails(failures: FailureDetails[]) {
   if (failures.length > 0) {
+    if (isSilentMode) {
+      console.log("\nSome checks failed. Run without --silent to see details.");
+      return;
+    }
+
     console.log("\nDetails:");
     failures.forEach((failure) => {
       const headline = formatFailureHeadline(failure);
