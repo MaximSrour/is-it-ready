@@ -16,3 +16,4 @@ jobs:
   release:
     needs: validate
     uses: ./.github/workflows/release.yml
+    secrets: inherit
