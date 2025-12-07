@@ -3,6 +3,7 @@
 import chalk from "chalk";
 import { type ParsedFailure } from "parsers/types";
 
+import pkg from "../package.json";
 import { stepConfig } from "./config";
 import {
   decorateLabel,
@@ -117,7 +118,11 @@ function render() {
   if (process.stdout.isTTY) {
     console.clear();
   }
-  console.log("Running project checks:\n");
+  console.log(
+    chalk.bold(`${pkg.name} v${pkg.version}`) +
+      " — Validating your code quality"
+  );
+  console.log();
   if (isLooseMode) {
     console.log(
       "(* indicates loose mode; some rules are disabled or set to warnings)\n"
