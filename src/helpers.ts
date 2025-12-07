@@ -1,5 +1,6 @@
 import { spawn } from "child_process";
-import { type RunOptions } from "types";
+
+import { type RunOptions } from "./types";
 
 /**
  * Parses command-line arguments to determine run options.

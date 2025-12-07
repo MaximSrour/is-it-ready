@@ -1,6 +1,7 @@
 import chalk from "chalk";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
+import { noOp } from "./noOp";
 import * as renderModule from "./render";
 import {
   colorStatusMessage,
@@ -155,7 +156,9 @@ describe("printFailureDetails", () => {
   });
 
   it("prints a hint when silent mode suppresses failure details", () => {
-    const logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+    const logSpy = vi.spyOn(console, "log").mockImplementation(() => {
+      noOp();
+    });
 
     printFailureDetails([baseFailure], {
       ...baseRunOptions,
@@ -169,7 +172,9 @@ describe("printFailureDetails", () => {
   });
 
   it("logs formatted headlines followed by raw output for each failure", () => {
-    const logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+    const logSpy = vi.spyOn(console, "log").mockImplementation(() => {
+      noOp();
+    });
     const headline = "Vitest suite failed";
 
     const formatSpy = vi
@@ -185,7 +190,9 @@ describe("printFailureDetails", () => {
   });
 
   it("falls back to parsed output and defaults when no raw output exists", () => {
-    const logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+    const logSpy = vi.spyOn(console, "log").mockImplementation(() => {
+      noOp();
+    });
     vi.spyOn(renderModule, "formatFailureHeadline").mockReturnValue("failed");
 
     const failureWithoutRaw = { ...baseFailure, rawOutput: "" };
