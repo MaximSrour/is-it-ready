@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  colorStatusMessage,
   getDisplayWidth,
   isFullWidthCodePoint,
   padCell,
@@ -55,5 +56,21 @@ describe("isFullWidthCodePoint", () => {
   it("returns false for undefined or ASCII code points", () => {
     expect(isFullWidthCodePoint(undefined)).toBe(false);
     expect(isFullWidthCodePoint(0x41)).toBe(false);
+  });
+});
+
+describe("colorStatusMessage", () => {
+  it("returns empty string when message missing", () => {
+    expect(colorStatusMessage("", "pending")).toBe("");
+  });
+
+  it("colors message red for failure state", () => {
+    expect(colorStatusMessage("Failed", "failure")).toBe(
+      "\u001b[31mFailed\u001b[39m"
+    );
+  });
+
+  it("leaves other states uncolored", () => {
+    expect(colorStatusMessage("Working", "running")).toBe("Working");
   });
 });

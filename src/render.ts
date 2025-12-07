@@ -1,7 +1,7 @@
 import chalk from "chalk";
 
 import { stripAnsi } from "./helpers";
-import { type BorderChars, type BorderLevel } from "./types";
+import { type BorderChars, type BorderLevel, type StepState } from "./types";
 
 const BORDER_CHARS: Record<BorderLevel, BorderChars> = {
   top: { left: "┌", mid: "┬", right: "┐", fill: "─" },
@@ -169,4 +169,24 @@ export const isFullWidthCodePoint = (codePoint?: number | null) => {
       (codePoint >= 0x1f200 && codePoint <= 0x1f251) ||
       (codePoint >= 0x20000 && codePoint <= 0x3fffd))
   );
+};
+
+/**
+ * Colors a status message based on the step state.
+ *
+ * @param {string} message - The status message to color.
+ * @param {StepState} state - The state of the step ("pending", "running", "success", "failure").
+ *
+ * @returns {string} - The colored status message.
+ */
+export const colorStatusMessage = (message: string, state: StepState) => {
+  if (!message) {
+    return "";
+  }
+
+  if (state === "failure") {
+    return chalk.red(message);
+  }
+
+  return message;
 };

@@ -14,7 +14,7 @@ import {
   stripAnsi,
 } from "./helpers";
 import { parserMap } from "./parsers";
-import { renderTable } from "./render";
+import { colorStatusMessage, renderTable } from "./render";
 import {
   type FailureDetails,
   type RunOptions,
@@ -231,19 +231,6 @@ function printFailureDetails(
       console.log(failure.rawOutput || failure.output || "(no output)");
     });
   }
-}
-
-function colorStatusMessage(message: string, state: StepState) {
-  if (!message) {
-    return "";
-  }
-  if (state === "failure") {
-    return chalk.red(message);
-  }
-  if (state === "success") {
-    return chalk.white(message);
-  }
-  return message;
 }
 
 function formatFailureHeadline(failure: FailureDetails) {
