@@ -42,8 +42,8 @@ describe("selectCommand", () => {
 });
 
 describe("runCommand", () => {
-  it("throws when command is empty", () => {
-    expect(() => runCommand("  ")).toThrow(/No command configured/);
+  it("throws when command is empty", async () => {
+    await expect(runCommand("  ")).rejects.toThrow(/No command configured/);
   });
 });
 
