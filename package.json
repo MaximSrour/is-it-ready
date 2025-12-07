@@ -26,6 +26,9 @@
     "check": "ts-node --transpile-only src/index.ts",
     "check:loose": "ts-node --transpile-only src/index.ts --loose"
   },
+  "dependencies": {
+    "chalk": "^4.1.2"
+  },
   "devDependencies": {
     "@trivago/prettier-plugin-sort-imports": "^6.0.0",
     "@types/node": "^24.10.1",

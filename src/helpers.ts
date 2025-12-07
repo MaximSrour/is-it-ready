@@ -91,6 +91,11 @@ export const runCommand = (command: string) => {
   const finalCommand = addSilentFlag(trimmed);
   return spawnSync(finalCommand, {
     encoding: "utf-8",
+    env: {
+      ...process.env,
+      FORCE_COLOR: process.env.FORCE_COLOR ?? "1",
+      npm_config_color: process.env.npm_config_color ?? "always",
+    },
     shell: true,
   });
 };

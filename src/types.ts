@@ -20,7 +20,13 @@ export type Step = {
 
 export type FailureDetails = {
   label: string;
+  tool: ToolName;
+  command: string;
   output: string;
+  rawOutput: string;
+  errors?: number;
+  warnings?: number;
+  summary?: string;
 };
 
 export type BorderLevel = "top" | "middle" | "bottom";

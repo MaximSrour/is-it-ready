@@ -1,3 +1,4 @@
+import { stripAnsi } from "./helpers";
 import { type BorderChars, type BorderLevel } from "./types";
 
 const BORDER_CHARS: Record<BorderLevel, BorderChars> = {
@@ -107,6 +108,8 @@ export const getDisplayWidth = (value: string) => {
     return 0;
   }
 
+  const cleanValue = stripAnsi(value);
+
   const segmenter =
     typeof Intl !== "undefined"
       ? new Intl.Segmenter(undefined, { granularity: "grapheme" })
@@ -115,8 +118,8 @@ export const getDisplayWidth = (value: string) => {
   const emojiRegex = /\p{Extended_Pictographic}/u;
 
   const graphemes = segmenter
-    ? Array.from(segmenter.segment(value), (seg) => seg.segment)
-    : Array.from(value);
+    ? Array.from(segmenter.segment(cleanValue), (seg) => seg.segment)
+    : Array.from(cleanValue);
 
   return graphemes.reduce((total, grapheme) => {
     const codePoint = grapheme.codePointAt(0);
