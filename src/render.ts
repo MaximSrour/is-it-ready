@@ -260,16 +260,18 @@ export const printFailureDetails = (
 ) => {
   if (failures.length > 0) {
     if (runOptions.isSilentMode) {
-      console.log("\nSome checks failed. Run without --silent to see details.");
+      console.log("Some checks failed. Run without --silent to see details.");
       return;
     }
 
-    console.log("\nDetails:");
+    console.log("Details:");
 
     failures.forEach((failure) => {
       const headline = formatFailureHeadline(failure);
       console.log(`\n${headline}`);
       console.log(failure.rawOutput || failure.output || "(no output)");
     });
+
+    console.log();
   }
 };

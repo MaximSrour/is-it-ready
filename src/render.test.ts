@@ -170,7 +170,7 @@ describe("printFailureDetails", () => {
 
     expect(logSpy).toHaveBeenCalledTimes(1);
     expect(logSpy).toHaveBeenCalledWith(
-      "\nSome checks failed. Run without --silent to see details."
+      "Some checks failed. Run without --silent to see details."
     );
   });
 
