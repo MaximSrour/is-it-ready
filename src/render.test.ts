@@ -149,6 +149,7 @@ describe("printFailureDetails", () => {
     isLooseMode: false,
     isSilentMode: false,
     showHelp: false,
+    showVersion: false,
   };
 
   beforeEach(() => {

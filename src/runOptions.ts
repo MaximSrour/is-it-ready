@@ -1,6 +1,7 @@
 import fs from "fs";
 import path from "path";
 
+import pkg from "../package.json";
 import { type RunOptions } from "./types";
 
 /**
@@ -13,8 +14,12 @@ export const getRunOptions = (): RunOptions => {
   const isSilentMode = process.argv.includes("--silent");
   const showHelp =
     process.argv.includes("--help") || process.argv.includes("-h");
+  const showVersion =
+    process.argv.includes("--version") || process.argv.includes("-v");
 
-  return { isLooseMode, isSilentMode, showHelp };
+  const runOptions = { isLooseMode, isSilentMode, showHelp, showVersion };
+
+  return runOptions;
 };
 
 export const printHelp = () => {
@@ -26,4 +31,8 @@ export const printHelp = () => {
   } catch (error) {
     console.error(`Error reading help file: ${(error as Error).message}`);
   }
+};
+
+export const printVersion = () => {
+  console.log(`v${pkg.version}`);
 };

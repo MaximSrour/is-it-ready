@@ -14,7 +14,7 @@ import {
 } from "./helpers";
 import { parserMap } from "./parsers";
 import { colorStatusMessage, printFailureDetails, renderTable } from "./render";
-import { getRunOptions, printHelp } from "./runOptions";
+import { getRunOptions, printHelp, printVersion } from "./runOptions";
 import {
   type FailureDetails,
   type RunOptions,
@@ -73,6 +73,11 @@ void main().catch((error) => {
 async function main() {
   if (runOptions.showHelp) {
     printHelp();
+    return;
+  }
+
+  if (runOptions.showVersion) {
+    printVersion();
     return;
   }
 

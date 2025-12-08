@@ -3,7 +3,7 @@ import path from "path";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { noOp } from "./noOp";
-import { getRunOptions, printHelp } from "./runOptions";
+import { getRunOptions, printHelp, printVersion } from "./runOptions";
 
 describe("getRunOptions", () => {
   const originalArgv = process.argv.slice();
@@ -18,6 +18,7 @@ describe("getRunOptions", () => {
       isLooseMode: false,
       isSilentMode: false,
       showHelp: false,
+      showVersion: false,
     });
   });
 
@@ -27,6 +28,7 @@ describe("getRunOptions", () => {
       isLooseMode: true,
       isSilentMode: false,
       showHelp: false,
+      showVersion: false,
     });
   });
 
@@ -36,6 +38,7 @@ describe("getRunOptions", () => {
       isLooseMode: false,
       isSilentMode: true,
       showHelp: false,
+      showVersion: false,
     });
   });
 
@@ -45,6 +48,7 @@ describe("getRunOptions", () => {
       isLooseMode: true,
       isSilentMode: true,
       showHelp: false,
+      showVersion: false,
     });
   });
 
@@ -54,6 +58,7 @@ describe("getRunOptions", () => {
       isLooseMode: false,
       isSilentMode: false,
       showHelp: true,
+      showVersion: false,
     });
 
     process.argv = ["node", "script.js", "-h"];
@@ -61,6 +66,25 @@ describe("getRunOptions", () => {
       isLooseMode: false,
       isSilentMode: false,
       showHelp: true,
+      showVersion: false,
+    });
+  });
+
+  it("shows version when either version flag is supplied", () => {
+    process.argv = ["node", "script.js", "--version"];
+    expect(getRunOptions()).toEqual({
+      isLooseMode: false,
+      isSilentMode: false,
+      showHelp: false,
+      showVersion: true,
+    });
+
+    process.argv = ["node", "script.js", "-v"];
+    expect(getRunOptions()).toEqual({
+      isLooseMode: false,
+      isSilentMode: false,
+      showHelp: false,
+      showVersion: true,
     });
   });
 });
@@ -79,5 +103,22 @@ describe("printHelp", () => {
 
     logSpy.mockRestore();
     errorSpy.mockRestore();
+  });
+});
+
+describe("printVersion", () => {
+  it("prints the version number from package.json", () => {
+    const pkg = JSON.parse(
+      fs.readFileSync(path.resolve(__dirname, "../package.json"), "utf-8")
+    ) as { version: string };
+
+    const expected = `v${pkg.version}`;
+    const logSpy = vi.spyOn(console, "log").mockImplementation(noOp);
+
+    printVersion();
+
+    expect(logSpy).toHaveBeenCalledWith(expected);
+
+    logSpy.mockRestore();
   });
 });
