@@ -89,8 +89,7 @@ async function main() {
   );
   suiteFinished = true;
   suiteDurationMs = Date.now() - suiteStartTime;
-  render(runOptions);
-  printFailureDetails(failures, runOptions);
+  render(runOptions, failures.length > 0 ? failures : null);
   process.exit(failures.length > 0 ? 1 : 0);
 }
 
@@ -114,12 +113,15 @@ function recordIssueCounts(parsedFailure?: ParsedFailure | null) {
   totalWarnings += warnings;
 }
 
-function render(runOptions: RunOptions) {
+function render(
+  runOptions: RunOptions,
+  failures: FailureDetails[] | null = null
+) {
   if (process.stdout.isTTY) {
     console.clear();
   }
   console.log(
-    chalk.bold(`${pkg.name} v${pkg.version}`) +
+    chalk.bold(`\n${pkg.name} v${pkg.version}`) +
       " — Validating your code quality"
   );
   console.log();
@@ -128,6 +130,11 @@ function render(runOptions: RunOptions) {
       "(* indicates loose mode; some rules are disabled or set to warnings)\n"
     );
   }
+
+  if (failures) {
+    printFailureDetails(failures, runOptions);
+  }
+
   const rows = steps.map((step, idx) => {
     const status = statuses[idx];
     const message =
