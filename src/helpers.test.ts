@@ -1,54 +1,13 @@
-import { afterEach, describe, expect, it } from "vitest";
+import { describe, expect, it } from "vitest";
 
 import {
   addSilentFlag,
   decorateLabel,
   formatDuration,
-  getRunOptions,
   runCommand,
   selectCommand,
   stripAnsi,
 } from "./helpers";
-
-describe("getRunOptions", () => {
-  const originalArgv = process.argv.slice();
-
-  afterEach(() => {
-    process.argv = [...originalArgv];
-  });
-
-  it("returns false flags when options omitted", () => {
-    process.argv = ["node", "script.js"];
-    expect(getRunOptions()).toEqual({
-      isLooseMode: false,
-      isSilentMode: false,
-    });
-  });
-
-  it("enables loose mode when --loose passed", () => {
-    process.argv = ["node", "script.js", "--loose"];
-    expect(getRunOptions()).toEqual({
-      isLooseMode: true,
-      isSilentMode: false,
-    });
-  });
-
-  it("enables silent mode when --silent passed", () => {
-    process.argv = ["node", "script.js", "--silent"];
-    expect(getRunOptions()).toEqual({
-      isLooseMode: false,
-      isSilentMode: true,
-    });
-  });
-
-  it("enables both flags when both arguments supplied", () => {
-    process.argv = ["node", "script.js", "--silent", "--loose"];
-    expect(getRunOptions()).toEqual({
-      isLooseMode: true,
-      isSilentMode: true,
-    });
-  });
-});
 
 describe("decorateLabel", () => {
   it("returns label unchanged when loose mode disabled", () => {

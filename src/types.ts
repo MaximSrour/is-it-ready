@@ -3,6 +3,7 @@ import { type ParsedFailure, type ToolName } from "parsers/types";
 export type RunOptions = {
   isLooseMode: boolean;
   isSilentMode: boolean;
+  showHelp: boolean;
 };
 
 export type StepState = "pending" | "running" | "success" | "failure";

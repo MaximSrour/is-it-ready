@@ -145,7 +145,11 @@ describe("printFailureDetails", () => {
     output: "parsed output",
     rawOutput: "raw output",
   };
-  const baseRunOptions = { isLooseMode: false, isSilentMode: false };
+  const baseRunOptions = {
+    isLooseMode: false,
+    isSilentMode: false,
+    showHelp: false,
+  };
 
   beforeEach(() => {
     chalk.level = 1;
@@ -156,9 +160,7 @@ describe("printFailureDetails", () => {
   });
 
   it("prints a hint when silent mode suppresses failure details", () => {
-    const logSpy = vi.spyOn(console, "log").mockImplementation(() => {
-      noOp();
-    });
+    const logSpy = vi.spyOn(console, "log").mockImplementation(noOp);
 
     printFailureDetails([baseFailure], {
       ...baseRunOptions,
@@ -172,9 +174,7 @@ describe("printFailureDetails", () => {
   });
 
   it("falls back to parsed output and defaults when no raw output exists", () => {
-    const logSpy = vi.spyOn(console, "log").mockImplementation(() => {
-      noOp();
-    });
+    const logSpy = vi.spyOn(console, "log").mockImplementation(noOp);
     vi.spyOn(renderModule, "formatFailureHeadline").mockReturnValue("failed");
 
     const failureWithoutRaw = { ...baseFailure, rawOutput: "" };

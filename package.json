@@ -17,7 +17,8 @@
   "type": "commonjs",
   "main": "dist/index.js",
   "files": [
-    "dist"
+    "dist",
+    "help.md"
   ],
   "bin": {
     "is-it-ready": "dist/index.js"

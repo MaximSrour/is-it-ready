@@ -1,19 +1,5 @@
 import { spawn } from "child_process";
 
-import { type RunOptions } from "./types";
-
-/**
- * Parses command-line arguments to determine run options.
- *
- * @returns {RunOptions} - object indicating active modes
- */
-export const getRunOptions = (): RunOptions => {
-  const isLooseMode = process.argv.includes("--loose");
-  const isSilentMode = process.argv.includes("--silent");
-
-  return { isLooseMode, isSilentMode };
-};
-
 /**
  * Adds the loose-mode indicator to step labels when required.
  *
