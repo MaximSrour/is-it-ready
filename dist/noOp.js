@@ -2,6 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.noOp = void 0;
 const noOp = () => {
-    // no operation performed
+    // No operation performed
 };
 exports.noOp = noOp;

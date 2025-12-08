@@ -20,7 +20,11 @@ const parseTypeCheck = (output) => {
         if (errorLines.length === 0) {
             return undefined;
         }
-        const files = new Set(errorLines.map((match) => match[1].trim()).filter(Boolean));
+        const files = new Set(errorLines
+            .map((match) => {
+            return match[1].trim();
+        })
+            .filter(Boolean));
         const fileCount = files.size;
         const fileLabel = fileCount === 1 ? "file" : "files";
         const errorCount = errorLines.length;

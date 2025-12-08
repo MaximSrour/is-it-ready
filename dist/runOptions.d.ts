@@ -6,3 +6,4 @@ import { type RunOptions } from "./types";
  */
 export declare const getRunOptions: () => RunOptions;
 export declare const printHelp: () => void;
+export declare const printVersion: () => void;

@@ -1,3 +1,11 @@
+## [1.1.6](https://github.com/MaximSrour/is-it-ready/compare/v1.1.5...v1.1.6) (2025-12-08)
+
+
+### Bug Fixes
+
+* add case for showing help and version flags together ([99c026b](https://github.com/MaximSrour/is-it-ready/commit/99c026b4d89b6c8deec1c95d755ba5d5bc0ca1eb))
+* create a version flag for the cli ([9eefb58](https://github.com/MaximSrour/is-it-ready/commit/9eefb5833e2e0f9577c4b24471e477d8c333553e))
+
 ## [1.1.5](https://github.com/MaximSrour/is-it-ready/compare/v1.1.4...v1.1.5) (2025-12-08)
 
 

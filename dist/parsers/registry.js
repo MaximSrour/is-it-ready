@@ -17,7 +17,9 @@ exports.parserMap = new Proxy({}, {
         }
         return undefined;
     },
-    ownKeys: () => Reflect.ownKeys(registry),
+    ownKeys: () => {
+        return Reflect.ownKeys(registry);
+    },
     getOwnPropertyDescriptor: (_target, prop) => {
         if (typeof prop === "string" && prop in registry) {
             return {

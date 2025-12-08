@@ -21,13 +21,25 @@ const BORDER_CHARS = {
  * @returns {string} - rendered table string
  */
 const renderTable = (headers, rows, footerRow) => {
-    const columnWidths = headers.map((header, idx) => Math.max((0, exports.getDisplayWidth)(header), ...rows.map((row) => (0, exports.getDisplayWidth)(row[idx] ?? "")), footerRow ? (0, exports.getDisplayWidth)(footerRow[idx] ?? "") : 0));
+    const columnWidths = headers.map((header, idx) => {
+        return Math.max((0, exports.getDisplayWidth)(header), ...rows.map((row) => {
+            return (0, exports.getDisplayWidth)(row[idx] ?? "");
+        }), footerRow ? (0, exports.getDisplayWidth)(footerRow[idx] ?? "") : 0);
+    });
     const topBorder = (0, exports.renderBorder)(columnWidths, "top");
-    const headerRow = (0, exports.renderRow)(headers.map((header) => chalk_1.default.bold(header)), columnWidths);
+    const headerRow = (0, exports.renderRow)(headers.map((header) => {
+        return chalk_1.default.bold(header);
+    }), columnWidths);
     const headerSeparator = (0, exports.renderBorder)(columnWidths, "middle");
-    const bodyRows = rows.map((row) => (0, exports.renderRow)(row, columnWidths)).join("\n");
+    const bodyRows = rows
+        .map((row) => {
+        return (0, exports.renderRow)(row, columnWidths);
+    })
+        .join("\n");
     const footerSection = footerRow
-        ? `\n${(0, exports.renderBorder)(columnWidths, "middle")}\n${(0, exports.renderRow)(footerRow.map((footer) => chalk_1.default.bold(footer)), columnWidths)}`
+        ? `\n${(0, exports.renderBorder)(columnWidths, "middle")}\n${(0, exports.renderRow)(footerRow.map((footer) => {
+            return chalk_1.default.bold(footer);
+        }), columnWidths)}`
         : "";
     const bottomBorder = (0, exports.renderBorder)(columnWidths, "bottom");
     return `${topBorder}\n${headerRow}\n${headerSeparator}\n${bodyRows}${footerSection}\n${bottomBorder}`;
@@ -43,7 +55,9 @@ exports.renderTable = renderTable;
  */
 const renderBorder = (columnWidths, borderLevel) => {
     const chars = BORDER_CHARS[borderLevel];
-    const segments = columnWidths.map((width) => chars.fill.repeat(width + 2));
+    const segments = columnWidths.map((width) => {
+        return chars.fill.repeat(width + 2);
+    });
     return `${chars.left}${segments.join(chars.mid)}${chars.right}`;
 };
 exports.renderBorder = renderBorder;
@@ -95,7 +109,9 @@ const getDisplayWidth = (value) => {
         : null;
     const emojiRegex = /\p{Extended_Pictographic}/u;
     const graphemes = segmenter
-        ? Array.from(segmenter.segment(cleanValue), (seg) => seg.segment)
+        ? Array.from(segmenter.segment(cleanValue), (seg) => {
+            return seg.segment;
+        })
         : Array.from(cleanValue);
     return graphemes.reduce((total, grapheme) => {
         const codePoint = grapheme.codePointAt(0);
