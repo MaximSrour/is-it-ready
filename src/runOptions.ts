@@ -17,9 +17,7 @@ export const getRunOptions = (): RunOptions => {
   const showVersion =
     process.argv.includes("--version") || process.argv.includes("-v");
 
-  const runOptions = { isLooseMode, isSilentMode, showHelp, showVersion };
-
-  return runOptions;
+  return { isLooseMode, isSilentMode, showHelp, showVersion };
 };
 
 export const printHelp = () => {
