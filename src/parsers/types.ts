@@ -1,6 +1,7 @@
 export type ToolName =
   | "Prettier"
   | "ESLint"
+  | "MarkdownLint"
   | "TypeScript"
   | "Vitest"
   | "Knip"

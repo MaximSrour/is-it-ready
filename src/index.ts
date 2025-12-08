@@ -8,13 +8,13 @@ import { stepConfig } from "./config";
 import {
   decorateLabel,
   formatDuration,
-  getRunOptions,
   runCommand,
   selectCommand,
   stripAnsi,
 } from "./helpers";
 import { parserMap } from "./parsers";
 import { colorStatusMessage, printFailureDetails, renderTable } from "./render";
+import { getRunOptions, printHelp } from "./runOptions";
 import {
   type FailureDetails,
   type RunOptions,
@@ -67,6 +67,11 @@ void main().catch((error) => {
 });
 
 async function main() {
+  if (runOptions.showHelp) {
+    printHelp();
+    return;
+  }
+
   render(runOptions);
   await Promise.all(steps.map((step, index) => executeStep(step, index)));
   suiteFinished = true;
