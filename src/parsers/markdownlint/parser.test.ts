@@ -36,7 +36,7 @@ describe("parseMarkdownLint", () => {
     expect(parseMarkdownLint("Summary: 0 error(s)")).toBeUndefined();
   });
 
-  it("returns undefined when no errors", () => {
+  it("returns undefined for empty output", () => {
     expect(parseMarkdownLint("")).toBeUndefined();
   });
 });
