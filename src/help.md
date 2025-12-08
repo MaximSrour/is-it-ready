@@ -6,12 +6,13 @@ security checks in one dashboard.
 ## Usage
 
 ```sh
-is-it-ready [--loose] [--silent] [-h | --help]
+is-it-ready [--loose] [--silent] [-h | --help] [-v | --version]
 ```
 
 ### Flags
 
 - `-h, --help` - Show usage.
+- `-v, --version` - Show version number.
 - `--loose` - Use the loose variant for steps that support it (labels show `*`).
 - `--silent` - Keep the summary table but skip the detailed failure output.
 
