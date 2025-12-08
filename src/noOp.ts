@@ -1,3 +1,3 @@
 export const noOp = () => {
-  // no operation performed
+  // No operation performed
 };

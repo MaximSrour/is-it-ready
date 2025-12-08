@@ -15,7 +15,9 @@ const parseNpmAudit = (output: string): ParsedFailure | undefined => {
 
     const breakdown = summary[2]
       .split(/,\s*/)
-      .map((part) => part.trim())
+      .map((part) => {
+        return part.trim();
+      })
       .filter(Boolean);
     const detail = breakdown.length > 0 ? ` (${breakdown.join(", ")})` : "";
 

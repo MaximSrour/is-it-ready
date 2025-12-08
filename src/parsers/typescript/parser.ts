@@ -32,7 +32,11 @@ const parseTypeCheck = (output: string): ParsedFailure | undefined => {
     }
 
     const files = new Set(
-      errorLines.map((match) => match[1].trim()).filter(Boolean)
+      errorLines
+        .map((match) => {
+          return match[1].trim();
+        })
+        .filter(Boolean)
     );
     const fileCount = files.size;
     const fileLabel = fileCount === 1 ? "file" : "files";
