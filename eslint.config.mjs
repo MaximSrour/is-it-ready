@@ -31,7 +31,14 @@ export default defineConfig([
       "unused-imports": unusedImports,
     },
     rules: {
+      "arrow-body-style": ["warn", "always"],
+      "capitalized-comments": "error",
+      curly: "error",
       "no-duplicate-imports": "warn",
+      "no-restricted-exports": [
+        "warn",
+        { restrictDefaultExports: { direct: true } },
+      ],
       "no-restricted-syntax": [
         "warn",
         {
@@ -40,6 +47,7 @@ export default defineConfig([
             "Do not use `export * from 'module'`. Export individual members instead.",
         },
       ],
+      "no-unneeded-ternary": "error",
       "no-useless-concat": "warn",
       "no-useless-rename": "warn",
       "prefer-const": "warn",

@@ -26,6 +26,9 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      - name: MarkdownLint
+        run: npm run markdownlint
+
       - name: Type checking
         run: npm run type-check
 

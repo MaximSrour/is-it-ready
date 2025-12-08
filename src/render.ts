@@ -29,24 +29,34 @@ export const renderTable = (
   rows: string[][],
   footerRow?: string[]
 ) => {
-  const columnWidths = headers.map((header, idx) =>
-    Math.max(
+  const columnWidths = headers.map((header, idx) => {
+    return Math.max(
       getDisplayWidth(header),
-      ...rows.map((row) => getDisplayWidth(row[idx] ?? "")),
+      ...rows.map((row) => {
+        return getDisplayWidth(row[idx] ?? "");
+      }),
       footerRow ? getDisplayWidth(footerRow[idx] ?? "") : 0
-    )
-  );
+    );
+  });
 
   const topBorder = renderBorder(columnWidths, "top");
   const headerRow = renderRow(
-    headers.map((header) => chalk.bold(header)),
+    headers.map((header) => {
+      return chalk.bold(header);
+    }),
     columnWidths
   );
   const headerSeparator = renderBorder(columnWidths, "middle");
-  const bodyRows = rows.map((row) => renderRow(row, columnWidths)).join("\n");
+  const bodyRows = rows
+    .map((row) => {
+      return renderRow(row, columnWidths);
+    })
+    .join("\n");
   const footerSection = footerRow
     ? `\n${renderBorder(columnWidths, "middle")}\n${renderRow(
-        footerRow.map((footer) => chalk.bold(footer)),
+        footerRow.map((footer) => {
+          return chalk.bold(footer);
+        }),
         columnWidths
       )}`
     : "";
@@ -68,7 +78,9 @@ export const renderBorder = (
   borderLevel: BorderLevel
 ) => {
   const chars = BORDER_CHARS[borderLevel];
-  const segments = columnWidths.map((width) => chars.fill.repeat(width + 2));
+  const segments = columnWidths.map((width) => {
+    return chars.fill.repeat(width + 2);
+  });
 
   return `${chars.left}${segments.join(chars.mid)}${chars.right}`;
 };
@@ -129,7 +141,9 @@ export const getDisplayWidth = (value: string) => {
   const emojiRegex = /\p{Extended_Pictographic}/u;
 
   const graphemes = segmenter
-    ? Array.from(segmenter.segment(cleanValue), (seg) => seg.segment)
+    ? Array.from(segmenter.segment(cleanValue), (seg) => {
+        return seg.segment;
+      })
     : Array.from(cleanValue);
 
   return graphemes.reduce((total, grapheme) => {

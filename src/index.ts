@@ -48,11 +48,15 @@ const icons: Record<StepState, string> = {
   failure: "❌",
 };
 
-const statuses: StepStatus[] = steps.map(() => ({
-  state: "pending",
-  message: "",
-}));
-const durations = steps.map(() => null as number | null);
+const statuses: StepStatus[] = steps.map(() => {
+  return {
+    state: "pending",
+    message: "",
+  };
+});
+const durations = steps.map(() => {
+  return null as number | null;
+});
 const failures: FailureDetails[] = [];
 let totalErrors = 0;
 let totalWarnings = 0;
@@ -73,7 +77,11 @@ async function main() {
   }
 
   render(runOptions);
-  await Promise.all(steps.map((step, index) => executeStep(step, index)));
+  await Promise.all(
+    steps.map((step, index) => {
+      return executeStep(step, index);
+    })
+  );
   suiteFinished = true;
   suiteDurationMs = Date.now() - suiteStartTime;
   render(runOptions);

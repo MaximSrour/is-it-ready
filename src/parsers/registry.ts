@@ -22,7 +22,9 @@ export const parserMap: Record<string, ParserFunction> = new Proxy(
       }
       return undefined;
     },
-    ownKeys: () => Reflect.ownKeys(registry),
+    ownKeys: () => {
+      return Reflect.ownKeys(registry);
+    },
     getOwnPropertyDescriptor: (_target, prop: string | symbol) => {
       if (typeof prop === "string" && prop in registry) {
         return {
