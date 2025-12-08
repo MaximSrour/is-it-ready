@@ -104,6 +104,16 @@ describe("printHelp", () => {
     logSpy.mockRestore();
     errorSpy.mockRestore();
   });
+
+  it("shows help when both help and version flags are supplied", () => {
+    process.argv = ["node", "script.js", "--help", "--version"];
+    expect(getRunOptions()).toEqual({
+      isLooseMode: false,
+      isSilentMode: false,
+      showHelp: true,
+      showVersion: true,
+    });
+  });
 });
 
 describe("printVersion", () => {
