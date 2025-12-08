@@ -63,8 +63,7 @@ async function main() {
     }));
     suiteFinished = true;
     suiteDurationMs = Date.now() - suiteStartTime;
-    render(runOptions);
-    (0, render_1.printFailureDetails)(failures, runOptions);
+    render(runOptions, failures.length > 0 ? failures : null);
     process.exit(failures.length > 0 ? 1 : 0);
 }
 function updateStatus(index, state, message) {
@@ -85,15 +84,18 @@ function recordIssueCounts(parsedFailure) {
     totalErrors += errors;
     totalWarnings += warnings;
 }
-function render(runOptions) {
+function render(runOptions, failures = null) {
     if (process.stdout.isTTY) {
         console.clear();
     }
-    console.log(chalk_1.default.bold(`${package_json_1.default.name} v${package_json_1.default.version}`) +
+    console.log(chalk_1.default.bold(`\n${package_json_1.default.name} v${package_json_1.default.version}`) +
         " — Validating your code quality");
     console.log();
     if (runOptions.isLooseMode) {
         console.log("(* indicates loose mode; some rules are disabled or set to warnings)\n");
+    }
+    if (failures) {
+        (0, render_1.printFailureDetails)(failures, runOptions);
     }
     const rows = steps.map((step, idx) => {
         const status = statuses[idx];

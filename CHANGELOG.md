@@ -1,3 +1,10 @@
+## [1.1.7](https://github.com/MaximSrour/is-it-ready/compare/v1.1.6...v1.1.7) (2025-12-08)
+
+
+### Bug Fixes
+
+* improve rendering of failure details and update function signatures ([1a5ec45](https://github.com/MaximSrour/is-it-ready/commit/1a5ec4595e91faa7d2f49e3f71f951d529f1d9da))
+
 ## [1.1.6](https://github.com/MaximSrour/is-it-ready/compare/v1.1.5...v1.1.6) (2025-12-08)
 
 
