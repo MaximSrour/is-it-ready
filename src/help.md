@@ -6,7 +6,7 @@ security checks in one dashboard.
 ## Usage
 
 ```sh
-is-it-ready [--loose] [--silent] [--help | -h]
+is-it-ready [--loose] [--silent] [-h | --help]
 ```
 
 ### Flags
