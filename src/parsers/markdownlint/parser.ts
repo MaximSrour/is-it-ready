@@ -17,9 +17,6 @@ const parseMarkdownLint = (output: string): ParsedFailure | undefined => {
     };
   }
 
-  if (/Summary:\s*0\s*error\(s\)/i.test(output)) {
-    return undefined;
-  }
 
   return undefined;
 };
