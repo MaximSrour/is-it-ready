@@ -1,18 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.formatDuration = exports.stripAnsi = exports.addSilentFlag = exports.runCommand = exports.selectCommand = exports.decorateLabel = exports.getRunOptions = void 0;
+exports.formatDuration = exports.stripAnsi = exports.addSilentFlag = exports.runCommand = exports.selectCommand = exports.decorateLabel = void 0;
 const child_process_1 = require("child_process");
-/**
- * Parses command-line arguments to determine run options.
- *
- * @returns {RunOptions} - object indicating active modes
- */
-const getRunOptions = () => {
-    const isLooseMode = process.argv.includes("--loose");
-    const isSilentMode = process.argv.includes("--silent");
-    return { isLooseMode, isSilentMode };
-};
-exports.getRunOptions = getRunOptions;
 /**
  * Adds the loose-mode indicator to step labels when required.
  *

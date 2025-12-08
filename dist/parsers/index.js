@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.parserMap = exports.getParser = void 0;
 require("./eslint/parser");
 require("./knip/parser");
+require("./markdownlint/parser");
 require("./npm-audit/parser");
 require("./prettier/parser");
 require("./typescript/parser");

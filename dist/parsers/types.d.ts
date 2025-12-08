@@ -1,4 +1,4 @@
-export type ToolName = "Prettier" | "ESLint" | "TypeScript" | "Vitest" | "Knip" | "npm audit";
+export type ToolName = "Prettier" | "ESLint" | "MarkdownLint" | "TypeScript" | "Vitest" | "Knip" | "npm audit";
 export type ParsedFailure = {
     message: string;
     errors?: number;

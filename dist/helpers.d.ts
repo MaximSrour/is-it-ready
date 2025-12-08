@@ -1,10 +1,3 @@
-import { type RunOptions } from "./types";
-/**
- * Parses command-line arguments to determine run options.
- *
- * @returns {RunOptions} - object indicating active modes
- */
-export declare const getRunOptions: () => RunOptions;
 /**
  * Adds the loose-mode indicator to step labels when required.
  *

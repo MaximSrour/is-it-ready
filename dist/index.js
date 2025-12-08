@@ -10,7 +10,8 @@ const config_1 = require("./config");
 const helpers_1 = require("./helpers");
 const parsers_1 = require("./parsers");
 const render_1 = require("./render");
-const runOptions = (0, helpers_1.getRunOptions)();
+const runOptions_1 = require("./runOptions");
+const runOptions = (0, runOptions_1.getRunOptions)();
 const steps = config_1.stepConfig.map((config) => {
     const supportsLoose = Boolean(config.looseCommand);
     return {
@@ -44,6 +45,10 @@ void main().catch((error) => {
     process.exit(1);
 });
 async function main() {
+    if (runOptions.showHelp) {
+        (0, runOptions_1.printHelp)();
+        return;
+    }
     render(runOptions);
     await Promise.all(steps.map((step, index) => executeStep(step, index)));
     suiteFinished = true;

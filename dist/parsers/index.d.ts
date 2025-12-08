@@ -1,5 +1,6 @@
 import "./eslint/parser";
 import "./knip/parser";
+import "./markdownlint/parser";
 import "./npm-audit/parser";
 import "./prettier/parser";
 import "./typescript/parser";

@@ -1,3 +1,11 @@
+## [1.1.5](https://github.com/MaximSrour/is-it-ready/compare/v1.1.4...v1.1.5) (2025-12-08)
+
+
+### Bug Fixes
+
+* add markdown linting support and update help documentation ([4a65f74](https://github.com/MaximSrour/is-it-ready/commit/4a65f7434c67730383f26ac2209146056dc90db4))
+* update prettier ([f118d70](https://github.com/MaximSrour/is-it-ready/commit/f118d706ebfb1ccd3dd2db98b19545da9f1a00e5))
+
 ## [1.1.4](https://github.com/MaximSrour/is-it-ready/compare/v1.1.3...v1.1.4) (2025-12-07)
 
 
