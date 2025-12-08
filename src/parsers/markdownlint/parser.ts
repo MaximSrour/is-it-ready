@@ -17,7 +17,6 @@ const parseMarkdownLint = (output: string): ParsedFailure | undefined => {
     };
   }
 
-
   return undefined;
 };
 
