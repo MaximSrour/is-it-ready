@@ -1,6 +1,7 @@
 # is-it-ready help
 
-CLI that runs your project's formatting, linting, tests, inventory, and security checks in one dashboard.
+CLI that runs your project's formatting, linting, tests, inventory, and
+security checks in one dashboard.
 
 ## Usage
 
@@ -18,6 +19,7 @@ is-it-ready [--loose] [--silent] [--help | -h]
 
 - Prettier via `npm run prettier`
 - ESLint via `npm run lint` (loose: `npm run lint:loose`)
+- MarkdownLint via `npm run markdownlint` (fix: `npm run markdownlint:fix`)
 - TypeScript via `npm run type-check` (loose: `npm run type-check:loose`)
 - Vitest via `npm run test`
 - Knip via `npm run knip` (loose: `npm run knip:loose`)

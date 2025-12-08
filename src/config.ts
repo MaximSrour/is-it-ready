@@ -13,6 +13,11 @@ export const stepConfig: StepConfig[] = [
     looseCommand: "npm run lint:loose",
   },
   {
+    label: "MD Linting",
+    tool: "MarkdownLint",
+    command: "npm run markdownlint",
+  },
+  {
     label: "Type Checking",
     tool: "TypeScript",
     command: "npm run type-check",

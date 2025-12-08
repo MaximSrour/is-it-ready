@@ -18,7 +18,7 @@ export const getRunOptions = (): RunOptions => {
 };
 
 export const printHelp = () => {
-  const helpPath = path.resolve(__dirname, "..", "help.md");
+  const helpPath = path.resolve(__dirname, "help.md");
 
   try {
     const content = fs.readFileSync(helpPath, "utf-8");

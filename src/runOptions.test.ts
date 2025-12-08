@@ -67,7 +67,7 @@ describe("getRunOptions", () => {
 
 describe("printHelp", () => {
   it("prints the help markdown content", () => {
-    const helpPath = path.resolve(__dirname, "..", "help.md");
+    const helpPath = path.resolve(__dirname, "help.md");
     const expected = fs.readFileSync(helpPath, "utf-8").trimEnd();
     const logSpy = vi.spyOn(console, "log").mockImplementation(noOp);
     const errorSpy = vi.spyOn(console, "error").mockImplementation(noOp);
