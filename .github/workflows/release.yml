@@ -30,3 +30,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: npm run release
+
+      - name: Update latest tag
+        run: |
+          git tag -f latest
+          git push origin latest --force
