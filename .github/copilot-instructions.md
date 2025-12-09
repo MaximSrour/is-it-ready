@@ -43,18 +43,19 @@ is-it-ready project.
 ### Test Structure
 
 ```typescript
-import { describe, it, expect } from 'vitest';
-import { functionToTest } from './module';
+import { describe, expect, it } from "vitest";
 
-describe('functionToTest', () => {
-  it('should handle basic case', () => {
-    const result = functionToTest('input');
-    expect(result).toBe('expected');
+import { functionToTest } from "./module";
+
+describe("functionToTest", () => {
+  it("should handle basic case", () => {
+    const result = functionToTest("input");
+    expect(result).toBe("expected");
   });
 
-  it('should handle edge case', () => {
-    const result = functionToTest('');
-    expect(result).toBe('');
+  it("should handle edge case", () => {
+    const result = functionToTest("");
+    expect(result).toBe("");
   });
 });
 ```
@@ -213,7 +214,8 @@ export const decorateLabel = (
 - ❌ Don't use `eval()` or similar dangerous functions
 - ❌ Don't hardcode file paths or system-specific values
 - ❌ Don't add dependencies without careful consideration
-- ❌ Don't disable ESLint or TypeScript rules without justification
+- ❌ Don't disable TypeScript at all
+- ❌ Don't disable ESLint rules without significant justification
 - ❌ Don't refactor unrelated code
 - ❌ Don't fix unrelated issues in your PR
 
