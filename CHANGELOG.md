@@ -1,3 +1,14 @@
+## [1.1.9](https://github.com/MaximSrour/is-it-ready/compare/v1.1.8...v1.1.9) (2025-12-09)
+
+
+### Bug Fixes
+
+* address code review feedback ([11053ac](https://github.com/MaximSrour/is-it-ready/commit/11053ac222f67cb949d935f30c9bd076a1630665))
+* address code review feedback ([4238aef](https://github.com/MaximSrour/is-it-ready/commit/4238aef788a8535425ec8078c55b91d5790ff786))
+* align version and help flags with GNU standards ([94f5d21](https://github.com/MaximSrour/is-it-ready/commit/94f5d213807ef9191a8b8f8e4eef07c1a824631e))
+* refactor run options handling and add help documentation ([d03a9c3](https://github.com/MaximSrour/is-it-ready/commit/d03a9c38f620be3e99be5707aed935ebff4222a6))
+* use cross-platform file copy for build script ([4f10f16](https://github.com/MaximSrour/is-it-ready/commit/4f10f16ffcb0c34ff7769e101e26e12c4eb87263))
+
 ## [1.1.8](https://github.com/MaximSrour/is-it-ready/compare/v1.1.7...v1.1.8) (2025-12-09)
 
 
