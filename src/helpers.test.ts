@@ -25,48 +25,82 @@ describe("decorateLabel", () => {
 });
 
 describe("selectCommand", () => {
-  const base = "npm run lint";
-  const loose = "npm run lint:loose";
-  const fix = "npm run lint:fix";
+  const baseCommand = "npm run lint";
+  const looseCommand = "npm run lint:loose";
+  const fixCommand = "npm run lint:fix";
 
-  const makeOptions = (isLoose: boolean, fix: boolean): RunOptions => {
+  const makeOptions = (isLoose: boolean, isFix: boolean): RunOptions => {
     return {
       isLooseMode: isLoose,
-      isFixMode: fix,
+      isFixMode: isFix,
       isSilentMode: false,
     };
   };
 
   it("returns fix command when fix mode enabled", () => {
-    expect(selectCommand(base, loose, fix, makeOptions(false, true))).toBe(fix);
+    expect(
+      selectCommand(
+        baseCommand,
+        looseCommand,
+        fixCommand,
+        makeOptions(false, true)
+      )
+    ).toBe(fixCommand);
   });
 
   it("falls back to base when fix mode enabled but no fix command", () => {
     expect(
-      selectCommand(base, loose, undefined, makeOptions(false, true))
-    ).toBe(base);
+      selectCommand(
+        baseCommand,
+        looseCommand,
+        undefined,
+        makeOptions(false, true)
+      )
+    ).toBe(baseCommand);
   });
 
   it("prioritizes fix over loose", () => {
-    expect(selectCommand(base, loose, fix, makeOptions(true, true))).toBe(fix);
+    expect(
+      selectCommand(
+        baseCommand,
+        looseCommand,
+        fixCommand,
+        makeOptions(true, true)
+      )
+    ).toBe(fixCommand);
   });
 
   it("returns loose command when loose mode enabled", () => {
-    expect(selectCommand(base, loose, fix, makeOptions(true, false))).toBe(
-      loose
-    );
+    expect(
+      selectCommand(
+        baseCommand,
+        looseCommand,
+        fixCommand,
+        makeOptions(true, false)
+      )
+    ).toBe(looseCommand);
   });
 
   it("falls back to base when loose mode enabled but no loose command", () => {
-    expect(selectCommand(base, undefined, fix, makeOptions(true, false))).toBe(
-      base
-    );
+    expect(
+      selectCommand(
+        baseCommand,
+        undefined,
+        fixCommand,
+        makeOptions(true, false)
+      )
+    ).toBe(baseCommand);
   });
 
   it("returns base command when no flags enabled", () => {
-    expect(selectCommand(base, loose, fix, makeOptions(false, false))).toBe(
-      base
-    );
+    expect(
+      selectCommand(
+        baseCommand,
+        looseCommand,
+        fixCommand,
+        makeOptions(false, false)
+      )
+    ).toBe(baseCommand);
   });
 });
 

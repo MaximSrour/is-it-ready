@@ -38,12 +38,12 @@ export const selectCommand = (
   fixCommand: string | undefined,
   runOptions: RunOptions
 ) => {
-  if (runOptions.isFixMode) {
-    return fixCommand ?? baseCommand;
+  if (runOptions.isFixMode && fixCommand) {
+    return fixCommand;
   }
 
-  if (runOptions.isLooseMode) {
-    return looseCommand ?? baseCommand;
+  if (runOptions.isLooseMode && looseCommand) {
+    return looseCommand;
   }
 
   return baseCommand;
