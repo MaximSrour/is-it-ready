@@ -26,8 +26,9 @@ export const getRunOptions = (): RunOptions => {
 
   const isLooseMode = args.includes("--loose");
   const isSilentMode = args.includes("--silent");
+  const isFixMode = args.includes("--fix");
 
-  return { isLooseMode, isSilentMode };
+  return { isLooseMode, isSilentMode, isFixMode };
 };
 
 export const printHelp = () => {

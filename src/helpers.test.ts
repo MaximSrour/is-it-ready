@@ -8,6 +8,7 @@ import {
   selectCommand,
   stripAnsi,
 } from "./helpers";
+import { type RunOptions } from "./runOptions/types";
 
 describe("decorateLabel", () => {
   it("returns label unchanged when loose mode disabled", () => {
@@ -24,20 +25,48 @@ describe("decorateLabel", () => {
 });
 
 describe("selectCommand", () => {
-  it("returns base command when loose mode disabled", () => {
-    expect(selectCommand("npm run lint", "npm run lint:loose", false)).toBe(
-      "npm run lint"
-    );
+  const base = "npm run lint";
+  const loose = "npm run lint:loose";
+  const fix = "npm run lint:fix";
+
+  const makeOptions = (isLoose: boolean, fix: boolean): RunOptions => {
+    return {
+      isLooseMode: isLoose,
+      isFixMode: fix,
+      isSilentMode: false,
+    };
+  };
+
+  it("returns fix command when fix mode enabled", () => {
+    expect(selectCommand(base, loose, fix, makeOptions(false, true))).toBe(fix);
+  });
+
+  it("falls back to base when fix mode enabled but no fix command", () => {
+    expect(
+      selectCommand(base, loose, undefined, makeOptions(false, true))
+    ).toBe(base);
+  });
+
+  it("prioritizes fix over loose", () => {
+    expect(selectCommand(base, loose, fix, makeOptions(true, true))).toBe(fix);
   });
 
   it("returns loose command when loose mode enabled", () => {
-    expect(selectCommand("npm run lint", "npm run lint:loose", true)).toBe(
-      "npm run lint:loose"
+    expect(selectCommand(base, loose, fix, makeOptions(true, false))).toBe(
+      loose
     );
   });
 
-  it("returns base command when no loose command provided", () => {
-    expect(selectCommand("npm run lint", undefined, true)).toBe("npm run lint");
+  it("falls back to base when loose mode enabled but no loose command", () => {
+    expect(selectCommand(base, undefined, fix, makeOptions(true, false))).toBe(
+      base
+    );
+  });
+
+  it("returns base command when no flags enabled", () => {
+    expect(selectCommand(base, loose, fix, makeOptions(false, false))).toBe(
+      base
+    );
   });
 });
 

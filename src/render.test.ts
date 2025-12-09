@@ -148,6 +148,7 @@ describe("printFailureDetails", () => {
   const baseRunOptions = {
     isLooseMode: false,
     isSilentMode: false,
+    isFixMode: false,
     showHelp: false,
     showVersion: false,
   };

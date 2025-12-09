@@ -9,6 +9,7 @@ export type StepConfig = {
   tool: ToolName;
   command: string;
   looseCommand?: string;
+  fixCommand?: string;
 };
 
 export type Step = {

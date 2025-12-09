@@ -33,7 +33,8 @@ const steps: Step[] = stepConfig.map((config) => {
     command: selectCommand(
       config.command,
       config.looseCommand,
-      runOptions.isLooseMode
+      config.fixCommand,
+      runOptions
     ),
     parseFailure: parserMap[config.tool],
   };
