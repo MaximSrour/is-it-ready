@@ -31,7 +31,7 @@
     "is-it-ready": "dist/index.js"
   },
   "scripts": {
-    "build": "tsc -p tsconfig.build.json",
+    "build": "tsc -p tsconfig.build.json && cp src/help.md dist/help.md",
     "clean": "rm -rf dist",
     "release": "semantic-release",
     "knip": "knip",

@@ -10,11 +10,7 @@ describe("getRunOptions", () => {
   let exitSpy: ReturnType<typeof vi.spyOn>;
 
   beforeEach(() => {
-    // Mock process.exit to prevent tests from actually exiting
-    exitSpy = vi
-      .spyOn(process, "exit")
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
-      .mockImplementation((() => {}) as () => never);
+    exitSpy = vi.spyOn(process, "exit").mockImplementation(noOp as () => never);
   });
 
   afterEach(() => {
@@ -27,8 +23,6 @@ describe("getRunOptions", () => {
     expect(getRunOptions()).toEqual({
       isLooseMode: false,
       isSilentMode: false,
-      showHelp: false,
-      showVersion: false,
     });
   });
 
@@ -37,8 +31,6 @@ describe("getRunOptions", () => {
     expect(getRunOptions()).toEqual({
       isLooseMode: true,
       isSilentMode: false,
-      showHelp: false,
-      showVersion: false,
     });
   });
 
@@ -47,8 +39,6 @@ describe("getRunOptions", () => {
     expect(getRunOptions()).toEqual({
       isLooseMode: false,
       isSilentMode: true,
-      showHelp: false,
-      showVersion: false,
     });
   });
 
@@ -57,8 +47,6 @@ describe("getRunOptions", () => {
     expect(getRunOptions()).toEqual({
       isLooseMode: true,
       isSilentMode: true,
-      showHelp: false,
-      showVersion: false,
     });
   });
 
@@ -131,16 +119,14 @@ describe("getRunOptions", () => {
 
 describe("printHelp", () => {
   it("prints the help markdown content", () => {
+    const helpPath = path.resolve(__dirname, "help.md");
+    const expected = fs.readFileSync(helpPath, "utf-8").trimEnd();
     const logSpy = vi.spyOn(console, "log").mockImplementation(noOp);
     const errorSpy = vi.spyOn(console, "error").mockImplementation(noOp);
 
     printHelp();
 
-    expect(logSpy).toHaveBeenCalledOnce();
-    expect(logSpy.mock.calls[0][0]).toContain("is-it-ready help");
-    expect(logSpy.mock.calls[0][0]).toContain("Usage");
-    expect(logSpy.mock.calls[0][0]).toContain("--help");
-    expect(logSpy.mock.calls[0][0]).toContain("--version");
+    expect(logSpy).toHaveBeenCalledWith(expected);
     expect(errorSpy).not.toHaveBeenCalled();
 
     logSpy.mockRestore();
