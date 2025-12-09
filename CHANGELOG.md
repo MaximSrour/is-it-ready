@@ -1,3 +1,11 @@
+## [1.1.8](https://github.com/MaximSrour/is-it-ready/compare/v1.1.7...v1.1.8) (2025-12-09)
+
+
+### Bug Fixes
+
+* clean up assets array in release configuration ([d3b2914](https://github.com/MaximSrour/is-it-ready/commit/d3b2914fae724d73a62065b28124f69efe9b25a0))
+* update .gitignore to include /dist and remove it from release assets ([e20db6b](https://github.com/MaximSrour/is-it-ready/commit/e20db6bcd35373d748dddfcaaa636649c9764b86))
+
 ## [1.1.7](https://github.com/MaximSrour/is-it-ready/compare/v1.1.6...v1.1.7) (2025-12-08)
 
 
