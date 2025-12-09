@@ -14,10 +14,10 @@ import {
 } from "./helpers";
 import { parserMap } from "./parsers";
 import { colorStatusMessage, printFailureDetails, renderTable } from "./render";
-import { getRunOptions, printHelp, printVersion } from "./runOptions";
+import { getRunOptions } from "./runOptions/runOptions";
+import { type RunOptions } from "./runOptions/types";
 import {
   type FailureDetails,
-  type RunOptions,
   type Step,
   type StepState,
   type StepStatus,
@@ -71,16 +71,6 @@ void main().catch((error) => {
 });
 
 async function main() {
-  if (runOptions.showHelp) {
-    printHelp();
-    return;
-  }
-
-  if (runOptions.showVersion) {
-    printVersion();
-    return;
-  }
-
   render(runOptions);
   await Promise.all(
     steps.map((step, index) => {
