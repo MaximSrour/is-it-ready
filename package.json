@@ -14,6 +14,14 @@
     "audit"
   ],
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MaximSrour/is-it-ready.git"
+  },
+  "bugs": {
+    "url": "https://github.com/MaximSrour/is-it-ready/issues"
+  },
+  "homepage": "https://github.com/MaximSrour/is-it-ready#readme",
   "type": "commonjs",
   "main": "dist/index.js",
   "files": [
