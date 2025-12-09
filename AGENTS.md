@@ -38,7 +38,6 @@ TypeScript and follows strict code quality standards.
 2. **Run Quality Gates Early and Often**:
    - Use `npm run check` to validate code meets all quality standards
    - Fix issues immediately before proceeding
-   - Use loose variants (`npm run check:loose`) during development if needed
 
 3. **Code Quality Standards**:
    - Follow TypeScript best practices
@@ -49,20 +48,16 @@ TypeScript and follows strict code quality standards.
 
 ### Available Commands
 
-- `npm run build` - Compile TypeScript to JavaScript
 - `npm run test` - Run tests with Vitest
-- `npm run lint` - Run ESLint (strict mode)
-- `npm run lint:loose` - Run ESLint in loose mode
+- `npm run lint` - Run ESLint
 - `npm run lint:fix` - Auto-fix ESLint issues
 - `npm run prettier` - Check code formatting
 - `npm run prettier:fix` - Auto-fix formatting issues
 - `npm run type-check` - Run TypeScript type checking
 - `npm run knip` - Check for unused dependencies and exports
-- `npm run knip:loose` - Run Knip in loose mode
 - `npm run markdownlint` - Lint markdown files
 - `npm run markdownlint:fix` - Auto-fix markdown issues
 - `npm run check` - Run all quality checks (recommended)
-- `npm run check:loose` - Run all checks in loose mode
 
 ### Before Committing
 
@@ -77,7 +72,6 @@ TypeScript and follows strict code quality standards.
   - `*.ts` - TypeScript source files
   - `*.test.ts` - Test files (co-located with source)
   - `parsers/` - Parser implementations
-- `dist/` - Compiled output (generated, not committed)
 - Configuration files at root:
   - `tsconfig.json`, `tsconfig.build.json`, `tsconfig.eslint.json`
   - `eslint.config.mjs`
@@ -103,7 +97,7 @@ TypeScript and follows strict code quality standards.
 ### Documentation
 
 - Update README.md if user-facing behavior changes
-- Update CHANGELOG.md (handled by semantic-release)
+- Do not manually edit CHANGELOG.md (automatically managed by semantic-release)
 - Add JSDoc comments for public APIs
 - Keep documentation in sync with code
 
@@ -121,7 +115,6 @@ TypeScript and follows strict code quality standards.
 - Don't commit code with TypeScript errors
 - Don't disable linting rules without good reason
 - Don't commit without tests for new functionality
-- Don't use loose variants in final commits (strict mode required)
 
 ## Getting Help
 

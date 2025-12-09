@@ -139,6 +139,8 @@ All checks must pass in strict mode (not loose mode).
 
 ### Code Comments
 
+- Prefer self-documenting code over comments where possible
+- Use descriptive names for functions, variables, and types
 - Use JSDoc for public APIs
 - Explain "why" not "what" in comments
 - Keep comments up-to-date with code
@@ -148,13 +150,16 @@ All checks must pass in strict mode (not loose mode).
 
 ```typescript
 /**
- * Parses command-line options for the CLI tool.
- * @param args - Command-line arguments
- * @returns Parsed options object
+ * Parses command-line arguments to determine run options.
+ *
+ * @returns {RunOptions} - object indicating active modes
  */
-export function parseOptions(args: string[]): RunOptions {
-  // Implementation
-}
+export const getRunOptions = (): RunOptions => {
+  const isLooseMode = process.argv.includes("--loose");
+  const isSilentMode = process.argv.includes("--silent");
+
+  return { isLooseMode, isSilentMode };
+};
 ```
 
 ## Performance Considerations

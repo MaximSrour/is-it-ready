@@ -12,23 +12,19 @@ for automated versioning and changelog generation.
 
 ```text
 <type>[optional scope]: <description>
-
-[optional body]
-
-[optional footer(s)]
 ```
 
 ### Rules
 
 1. **One logical change per commit** - Each commit should represent a single,
    cohesive change
-2. **Maximum 80 characters** for the first line (type + scope +
+2. **Maximum 80 characters** for the commit message (type + scope +
    description)
 3. **Use lowercase** for type, scope, and description
 4. **Start description with a verb** in imperative mood (e.g., "add", "fix",
    "update")
 5. **No period** at the end of the description
-6. **Separate body and footer** with blank lines if present
+6. **Keep it simple** - Single line commit messages only, no body or footer
 
 ## Commit Types
 
@@ -96,17 +92,15 @@ Example with scope: `fix(parser): handle null values in audit output`
 
 ## Breaking Changes
 
-Breaking changes trigger a MAJOR version bump and must be indicated in two
-ways:
-
-1. Add `!` after type/scope: `feat!: change CLI flag names`
-2. Add `BREAKING CHANGE:` footer with description
+Breaking changes trigger a MAJOR version bump and must be indicated by adding
+`!` after type/scope:
 
 ```text
 feat!: change default behavior to strict mode
+```
 
-BREAKING CHANGE: The CLI now defaults to strict mode. Use --loose flag for
-previous behavior.
+```text
+fix!: change exit code behavior for warnings
 ```
 
 ## Examples
@@ -134,17 +128,11 @@ refactor: simplify check execution logic
 ```
 
 ```text
-feat(render): add colored output for status table
-
-Add support for color-coded status indicators in the summary table.
-Red for failures, green for success, yellow for warnings.
+feat!: change default behavior to strict mode
 ```
 
 ```text
 fix!: change exit code behavior for warnings
-
-BREAKING CHANGE: Warnings now cause exit code 1 instead of 0.
-Use --loose flag to treat warnings as success.
 ```
 
 ### Bad Commit Messages
@@ -178,22 +166,6 @@ FEAT: ADD SUPPORT FOR CUSTOM CONFIGS
 ```
 
 **Issue:** All uppercase (should be lowercase)
-
-## Body and Footer Guidelines
-
-### Body (Optional)
-
-- Explain **what** and **why**, not **how**
-- Wrap at 72 characters
-- Use bullet points for multiple items
-- Reference issue numbers: `Fixes #123`, `Closes #456`, `Related to #789`
-
-### Footer (Optional)
-
-- `BREAKING CHANGE:` - Describes breaking changes
-- `Fixes:` or `Closes:` - Links to closed issues
-- `Co-authored-by:` - Credits co-authors
-- `Reviewed-by:` - Notes reviewers
 
 ## Workflow
 
