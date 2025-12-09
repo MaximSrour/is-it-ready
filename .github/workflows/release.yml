@@ -30,16 +30,3 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: npm run release
-
-      - name: Update latest tag
-        run: |
-          # Check if semantic-release created a new version tag
-          if git describe --exact-match HEAD 2>/dev/null | grep -q '^v'; then
-            echo "New release detected, updating latest tag"
-            git config user.name "github-actions[bot]"
-            git config user.email "github-actions[bot]@users.noreply.github.com"
-            git tag -f latest
-            git push origin latest --force
-          else
-            echo "No new release created, skipping latest tag update"
-          fi
