@@ -32,3 +32,6 @@ yarn-error.log*
 
 # production
 .env
+
+# build output
+/dist
