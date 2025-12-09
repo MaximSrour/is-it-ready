@@ -157,8 +157,12 @@ All checks must pass in strict mode (not loose mode).
 export const getRunOptions = (): RunOptions => {
   const isLooseMode = process.argv.includes("--loose");
   const isSilentMode = process.argv.includes("--silent");
+  const showHelp =
+    process.argv.includes("--help") || process.argv.includes("-h");
+  const showVersion =
+    process.argv.includes("--version") || process.argv.includes("-v");
 
-  return { isLooseMode, isSilentMode };
+  return { isLooseMode, isSilentMode, showHelp, showVersion };
 };
 ```
 
