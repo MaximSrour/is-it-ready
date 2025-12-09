@@ -1,3 +1,13 @@
+## [1.1.10](https://github.com/MaximSrour/is-it-ready/compare/v1.1.9...v1.1.10) (2025-12-09)
+
+
+### Bug Fixes
+
+* add check to only update latest tag when new release is created ([a234600](https://github.com/MaximSrour/is-it-ready/commit/a234600a1a6f2f5c01d60672ded4146e1baf0acc))
+* add git config for user identity before tagging ([4e562a6](https://github.com/MaximSrour/is-it-ready/commit/4e562a6ffc968b3b8708daac82c7c101ae74939d))
+* add step to create and update latest tag on release ([930d365](https://github.com/MaximSrour/is-it-ready/commit/930d365761df191d61b5d1a4bf673bd76f52b2b6))
+* create a separate ci file for updating the latest tag ([63789a6](https://github.com/MaximSrour/is-it-ready/commit/63789a6045d0a1b735c6803e81b4864c08a58c4b))
+
 ## [1.1.9](https://github.com/MaximSrour/is-it-ready/compare/v1.1.8...v1.1.9) (2025-12-09)
 
 
