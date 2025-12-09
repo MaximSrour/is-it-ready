@@ -11,9 +11,10 @@ describe("getRunOptions", () => {
 
   beforeEach(() => {
     // Mock process.exit to prevent tests from actually exiting
-    exitSpy = vi.spyOn(process, "exit").mockImplementation(() => {
-      return undefined as never;
-    });
+    exitSpy = vi
+      .spyOn(process, "exit")
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      .mockImplementation((() => {}) as () => never);
   });
 
   afterEach(() => {
@@ -158,7 +159,9 @@ describe("printVersion", () => {
     printVersion();
 
     expect(logSpy).toHaveBeenCalledWith(`${pkg.name} ${pkg.version}`);
-    expect(logSpy).toHaveBeenCalledWith(`Copyright (C) 2024 ${pkg.author}`);
+    expect(logSpy).toHaveBeenCalledWith(
+      `Copyright (C) ${new Date().getFullYear()} ${pkg.author}`
+    );
     expect(logSpy).toHaveBeenCalledWith(`License: ${pkg.license}`);
 
     logSpy.mockRestore();

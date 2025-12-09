@@ -63,7 +63,7 @@ export const printHelp = () => {
 
 export const printVersion = () => {
   console.log(`${pkg.name} ${pkg.version}`);
-  console.log(`Copyright (C) 2024 ${pkg.author}`);
+  console.log(`Copyright (C) ${new Date().getFullYear()} ${pkg.author}`);
   console.log(`License: ${pkg.license}`);
   console.log();
   console.log(
