@@ -1,3 +1,16 @@
+# [1.2.0](https://github.com/MaximSrour/is-it-ready/compare/v1.1.10...v1.2.0) (2025-12-09)
+
+
+### Bug Fixes
+
+* markdown error in README and help.md ([533ecdd](https://github.com/MaximSrour/is-it-ready/commit/533ecdd108e43befdbd6e8e0f83530e36b6efe77))
+
+
+### Features
+
+* add --fix flag description to README and help.md ([e95a7df](https://github.com/MaximSrour/is-it-ready/commit/e95a7df3d173bc2565df17470908206cf45c4cce))
+* add --fix prefix support and unified command selection logic ([fac865d](https://github.com/MaximSrour/is-it-ready/commit/fac865d64f2aa3435495704506b5b5f00e67a183))
+
 ## [1.1.10](https://github.com/MaximSrour/is-it-ready/compare/v1.1.9...v1.1.10) (2025-12-09)
 
 

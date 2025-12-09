@@ -1,7 +1,7 @@
 {
   "name": "is-it-ready",
   "author": "Maxim Srour",
-  "version": "1.1.10",
+  "version": "1.2.0",
   "description": "CLI that runs your project's formatting, linting, tests, inventory, and security checks in one dashboard.",
   "keywords": [
     "cli",
