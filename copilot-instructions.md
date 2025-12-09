@@ -12,7 +12,7 @@ is-it-ready project.
 - Use meaningful variable and function names
 - Prefer functional programming patterns where appropriate
 - Use type inference when types are obvious
-- Explicitly type function parameters and return values
+- Explicitly type function parameters, rely on type inference for return values
 - Use interfaces for object shapes, types for unions/primitives
 
 ### Code Organization
@@ -150,19 +150,24 @@ All checks must pass in strict mode (not loose mode).
 
 ```typescript
 /**
- * Parses command-line arguments to determine run options.
+ * Adds the loose-mode indicator to step labels when required.
  *
- * @returns {RunOptions} - object indicating active modes
+ * @param {string} label - base label for the step
+ * @param {boolean} supportsLoose - whether this step supports loose mode
+ * @param {boolean} isLooseMode - whether the overall run is in loose mode
+ *
+ * @returns {string} - label optionally decorated with an asterisk
  */
-export const getRunOptions = (): RunOptions => {
-  const isLooseMode = process.argv.includes("--loose");
-  const isSilentMode = process.argv.includes("--silent");
-  const showHelp =
-    process.argv.includes("--help") || process.argv.includes("-h");
-  const showVersion =
-    process.argv.includes("--version") || process.argv.includes("-v");
+export const decorateLabel = (
+  label: string,
+  supportsLoose: boolean,
+  isLooseMode: boolean
+) => {
+  if (isLooseMode && supportsLoose) {
+    return `${label}*`;
+  }
 
-  return { isLooseMode, isSilentMode, showHelp, showVersion };
+  return label;
 };
 ```
 
