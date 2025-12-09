@@ -1,5 +1,7 @@
 import { spawn } from "child_process";
 
+import { type RunOptions } from "./runOptions/types";
+
 /**
  * Adds the loose-mode indicator to step labels when required.
  *
@@ -33,9 +35,14 @@ export const decorateLabel = (
 export const selectCommand = (
   baseCommand: string,
   looseCommand: string | undefined,
-  isLooseMode: boolean
+  fixCommand: string | undefined,
+  runOptions: RunOptions
 ) => {
-  if (isLooseMode && looseCommand) {
+  if (runOptions.isFixMode && fixCommand) {
+    return fixCommand;
+  }
+
+  if (runOptions.isLooseMode && looseCommand) {
     return looseCommand;
   }
 

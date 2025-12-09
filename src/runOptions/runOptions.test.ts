@@ -23,6 +23,7 @@ describe("getRunOptions", () => {
     expect(getRunOptions()).toEqual({
       isLooseMode: false,
       isSilentMode: false,
+      isFixMode: false,
     });
   });
 
@@ -31,6 +32,7 @@ describe("getRunOptions", () => {
     expect(getRunOptions()).toEqual({
       isLooseMode: true,
       isSilentMode: false,
+      isFixMode: false,
     });
   });
 
@@ -39,6 +41,7 @@ describe("getRunOptions", () => {
     expect(getRunOptions()).toEqual({
       isLooseMode: false,
       isSilentMode: true,
+      isFixMode: false,
     });
   });
 
@@ -47,6 +50,7 @@ describe("getRunOptions", () => {
     expect(getRunOptions()).toEqual({
       isLooseMode: true,
       isSilentMode: true,
+      isFixMode: false,
     });
   });
 

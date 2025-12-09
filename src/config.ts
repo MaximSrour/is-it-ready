@@ -5,17 +5,20 @@ export const stepConfig: StepConfig[] = [
     label: "Formatting",
     tool: "Prettier",
     command: "npm run prettier",
+    fixCommand: "npm run prettier:fix",
   },
   {
     label: "Linting",
     tool: "ESLint",
     command: "npm run lint",
     looseCommand: "npm run lint:loose",
+    fixCommand: "npm run lint:fix",
   },
   {
     label: "MD Linting",
     tool: "MarkdownLint",
     command: "npm run markdownlint",
+    fixCommand: "npm run markdownlint:fix",
   },
   {
     label: "Type Checking",
@@ -33,6 +36,7 @@ export const stepConfig: StepConfig[] = [
     tool: "Knip",
     command: "npm run knip",
     looseCommand: "npm run knip:loose",
+    fixCommand: "npm run knip:fix",
   },
   {
     label: "Package Health",
