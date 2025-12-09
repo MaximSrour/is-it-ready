@@ -14,10 +14,10 @@ import {
 } from "./helpers";
 import { parserMap } from "./parsers";
 import { colorStatusMessage, printFailureDetails, renderTable } from "./render";
-import { getRunOptions } from "./runOptions";
+import { getRunOptions } from "./runOptions/runOptions";
+import { type RunOptions } from "./runOptions/types";
 import {
   type FailureDetails,
-  type RunOptions,
   type Step,
   type StepState,
   type StepStatus,

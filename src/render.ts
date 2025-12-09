@@ -1,11 +1,11 @@
 import chalk from "chalk";
 
 import { stripAnsi } from "./helpers";
+import { type RunOptions } from "./runOptions/types";
 import {
   type BorderChars,
   type BorderLevel,
   type FailureDetails,
-  type RunOptions,
   type StepState,
 } from "./types";
 

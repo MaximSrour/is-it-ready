@@ -2,7 +2,7 @@ import fs from "fs";
 import path from "path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { noOp } from "./noOp";
+import { noOp, noOpNever } from "../noOp";
 import { getRunOptions, printHelp, printVersion } from "./runOptions";
 
 describe("getRunOptions", () => {
@@ -10,7 +10,7 @@ describe("getRunOptions", () => {
   let exitSpy: ReturnType<typeof vi.spyOn>;
 
   beforeEach(() => {
-    exitSpy = vi.spyOn(process, "exit").mockImplementation(noOp as () => never);
+    exitSpy = vi.spyOn(process, "exit").mockImplementation(noOpNever);
   });
 
   afterEach(() => {
@@ -137,7 +137,7 @@ describe("printHelp", () => {
 describe("printVersion", () => {
   it("prints version information per GNU standards", () => {
     const pkg = JSON.parse(
-      fs.readFileSync(path.resolve(__dirname, "../package.json"), "utf-8")
+      fs.readFileSync(path.resolve(__dirname, "../../package.json"), "utf-8")
     ) as { version: string; name: string; author: string; license: string };
 
     const logSpy = vi.spyOn(console, "log").mockImplementation(noOp);
