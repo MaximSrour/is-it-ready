@@ -13,7 +13,7 @@ import {
 } from "./helpers";
 
 describe("decorateLabel", () => {
-  it("it appends asterisk", () => {
+  it("appends asterisk", () => {
     expect(decorateLabel("Linting")).toBe("Linting*");
   });
 });
