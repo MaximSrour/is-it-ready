@@ -2,7 +2,7 @@ import fs from "fs";
 import path from "path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { noOp, noOpNever } from "../noOp";
+import { noOp, noOpNever } from "../helpers";
 import { getRunOptions, printHelp, printVersion } from "./runOptions";
 
 describe("getRunOptions", () => {

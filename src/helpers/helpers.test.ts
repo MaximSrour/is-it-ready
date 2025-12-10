@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest";
 
+import { type RunOptions } from "@/runOptions/types";
+
 import {
   addSilentFlag,
   decorateLabel,
@@ -8,7 +10,6 @@ import {
   selectCommand,
   stripAnsi,
 } from "./helpers";
-import { type RunOptions } from "./runOptions/types";
 
 describe("decorateLabel", () => {
   it("returns label unchanged when loose mode disabled", () => {

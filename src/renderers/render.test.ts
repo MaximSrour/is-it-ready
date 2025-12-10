@@ -1,7 +1,8 @@
 import chalk from "chalk";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { noOp } from "./noOp";
+import { noOp } from "../helpers";
+import { type FailureDetails } from "../types";
 import * as renderModule from "./render";
 import {
   colorStatusMessage,
@@ -13,7 +14,6 @@ import {
   renderBorder,
   renderRow,
 } from "./render";
-import { type FailureDetails } from "./types";
 
 describe("renderBorder", () => {
   it("renders top border with provided widths", () => {

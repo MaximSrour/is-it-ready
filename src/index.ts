@@ -3,6 +3,8 @@
 import chalk from "chalk";
 import { type ParsedFailure } from "parsers/types";
 
+import { type Step, type StepState, type StepStatus } from "@/config/types";
+
 import pkg from "../package.json";
 import { stepConfig } from "./config";
 import {
@@ -10,18 +12,18 @@ import {
   formatDuration,
   runCommand,
   selectCommand,
+  stepIcons,
   stripAnsi,
 } from "./helpers";
 import { parserMap } from "./parsers";
-import { colorStatusMessage, printFailureDetails, renderTable } from "./render";
+import {
+  colorStatusMessage,
+  printFailureDetails,
+  renderTable,
+} from "./renderers";
 import { getRunOptions } from "./runOptions/runOptions";
 import { type RunOptions } from "./runOptions/types";
-import {
-  type FailureDetails,
-  type Step,
-  type StepState,
-  type StepStatus,
-} from "./types";
+import { type FailureDetails } from "./types";
 
 const runOptions = getRunOptions();
 
@@ -41,13 +43,6 @@ const steps: Step[] = stepConfig.map((config) => {
 });
 
 const tableHeaders = ["Label", "Tool", "Results", "Time"];
-
-const icons: Record<StepState, string> = {
-  pending: "  ",
-  running: "⏳",
-  success: "✅",
-  failure: "❌",
-};
 
 const statuses: StepStatus[] = steps.map(() => {
   return {
@@ -133,7 +128,7 @@ function render(
         ? ""
         : colorStatusMessage(status.message, status.state);
     return [
-      `${icons[status.state]} ${step.label}`,
+      `${stepIcons[status.state]} ${step.label}`,
       step.tool,
       message,
       formatDuration(durations[idx]),
@@ -142,9 +137,9 @@ function render(
   const overallIssues = totalErrors + totalWarnings;
   const overallIcon = suiteFinished
     ? overallIssues === 0
-      ? icons.success
-      : icons.failure
-    : icons.running;
+      ? stepIcons.success
+      : stepIcons.failure
+    : stepIcons.running;
   const overallDurationMs = suiteFinished
     ? (suiteDurationMs ?? 0)
     : Date.now() - suiteStartTime;
