@@ -1,7 +1,7 @@
 import chalk from "chalk";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { noOp } from "./noOp";
+import { noOp } from "./helpers";
 import * as renderModule from "./render";
 import {
   colorStatusMessage,
