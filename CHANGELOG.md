@@ -1,3 +1,12 @@
+## [1.2.3](https://github.com/MaximSrour/is-it-ready/compare/v1.2.2...v1.2.3) (2025-12-10)
+
+
+### Bug Fixes
+
+* add a notice to indicate the fix mode is enabled and mark supported  tasks ([3d939cd](https://github.com/MaximSrour/is-it-ready/commit/3d939cda7041a4a8ab1f3b73cd704794c5006a1b))
+* refactor decorateLabel to prioritize fix mode and update tests accordingly ([c1a96e8](https://github.com/MaximSrour/is-it-ready/commit/c1a96e8706efdf3bcf49b9de4539fcfb4189454e))
+* refactor selectCommand to use StepConfig and simplify command selection logic ([aa18316](https://github.com/MaximSrour/is-it-ready/commit/aa18316db04c9075f8881150bf056cae66f4608c))
+
 ## [1.2.2](https://github.com/MaximSrour/is-it-ready/compare/v1.2.1...v1.2.2) (2025-12-10)
 
 
