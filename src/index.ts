@@ -3,6 +3,8 @@
 import chalk from "chalk";
 import { type ParsedFailure } from "parsers/types";
 
+import { type Step, type StepState, type StepStatus } from "@/config/types";
+
 import pkg from "../package.json";
 import { stepConfig } from "./config";
 import {
@@ -20,12 +22,7 @@ import {
 } from "./renderers";
 import { getRunOptions } from "./runOptions/runOptions";
 import { type RunOptions } from "./runOptions/types";
-import {
-  type FailureDetails,
-  type Step,
-  type StepState,
-  type StepStatus,
-} from "./types";
+import { type FailureDetails } from "./types";
 
 const runOptions = getRunOptions();
 
