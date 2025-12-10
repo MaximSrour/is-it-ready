@@ -1,0 +1,45 @@
+name: General Issue
+description: Report an issue that doesn't fit other categories
+title: ""
+labels: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for contributing! If this is a bug report, please use the Bug Report template. If this is a feature request, please use the Feature Request template.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Issue Description
+      description: Clearly describe what this issue is about.
+      placeholder: Provide a detailed description of the issue...
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Context and Background
+      description: Provide any relevant context or background information.
+      placeholder: Help us understand the bigger picture...
+    validations:
+      required: false
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed Solution (if applicable)
+      description: If you have ideas on how to address this, share them here.
+      placeholder: Describe potential approaches or solutions...
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Information
+      description: Any other details, references, or context that might be helpful.
+      placeholder: Links, examples, related issues, etc.
+    validations:
+      required: false
