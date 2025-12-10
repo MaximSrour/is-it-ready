@@ -1,3 +1,10 @@
+## [1.2.4](https://github.com/MaximSrour/is-it-ready/compare/v1.2.3...v1.2.4) (2025-12-10)
+
+
+### Bug Fixes
+
+* simplify the label decoration and combine both processes into the select command function ([f031843](https://github.com/MaximSrour/is-it-ready/commit/f0318431313a56d0c0b769877a73f11a9ca53bdf))
+
 ## [1.2.3](https://github.com/MaximSrour/is-it-ready/compare/v1.2.2...v1.2.3) (2025-12-10)
 
 
