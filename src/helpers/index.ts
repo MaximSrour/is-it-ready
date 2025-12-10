@@ -1,5 +1,4 @@
 export {
-  decorateLabel,
   formatDuration,
   runCommand,
   selectCommand,
