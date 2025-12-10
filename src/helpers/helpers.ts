@@ -1,26 +1,31 @@
 import { spawn } from "child_process";
 
+import { type StepConfig } from "@/config/types";
 import { type RunOptions } from "@/runOptions/types";
 
 /**
- * Adds the loose-mode indicator to step labels when required.
+ * Adds a mode indicator to a step label when required.
  *
- * @param {string} label - base label for the step
- * @param {boolean} canBeDecorated - whether this step supports loose mode
- * @param {boolean} shouldBeDecorated - whether the overall run is in loose mode
+ * @param {StepConfig} toolConfig - configuration for the step
+ * @param {RunOptions} runOptions - the current run options
  *
  * @returns {string} - label optionally decorated with an asterisk
  */
 export const decorateLabel = (
-  label: string,
-  canBeDecorated: boolean,
-  shouldBeDecorated: boolean
+  toolConfig: StepConfig,
+  runOptions: RunOptions
 ) => {
-  if (shouldBeDecorated && canBeDecorated) {
-    return `${label}*`;
+  if (runOptions.isFixMode) {
+    if (toolConfig.fixCommand) {
+      return `${toolConfig.label}*`;
+    }
+  } else if (runOptions.isLooseMode) {
+    if (toolConfig.looseCommand) {
+      return `${toolConfig.label}*`;
+    }
   }
 
-  return label;
+  return toolConfig.label;
 };
 
 /**

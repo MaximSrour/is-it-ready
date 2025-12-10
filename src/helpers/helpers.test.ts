@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 
+import { type StepConfig } from "@/config/types";
 import { type RunOptions } from "@/runOptions/types";
 
 import {
@@ -12,16 +13,57 @@ import {
 } from "./helpers";
 
 describe("decorateLabel", () => {
-  it("returns label unchanged when loose mode disabled", () => {
-    expect(decorateLabel("Linting", true, false)).toBe("Linting");
+  const makeConfig = (
+    label = "Linting",
+    opts: { loose?: string | undefined; fix?: string | undefined } = {}
+  ): StepConfig => {
+    return {
+      label,
+      tool: "ESLint",
+      command: "npm run lint",
+      looseCommand: opts.loose,
+      fixCommand: opts.fix,
+    } as StepConfig;
+  };
+
+  const baseOptions = (isLoose = false, isFix = false): RunOptions => {
+    return {
+      isLooseMode: isLoose,
+      isFixMode: isFix,
+      isSilentMode: false,
+    };
+  };
+
+  it("returns label unchanged when both modes disabled", () => {
+    const config = makeConfig();
+    expect(decorateLabel(config, baseOptions(false, false))).toBe("Linting");
   });
 
   it("appends asterisk when loose mode active and supported", () => {
-    expect(decorateLabel("Linting", true, true)).toBe("Linting*");
+    const config = makeConfig("Linting", { loose: "npm run lint:loose" });
+    expect(decorateLabel(config, baseOptions(true, false))).toBe("Linting*");
   });
 
   it("ignores loose mode when step does not support it", () => {
-    expect(decorateLabel("Tests", false, true)).toBe("Tests");
+    const config = makeConfig("Tests");
+    expect(decorateLabel(config, baseOptions(true, false))).toBe("Tests");
+  });
+
+  it("appends asterisk when fix mode active and supported", () => {
+    const config = makeConfig("Linting", { fix: "npm run lint:fix" });
+    expect(decorateLabel(config, baseOptions(false, true))).toBe("Linting*");
+  });
+
+  it("ignores fix mode when step does not support it", () => {
+    const config = makeConfig("Tests");
+    expect(decorateLabel(config, baseOptions(false, true))).toBe("Tests");
+  });
+
+  it("prioritizes fix mode over loose mode, even if fix isn't supported", () => {
+    const config = makeConfig("Linting", {
+      loose: "npm run lint:loose",
+    });
+    expect(decorateLabel(config, baseOptions(true, true))).toBe("Linting");
   });
 });
 

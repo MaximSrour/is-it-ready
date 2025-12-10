@@ -35,19 +35,8 @@ const steps: Step[] = stepConfig.map((config) => {
     runOptions
   );
 
-  const supportsFix = Boolean(config.fixCommand);
-  if (runOptions.isFixMode) {
-    return {
-      label: decorateLabel(config.label, supportsFix, runOptions.isFixMode),
-      tool: config.tool,
-      command,
-      parseFailure: parserMap[config.tool],
-    };
-  }
-
-  const supportsLoose = Boolean(config.looseCommand);
   return {
-    label: decorateLabel(config.label, supportsLoose, runOptions.isLooseMode),
+    label: decorateLabel(config, runOptions),
     tool: config.tool,
     command,
     parseFailure: parserMap[config.tool],
