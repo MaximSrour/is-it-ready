@@ -1,13 +1,10 @@
 import chalk from "chalk";
 
-import { stripAnsi } from "./helpers";
-import { type RunOptions } from "./runOptions/types";
-import {
-  type BorderChars,
-  type BorderLevel,
-  type FailureDetails,
-  type StepState,
-} from "./types";
+import { type RunOptions } from "@/runOptions/types";
+
+import { stripAnsi } from "../helpers";
+import { type FailureDetails, type StepState } from "../types";
+import { type BorderChars, type BorderLevel } from "./types";
 
 const BORDER_CHARS: Record<BorderLevel, BorderChars> = {
   top: { left: "┌", mid: "┬", right: "┐", fill: "─" },

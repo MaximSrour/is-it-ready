@@ -13,7 +13,11 @@ import {
   stripAnsi,
 } from "./helpers";
 import { parserMap } from "./parsers";
-import { colorStatusMessage, printFailureDetails, renderTable } from "./render";
+import {
+  colorStatusMessage,
+  printFailureDetails,
+  renderTable,
+} from "./renderers";
 import { getRunOptions } from "./runOptions/runOptions";
 import { type RunOptions } from "./runOptions/types";
 import {
