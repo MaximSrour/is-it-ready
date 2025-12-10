@@ -6,8 +6,6 @@
 
 ## Reasoning
 
-<!-- Explain why this change is necessary and what benefits it brings -->
-
 ### Why is this change needed?
 
 <!-- Describe the problem this PR solves or the feature it adds -->
