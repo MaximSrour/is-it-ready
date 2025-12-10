@@ -1,52 +1,56 @@
 import { spawn } from "child_process";
 
+import { type StepConfig } from "@/config/types";
 import { type RunOptions } from "@/runOptions/types";
 
 /**
- * Adds the loose-mode indicator to step labels when required.
+ * Adds a mode indicator to a step label when required.
  *
- * @param {string} label - base label for the step
- * @param {boolean} supportsLoose - whether this step supports loose mode
- * @param {boolean} isLooseMode - whether the overall run is in loose mode
+ * @param {StepConfig} toolConfig - configuration for the step
+ * @param {RunOptions} runOptions - the current run options
  *
  * @returns {string} - label optionally decorated with an asterisk
  */
 export const decorateLabel = (
-  label: string,
-  supportsLoose: boolean,
-  isLooseMode: boolean
+  toolConfig: StepConfig,
+  runOptions: RunOptions
 ) => {
-  if (isLooseMode && supportsLoose) {
-    return `${label}*`;
+  if (runOptions.isFixMode) {
+    if (toolConfig.fixCommand) {
+      return `${toolConfig.label}*`;
+    }
+  } else if (runOptions.isLooseMode) {
+    if (toolConfig.looseCommand) {
+      return `${toolConfig.label}*`;
+    }
   }
 
-  return label;
+  return toolConfig.label;
 };
 
 /**
- * Picks the correct command to execute, preferring the loose command when requested.
+ * Picks the correct command to execute from the provided step config.
  *
- * @param {string} baseCommand - command configured for the step
- * @param {string | undefined} looseCommand - loose-mode variant of the command
- * @param {boolean} isLooseMode - whether the current run is in loose mode
+ * @param {StepConfig} toolConfig - configuration for the step
+ * @param {RunOptions} runOptions - the current run options
  *
  * @returns {string} - command to execute for the step
  */
 export const selectCommand = (
-  baseCommand: string,
-  looseCommand: string | undefined,
-  fixCommand: string | undefined,
+  toolConfig: StepConfig,
   runOptions: RunOptions
 ) => {
-  if (runOptions.isFixMode && fixCommand) {
-    return fixCommand;
+  if (runOptions.isFixMode) {
+    if (toolConfig.fixCommand) {
+      return toolConfig.fixCommand;
+    }
+  } else if (runOptions.isLooseMode) {
+    if (toolConfig.looseCommand) {
+      return toolConfig.looseCommand;
+    }
   }
 
-  if (runOptions.isLooseMode && looseCommand) {
-    return looseCommand;
-  }
-
-  return baseCommand;
+  return toolConfig.command;
 };
 
 /**
