@@ -39,4 +39,5 @@ when everything passes and `1` otherwise.
 
 ## Contributing
 
-Install dependencies with `npm install`, run checks with `npm run check`.
+Contributions are welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for
+detailed guidelines on code standards, testing, and the pull request process.
