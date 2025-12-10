@@ -194,7 +194,8 @@ correctness of your contributions.
 - ❌ Don't use `eval()` or similar dangerous functions
 - ❌ Don't hardcode file paths or system-specific values
 - ❌ Don't add dependencies without careful consideration
-- ❌ Don't disable TypeScript or ESLint rules without justification
+- ❌ Don't disable TypeScript at all
+- ❌ Don't disable ESLint rules without significant justification
 - ❌ Don't refactor unrelated code
 - ❌ Don't fix unrelated issues in your PR
 
