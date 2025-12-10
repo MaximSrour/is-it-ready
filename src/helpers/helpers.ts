@@ -1,6 +1,6 @@
 import { spawn } from "child_process";
 
-import { type RunOptions } from "./runOptions/types";
+import { type RunOptions } from "@/runOptions/types";
 
 /**
  * Adds the loose-mode indicator to step labels when required.
