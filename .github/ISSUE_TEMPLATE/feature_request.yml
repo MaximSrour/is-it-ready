@@ -1,0 +1,76 @@
+name: Feature Request
+description: Suggest a new feature or enhancement
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for suggesting a new feature! Please provide as much detail as possible to help us understand your request.
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: Feature Summary
+      description: A brief, clear description of the feature you'd like to see.
+      placeholder: Describe the feature in one or two sentences...
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem Statement
+      description: What problem does this feature solve? Why is it needed?
+      placeholder: Explain the use case or pain point this feature addresses...
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed Solution
+      description: How do you envision this feature working? Be as specific as possible.
+      placeholder: Describe your ideal implementation...
+    validations:
+      required: true
+
+  - type: textarea
+    id: benefits
+    attributes:
+      label: Benefits
+      description: What benefits would this feature bring to users?
+      placeholder: List the advantages of implementing this feature...
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: Have you considered any alternative solutions or workarounds?
+      placeholder: Describe other approaches you've thought about...
+    validations:
+      required: false
+
+  - type: textarea
+    id: implementation
+    attributes:
+      label: Implementation Ideas (Optional)
+      description: If you have thoughts on how this could be implemented, share them here.
+      placeholder: |
+        If you have technical ideas, share them here:
+        - Potential changes to existing code
+        - New components or modules needed
+        - Integration points or dependencies
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context
+      description: Any other information, mockups, or examples that might help.
+      placeholder: Screenshots, code examples, links to similar features in other tools, etc.
+    validations:
+      required: false
