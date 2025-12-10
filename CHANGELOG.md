@@ -1,3 +1,10 @@
+## [1.2.1](https://github.com/MaximSrour/is-it-ready/compare/v1.2.0...v1.2.1) (2025-12-10)
+
+
+### Bug Fixes
+
+* remove trailing spaces and improve placeholder text ([05c8301](https://github.com/MaximSrour/is-it-ready/commit/05c83016e09bca361f15361bbe86c33bc0523cf3))
+
 # [1.2.0](https://github.com/MaximSrour/is-it-ready/compare/v1.1.10...v1.2.0) (2025-12-09)
 
 
