@@ -1,3 +1,10 @@
+## [1.2.2](https://github.com/MaximSrour/is-it-ready/compare/v1.2.1...v1.2.2) (2025-12-10)
+
+
+### Bug Fixes
+
+* move icons into helper modules ([16b311c](https://github.com/MaximSrour/is-it-ready/commit/16b311ca940c167b6bd1a477b479d66d42e36e93))
+
 ## [1.2.1](https://github.com/MaximSrour/is-it-ready/compare/v1.2.0...v1.2.1) (2025-12-10)
 
 
