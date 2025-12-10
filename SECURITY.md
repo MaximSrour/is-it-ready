@@ -2,12 +2,13 @@
 
 ## Supported Versions
 
-We release patches for security vulnerabilities for the following versions:
+As this is a small, personal project, only the latest release is currently
+supported with security updates.
 
 | Version | Supported          |
 | ------- | ------------------ |
-| 1.x.x   | :white_check_mark: |
-| < 1.0   | :x:                |
+| Latest  | :white_check_mark: |
+| < Latest| :x:                |
 
 ## Reporting a Vulnerability
 
