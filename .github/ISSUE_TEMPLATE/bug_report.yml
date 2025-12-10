@@ -58,10 +58,10 @@ body:
         - is-it-ready version: [e.g., 1.2.0]
         - Installation method: [global/dev/npx]
       value: |
-        - OS: 
-        - Node.js version: 
-        - is-it-ready version: 
-        - Installation method: 
+        - OS:
+        - Node.js version:
+        - is-it-ready version:
+        - Installation method:
     validations:
       required: true
 

@@ -59,10 +59,10 @@ body:
       label: Implementation Ideas (Optional)
       description: If you have thoughts on how this could be implemented, share them here.
       placeholder: |
-        Potential approach:
-        - Add new command-line flag
-        - Update configuration options
-        - Modify existing behavior
+        If you have technical ideas, share them here:
+        - Potential changes to existing code
+        - New components or modules needed
+        - Integration points or dependencies
     validations:
       required: false
 
