@@ -3,29 +3,17 @@ import { spawn } from "child_process";
 import { type StepConfig } from "@/config/types";
 import { type RunOptions } from "@/runOptions/types";
 
-/**
- * Adds a mode indicator to a step label when required.
- *
- * @param {StepConfig} toolConfig - configuration for the step
- * @param {RunOptions} runOptions - the current run options
- *
- * @returns {string} - label optionally decorated with an asterisk
- */
-export const decorateLabel = (
-  toolConfig: StepConfig,
-  runOptions: RunOptions
-) => {
-  if (runOptions.isFixMode) {
-    if (toolConfig.fixCommand) {
-      return `${toolConfig.label}*`;
-    }
-  } else if (runOptions.isLooseMode) {
-    if (toolConfig.looseCommand) {
-      return `${toolConfig.label}*`;
-    }
-  }
+import { type ExecutableCommand } from "./types";
 
-  return toolConfig.label;
+/**
+ * Adds an indicator to a label.
+ *
+ * @param {string} label - original step label
+ *
+ * @returns {string} - label decorated with an asterisk
+ */
+export const decorateLabel = (label: string) => {
+  return `${label}*`;
 };
 
 /**
@@ -34,23 +22,29 @@ export const decorateLabel = (
  * @param {StepConfig} toolConfig - configuration for the step
  * @param {RunOptions} runOptions - the current run options
  *
- * @returns {string} - command to execute for the step
+ * @returns {ExecutableCommand} - command to execute for the step
  */
 export const selectCommand = (
   toolConfig: StepConfig,
   runOptions: RunOptions
-) => {
+): ExecutableCommand => {
   if (runOptions.isFixMode) {
     if (toolConfig.fixCommand) {
-      return toolConfig.fixCommand;
+      return {
+        label: decorateLabel(toolConfig.label),
+        command: toolConfig.fixCommand,
+      };
     }
   } else if (runOptions.isLooseMode) {
     if (toolConfig.looseCommand) {
-      return toolConfig.looseCommand;
+      return {
+        label: decorateLabel(toolConfig.label),
+        command: toolConfig.looseCommand,
+      };
     }
   }
 
-  return toolConfig.command;
+  return { label: toolConfig.label, command: toolConfig.command };
 };
 
 /**

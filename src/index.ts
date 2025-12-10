@@ -8,7 +8,6 @@ import { type Step, type StepState, type StepStatus } from "@/config/types";
 import pkg from "../package.json";
 import { stepConfig } from "./config";
 import {
-  decorateLabel,
   formatDuration,
   runCommand,
   selectCommand,
@@ -28,12 +27,12 @@ import { type FailureDetails } from "./types";
 const runOptions = getRunOptions();
 
 const steps: Step[] = stepConfig.map((config) => {
-  const command = selectCommand(config, runOptions);
+  const executableCommand = selectCommand(config, runOptions);
 
   return {
-    label: decorateLabel(config, runOptions),
+    label: executableCommand.label,
     tool: config.tool,
-    command,
+    command: executableCommand.command,
     parseFailure: parserMap[config.tool],
   };
 });
