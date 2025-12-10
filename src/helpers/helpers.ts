@@ -6,17 +6,17 @@ import { type RunOptions } from "@/runOptions/types";
  * Adds the loose-mode indicator to step labels when required.
  *
  * @param {string} label - base label for the step
- * @param {boolean} supportsLoose - whether this step supports loose mode
- * @param {boolean} isLooseMode - whether the overall run is in loose mode
+ * @param {boolean} canBeDecorated - whether this step supports loose mode
+ * @param {boolean} shouldBeDecorated - whether the overall run is in loose mode
  *
  * @returns {string} - label optionally decorated with an asterisk
  */
 export const decorateLabel = (
   label: string,
-  supportsLoose: boolean,
-  isLooseMode: boolean
+  canBeDecorated: boolean,
+  shouldBeDecorated: boolean
 ) => {
-  if (isLooseMode && supportsLoose) {
+  if (shouldBeDecorated && canBeDecorated) {
     return `${label}*`;
   }
 

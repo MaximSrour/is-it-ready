@@ -28,16 +28,28 @@ import { type FailureDetails } from "./types";
 const runOptions = getRunOptions();
 
 const steps: Step[] = stepConfig.map((config) => {
+  const command = selectCommand(
+    config.command,
+    config.looseCommand,
+    config.fixCommand,
+    runOptions
+  );
+
+  const supportsFix = Boolean(config.fixCommand);
+  if (runOptions.isFixMode) {
+    return {
+      label: decorateLabel(config.label, supportsFix, runOptions.isFixMode),
+      tool: config.tool,
+      command,
+      parseFailure: parserMap[config.tool],
+    };
+  }
+
   const supportsLoose = Boolean(config.looseCommand);
   return {
     label: decorateLabel(config.label, supportsLoose, runOptions.isLooseMode),
     tool: config.tool,
-    command: selectCommand(
-      config.command,
-      config.looseCommand,
-      config.fixCommand,
-      runOptions
-    ),
+    command,
     parseFailure: parserMap[config.tool],
   };
 });
@@ -111,7 +123,12 @@ function render(
       " — Validating your code quality"
   );
   console.log();
-  if (runOptions.isLooseMode) {
+
+  if (runOptions.isFixMode) {
+    console.log(
+      "(* indicates fix mode; some tasks will automatically apply fixes to your code)\n"
+    );
+  } else if (runOptions.isLooseMode) {
     console.log(
       "(* indicates loose mode; some rules are disabled or set to warnings)\n"
     );
