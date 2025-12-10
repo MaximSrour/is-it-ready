@@ -3,7 +3,7 @@ import { spawn } from "child_process";
 import { type StepConfig } from "@/config/types";
 import { type RunOptions } from "@/runOptions/types";
 
-import { type ExecutableCommand } from "./types";
+import { type CommandResult, type ExecutableCommand } from "./types";
 
 /**
  * Adds an indicator to a label.
@@ -56,12 +56,6 @@ export const selectCommand = (
  *
  * @throws when the command is empty
  */
-type CommandResult = {
-  status: number | null;
-  stdout: string;
-  stderr: string;
-};
-
 export const runCommand = async (command: string): Promise<CommandResult> => {
   const trimmed = command.trim();
   if (!trimmed) {
