@@ -12,6 +12,7 @@ import {
   formatDuration,
   runCommand,
   selectCommand,
+  stepIcons,
   stripAnsi,
 } from "./helpers";
 import { parserMap } from "./parsers";
@@ -42,13 +43,6 @@ const steps: Step[] = stepConfig.map((config) => {
 });
 
 const tableHeaders = ["Label", "Tool", "Results", "Time"];
-
-const icons: Record<StepState, string> = {
-  pending: "  ",
-  running: "⏳",
-  success: "✅",
-  failure: "❌",
-};
 
 const statuses: StepStatus[] = steps.map(() => {
   return {
@@ -134,7 +128,7 @@ function render(
         ? ""
         : colorStatusMessage(status.message, status.state);
     return [
-      `${icons[status.state]} ${step.label}`,
+      `${stepIcons[status.state]} ${step.label}`,
       step.tool,
       message,
       formatDuration(durations[idx]),
@@ -143,9 +137,9 @@ function render(
   const overallIssues = totalErrors + totalWarnings;
   const overallIcon = suiteFinished
     ? overallIssues === 0
-      ? icons.success
-      : icons.failure
-    : icons.running;
+      ? stepIcons.success
+      : stepIcons.failure
+    : stepIcons.running;
   const overallDurationMs = suiteFinished
     ? (suiteDurationMs ?? 0)
     : Date.now() - suiteStartTime;
