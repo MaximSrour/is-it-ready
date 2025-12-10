@@ -81,69 +81,85 @@ describe("selectCommand", () => {
   };
 
   it("returns fix command when fix mode enabled", () => {
-    expect(
-      selectCommand(
-        baseCommand,
-        looseCommand,
-        fixCommand,
-        makeOptions(false, true)
-      )
-    ).toBe(fixCommand);
+    const config: StepConfig = {
+      label: "Linting",
+      tool: "ESLint",
+      command: baseCommand,
+      looseCommand,
+      fixCommand,
+    } as StepConfig;
+
+    expect(selectCommand(config, makeOptions(false, true))).toBe(fixCommand);
   });
 
   it("falls back to base when fix mode enabled but no fix command", () => {
-    expect(
-      selectCommand(
-        baseCommand,
-        looseCommand,
-        undefined,
-        makeOptions(false, true)
-      )
-    ).toBe(baseCommand);
+    const config: StepConfig = {
+      label: "Linting",
+      tool: "ESLint",
+      command: baseCommand,
+      looseCommand,
+      fixCommand: undefined,
+    } as StepConfig;
+
+    expect(selectCommand(config, makeOptions(false, true))).toBe(baseCommand);
   });
 
   it("prioritizes fix over loose", () => {
-    expect(
-      selectCommand(
-        baseCommand,
-        looseCommand,
-        fixCommand,
-        makeOptions(true, true)
-      )
-    ).toBe(fixCommand);
+    const config: StepConfig = {
+      label: "Linting",
+      tool: "ESLint",
+      command: baseCommand,
+      looseCommand,
+      fixCommand,
+    } as StepConfig;
+
+    expect(selectCommand(config, makeOptions(true, true))).toBe(fixCommand);
   });
 
   it("returns loose command when loose mode enabled", () => {
-    expect(
-      selectCommand(
-        baseCommand,
-        looseCommand,
-        fixCommand,
-        makeOptions(true, false)
-      )
-    ).toBe(looseCommand);
+    const config: StepConfig = {
+      label: "Linting",
+      tool: "ESLint",
+      command: baseCommand,
+      looseCommand,
+      fixCommand,
+    } as StepConfig;
+
+    expect(selectCommand(config, makeOptions(true, false))).toBe(looseCommand);
   });
 
   it("falls back to base when loose mode enabled but no loose command", () => {
-    expect(
-      selectCommand(
-        baseCommand,
-        undefined,
-        fixCommand,
-        makeOptions(true, false)
-      )
-    ).toBe(baseCommand);
+    const config: StepConfig = {
+      label: "Linting",
+      tool: "ESLint",
+      command: baseCommand,
+      looseCommand: undefined,
+      fixCommand,
+    } as StepConfig;
+
+    expect(selectCommand(config, makeOptions(true, false))).toBe(baseCommand);
   });
 
   it("returns base command when no flags enabled", () => {
-    expect(
-      selectCommand(
-        baseCommand,
-        looseCommand,
-        fixCommand,
-        makeOptions(false, false)
-      )
-    ).toBe(baseCommand);
+    const config: StepConfig = {
+      label: "Linting",
+      tool: "ESLint",
+      command: baseCommand,
+    } as StepConfig;
+
+    expect(selectCommand(config, makeOptions(false, false))).toBe(baseCommand);
+  });
+
+  it("prioritizes fix mode over loose mode, even if fix isn't supported", () => {
+    const config: StepConfig = {
+      label: "Linting",
+      tool: "ESLint",
+      command: baseCommand,
+      looseCommand,
+      fixCommand: undefined,
+    } as StepConfig;
+
+    expect(selectCommand(config, makeOptions(true, true))).toBe(baseCommand);
   });
 });
 

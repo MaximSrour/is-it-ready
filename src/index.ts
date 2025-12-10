@@ -28,12 +28,7 @@ import { type FailureDetails } from "./types";
 const runOptions = getRunOptions();
 
 const steps: Step[] = stepConfig.map((config) => {
-  const command = selectCommand(
-    config.command,
-    config.looseCommand,
-    config.fixCommand,
-    runOptions
-  );
+  const command = selectCommand(config, runOptions);
 
   return {
     label: decorateLabel(config, runOptions),
