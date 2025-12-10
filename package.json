@@ -48,7 +48,8 @@
     "test": "vitest",
     "type-check": "tsc --noEmit",
     "check": "ts-node --transpile-only src/index.ts",
-    "check:loose": "ts-node --transpile-only src/index.ts --loose"
+    "check:loose": "ts-node --transpile-only src/index.ts --loose",
+    "check:fix": "ts-node --transpile-only src/index.ts --fix"
   },
   "dependencies": {
     "chalk": "^4.1.2"
