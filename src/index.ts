@@ -41,11 +41,22 @@ async function main() {
 
   await Promise.all(
     tasks.map((task) => {
-      return executeTask(task, () => {
-        render(tasks, runOptions);
+      return task.execute({
+        onStart: () => {
+          render(tasks, runOptions);
+        },
+        onFinish: () => {
+          render(tasks, runOptions);
+        },
       });
     })
   );
+
+  for (const task of tasks) {
+    totalErrors += task.getTotalErrors();
+    totalWarnings += task.getTotalWarnings();
+    failures.push(...task.getFailures());
+  }
 
   suiteFinished = true;
   suiteDurationMs = Date.now() - suiteStartTime;
@@ -123,19 +134,4 @@ function render(
     formatDuration(overallDurationMs),
   ];
   console.log(renderTable(tableHeaders, rows, overallRow));
-}
-
-async function executeTask(task: Task, render: () => void) {
-  await task.execute({
-    onStart: () => {
-      render();
-    },
-    onFinish: () => {
-      render();
-    },
-  });
-
-  totalErrors += task.getTotalErrors();
-  totalWarnings += task.getTotalWarnings();
-  failures.push(...task.getFailures());
 }
