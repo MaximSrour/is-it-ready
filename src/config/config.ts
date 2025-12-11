@@ -1,6 +1,6 @@
-import { type StepConfig } from "./types";
+import { type TaskConfig } from "./types";
 
-export const stepConfig: StepConfig[] = [
+export const taskConfig: TaskConfig[] = [
   {
     label: "Formatting",
     tool: "Prettier",

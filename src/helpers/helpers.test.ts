@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { type StepConfig } from "@/config/types";
+import { type TaskConfig } from "@/config/types";
 import { type RunOptions } from "@/runOptions/types";
 
 import {
@@ -32,13 +32,13 @@ describe("selectCommand", () => {
   };
 
   it("returns fix command when fix mode enabled", () => {
-    const config: StepConfig = {
+    const config: TaskConfig = {
       label: "Linting",
       tool: "ESLint",
       command: baseCommand,
       looseCommand,
       fixCommand,
-    } as StepConfig;
+    } as TaskConfig;
 
     const result = selectCommand(config, makeOptions(false, true));
 
@@ -47,13 +47,13 @@ describe("selectCommand", () => {
   });
 
   it("falls back to base when fix mode enabled but no fix command", () => {
-    const config: StepConfig = {
+    const config: TaskConfig = {
       label: "Linting",
       tool: "ESLint",
       command: baseCommand,
       looseCommand,
       fixCommand: undefined,
-    } as StepConfig;
+    } as TaskConfig;
 
     const result = selectCommand(config, makeOptions(false, true));
 
@@ -62,13 +62,13 @@ describe("selectCommand", () => {
   });
 
   it("prioritizes fix over loose", () => {
-    const config: StepConfig = {
+    const config: TaskConfig = {
       label: "Linting",
       tool: "ESLint",
       command: baseCommand,
       looseCommand,
       fixCommand,
-    } as StepConfig;
+    } as TaskConfig;
 
     const result = selectCommand(config, makeOptions(true, true));
 
@@ -77,13 +77,13 @@ describe("selectCommand", () => {
   });
 
   it("returns loose command when loose mode enabled", () => {
-    const config: StepConfig = {
+    const config: TaskConfig = {
       label: "Linting",
       tool: "ESLint",
       command: baseCommand,
       looseCommand,
       fixCommand,
-    } as StepConfig;
+    } as TaskConfig;
 
     const result = selectCommand(config, makeOptions(true, false));
 
@@ -92,13 +92,13 @@ describe("selectCommand", () => {
   });
 
   it("falls back to base when loose mode enabled but no loose command", () => {
-    const config: StepConfig = {
+    const config: TaskConfig = {
       label: "Linting",
       tool: "ESLint",
       command: baseCommand,
       looseCommand: undefined,
       fixCommand,
-    } as StepConfig;
+    } as TaskConfig;
 
     const result = selectCommand(config, makeOptions(true, false));
 
@@ -107,11 +107,11 @@ describe("selectCommand", () => {
   });
 
   it("returns base command when no flags enabled", () => {
-    const config: StepConfig = {
+    const config: TaskConfig = {
       label: "Linting",
       tool: "ESLint",
       command: baseCommand,
-    } as StepConfig;
+    } as TaskConfig;
 
     const result = selectCommand(config, makeOptions(false, false));
 
@@ -120,13 +120,13 @@ describe("selectCommand", () => {
   });
 
   it("prioritizes fix mode over loose mode, even if fix isn't supported", () => {
-    const config: StepConfig = {
+    const config: TaskConfig = {
       label: "Linting",
       tool: "ESLint",
       command: baseCommand,
       looseCommand,
       fixCommand: undefined,
-    } as StepConfig;
+    } as TaskConfig;
 
     const result = selectCommand(config, makeOptions(true, true));
 

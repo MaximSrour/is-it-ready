@@ -1,1 +1,1 @@
-export { stepConfig } from "./config";
+export { taskConfig } from "./config";

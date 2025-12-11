@@ -1,10 +1,10 @@
 import { type ParsedFailure, type ToolName } from "parsers/types";
 
-export type StepState = "pending" | "running" | "success" | "failure";
+export type TaskState = "pending" | "running" | "success" | "failure";
 
-export type StepStatus = { state: StepState; message: string };
+export type TaskStatus = { state: TaskState; message: string };
 
-export type StepConfig = {
+export type TaskConfig = {
   label: string;
   tool: ToolName;
   command: string;
@@ -12,7 +12,7 @@ export type StepConfig = {
   fixCommand?: string;
 };
 
-export type Step = {
+export type Task = {
   label: string;
   tool: ToolName;
   command: string;

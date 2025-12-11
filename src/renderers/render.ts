@@ -2,7 +2,7 @@ import chalk from "chalk";
 
 import { type RunOptions } from "@/runOptions/types";
 
-import { type StepState } from "../config/types";
+import { type TaskState } from "../config/types";
 import { stripAnsi } from "../helpers";
 import { type FailureDetails } from "../types";
 import { type BorderChars, type BorderLevel } from "./types";
@@ -190,14 +190,14 @@ export const isFullWidthCodePoint = (codePoint?: number | null) => {
 };
 
 /**
- * Colors a status message based on the step state.
+ * Colors a status message based on the task state.
  *
  * @param {string} message - The status message to color.
- * @param {StepState} state - The state of the step ("pending", "running", "success", "failure").
+ * @param {TaskState} state - The state of the task ("pending", "running", "success", "failure").
  *
  * @returns {string} - The colored status message.
  */
-export const colorStatusMessage = (message: string, state: StepState) => {
+export const colorStatusMessage = (message: string, state: TaskState) => {
   if (!message) {
     return "";
   }
@@ -212,7 +212,7 @@ export const colorStatusMessage = (message: string, state: StepState) => {
 /**
  * Builds a formatted string summarizing failure details for display.
  *
- * @param {FailureDetails} failure - metadata describing the failed step
+ * @param {FailureDetails} failure - metadata describing the failed task
  *
  * @returns {string} - decorated headline containing label, tool, command, and breakdown
  */
@@ -247,7 +247,7 @@ export const formatFailureHeadline = (failure: FailureDetails) => {
 };
 
 /**
- * Prints detailed information about failed steps.
+ * Prints detailed information about failed tasks.
  *
  * @param {FailureDetails[]} failures - Array of failure details to print
  * @param {RunOptions} runOptions - Options that influenced the run

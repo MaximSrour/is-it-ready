@@ -3,16 +3,16 @@
 import chalk from "chalk";
 import { type ParsedFailure } from "parsers/types";
 
-import { type Step, type StepState, type StepStatus } from "@/config/types";
+import { type Task, type TaskState, type TaskStatus } from "@/config/types";
 
 import pkg from "../package.json";
-import { stepConfig } from "./config";
+import { taskConfig } from "./config";
 import {
   formatDuration,
   runCommand,
   selectCommand,
-  stepIcons,
   stripAnsi,
+  taskStateIcons,
 } from "./helpers";
 import { parserMap } from "./parsers";
 import {
@@ -26,7 +26,7 @@ import { type FailureDetails } from "./types";
 
 const runOptions = getRunOptions();
 
-const steps: Step[] = stepConfig.map((config) => {
+const tasks: Task[] = taskConfig.map((config) => {
   const executableCommand = selectCommand(config, runOptions);
 
   return {
@@ -39,13 +39,13 @@ const steps: Step[] = stepConfig.map((config) => {
 
 const tableHeaders = ["Label", "Tool", "Results", "Time"];
 
-const statuses: StepStatus[] = steps.map(() => {
+const statuses: TaskStatus[] = tasks.map(() => {
   return {
     state: "pending",
     message: "",
   };
 });
-const durations = steps.map(() => {
+const durations = tasks.map(() => {
   return null as number | null;
 });
 const failures: FailureDetails[] = [];
@@ -56,7 +56,7 @@ const suiteStartTime = Date.now();
 let suiteDurationMs: number | null = null;
 
 void main().catch((error) => {
-  console.error(chalk.red("Unexpected error while running steps."));
+  console.error(chalk.red("Unexpected error while running tasks."));
   console.error(error);
   process.exit(1);
 });
@@ -64,8 +64,8 @@ void main().catch((error) => {
 async function main() {
   render(runOptions);
   await Promise.all(
-    steps.map((step, index) => {
-      return executeStep(step, index);
+    tasks.map((task, index) => {
+      return executeTask(task, index);
     })
   );
   suiteFinished = true;
@@ -74,7 +74,7 @@ async function main() {
   process.exit(failures.length > 0 ? 1 : 0);
 }
 
-function updateStatus(index: number, state: StepState, message: string) {
+function updateStatus(index: number, state: TaskState, message: string) {
   statuses[index] = { state, message };
   render(runOptions);
 }
@@ -121,15 +121,15 @@ function render(
     printFailureDetails(failures, runOptions);
   }
 
-  const rows = steps.map((step, idx) => {
+  const rows = tasks.map((task, idx) => {
     const status = statuses[idx];
     const message =
       status.state === "pending"
         ? ""
         : colorStatusMessage(status.message, status.state);
     return [
-      `${stepIcons[status.state]} ${step.label}`,
-      step.tool,
+      `${taskStateIcons[status.state]} ${task.label}`,
+      task.tool,
       message,
       formatDuration(durations[idx]),
     ];
@@ -137,9 +137,9 @@ function render(
   const overallIssues = totalErrors + totalWarnings;
   const overallIcon = suiteFinished
     ? overallIssues === 0
-      ? stepIcons.success
-      : stepIcons.failure
-    : stepIcons.running;
+      ? taskStateIcons.success
+      : taskStateIcons.failure
+    : taskStateIcons.running;
   const overallDurationMs = suiteFinished
     ? (suiteDurationMs ?? 0)
     : Date.now() - suiteStartTime;
@@ -163,18 +163,18 @@ function render(
   console.log(renderTable(tableHeaders, rows, overallRow));
 }
 
-async function executeStep(step: Step, index: number) {
+async function executeTask(task: Task, index: number) {
   updateStatus(index, "running", "Running...");
   const startTime = Date.now();
 
   try {
-    const result = await runCommand(step.command);
+    const result = await runCommand(task.command);
     durations[index] = Date.now() - startTime;
     const rawCombined = [result.stdout, result.stderr]
       .filter(Boolean)
       .join("\n");
     const combined = stripAnsi(rawCombined);
-    const parsedFailure = step.parseFailure?.(combined);
+    const parsedFailure = task.parseFailure?.(combined);
 
     if (result.status === 0 && !parsedFailure) {
       updateStatus(index, "success", "Passed");
@@ -186,9 +186,9 @@ async function executeStep(step: Step, index: number) {
     updateStatus(index, "failure", detail);
 
     failures.push({
-      label: step.label,
-      tool: step.tool,
-      command: step.command,
+      label: task.label,
+      tool: task.tool,
+      command: task.command,
       errors: parsedFailure?.errors ?? undefined,
       warnings: parsedFailure?.warnings ?? undefined,
       summary: parsedFailure?.message ?? undefined,
@@ -208,9 +208,9 @@ async function executeStep(step: Step, index: number) {
     updateStatus(index, "failure", message);
 
     failures.push({
-      label: step.label,
-      tool: step.tool,
-      command: step.command,
+      label: task.label,
+      tool: task.tool,
+      command: task.command,
       summary: message,
       output: message,
       rawOutput: message,

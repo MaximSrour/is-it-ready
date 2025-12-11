@@ -13,10 +13,10 @@ is-it-ready [--loose] [--silent] [--fix] [-h | --help] [-v | --version]
 
 - `-h, --help` - Show usage.
 - `-v, --version` - Show version number.
-- `--loose` - Use the loose variant for steps that support it (labels show `*`).
 - `--silent` - Keep the summary table but skip the detailed failure output.
-- `--fix` - Automatically run fix commands for steps that
-  define them (e.g. prettier:fix, lint:fix, markdownlint:fix, knip:fix).
+- `--loose` - Use the loose variant for tasks that support it (labels show `*`).
+- `--fix` - Automatically run fix commands for tasks that support it (labels
+  show `*`).
 
 ### What it runs
 
