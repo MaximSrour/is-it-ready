@@ -1,1 +1,1 @@
-export { colorStatusMessage, printFailureDetails, renderTable } from "./render";
+export { render } from "./render";

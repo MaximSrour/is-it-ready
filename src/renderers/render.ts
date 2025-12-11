@@ -1,9 +1,11 @@
 import chalk from "chalk";
 
+import { type Task } from "@/config/task";
 import { type RunOptions } from "@/runOptions/types";
 
+import pkg from "../../package.json";
 import { type FailureDetails, type TaskState } from "../config/types";
-import { stripAnsi } from "../helpers";
+import { formatDuration, stripAnsi, taskStateIcons } from "../helpers";
 import { type BorderChars, type BorderLevel } from "./types";
 
 const BORDER_CHARS: Record<BorderLevel, BorderChars> = {
@@ -11,6 +13,8 @@ const BORDER_CHARS: Record<BorderLevel, BorderChars> = {
   middle: { left: "├", mid: "┼", right: "┤", fill: "─" },
   bottom: { left: "└", mid: "┴", right: "┘", fill: "─" },
 } as const;
+
+const TABLE_HEADERS = ["Label", "Tool", "Results", "Time"];
 
 /**
  * Renders a table with borders, headers, rows, and an optional footer.
@@ -271,4 +275,109 @@ export const printFailureDetails = (
 
     console.log();
   }
+};
+
+export const render = (tasks: Task[], runOptions: RunOptions) => {
+  if (process.stdout.isTTY) {
+    console.clear();
+  }
+  console.log(
+    chalk.bold(`\n${pkg.name} v${pkg.version}`) +
+      " — Validating your code quality\n"
+  );
+
+  if (runOptions.isFixMode) {
+    console.log(
+      "(* indicates fix mode; some tasks will automatically apply fixes to your code)\n"
+    );
+  } else if (runOptions.isLooseMode) {
+    console.log(
+      "(* indicates loose mode; some rules are disabled or set to warnings)\n"
+    );
+  }
+
+  const suiteFinished = tasks.every((task) => {
+    const state = task.getStatus().state;
+    return state === "success" || state === "failure";
+  });
+
+  const failures: FailureDetails[] = [];
+  tasks.forEach((task) => {
+    failures.push(...task.getFailures());
+  });
+
+  if (failures.length > 0 && suiteFinished) {
+    printFailureDetails(failures, runOptions);
+  }
+
+  const rows = tasks.map((task) => {
+    const status = task.getStatus();
+    const message =
+      status.state === "pending"
+        ? ""
+        : colorStatusMessage(status.message, status.state);
+    return [
+      `${taskStateIcons[status.state]} ${task.label}`,
+      task.tool,
+      message,
+      formatDuration(task.getDuration()),
+    ];
+  });
+
+  const { totalErrors, totalWarnings, totalIssues } = tasks.reduce(
+    (sum, task) => {
+      sum.totalErrors += task.getTotalErrors();
+      sum.totalWarnings += task.getTotalWarnings();
+      sum.totalIssues += task.getTotalErrors() + task.getTotalWarnings();
+      return sum;
+    },
+    { totalErrors: 0, totalWarnings: 0, totalIssues: 0 }
+  );
+
+  const { suiteStartTime, suiteDurationMs } = suiteFinished
+    ? tasks.reduce(
+        (acc, task) => {
+          const duration = task.getDuration();
+          if (duration !== null) {
+            acc.suiteDurationMs = Math.max(acc.suiteDurationMs, duration);
+          }
+          return acc;
+        },
+        { suiteStartTime: Date.now(), suiteDurationMs: 0 }
+      )
+    : { suiteStartTime: null, suiteDurationMs: null };
+
+  const overallIcon = suiteFinished
+    ? totalIssues === 0
+      ? taskStateIcons.success
+      : taskStateIcons.failure
+    : taskStateIcons.running;
+
+  const overallDurationMs = suiteFinished
+    ? (suiteDurationMs ?? 0)
+    : suiteStartTime
+      ? Date.now() - suiteStartTime
+      : 0;
+
+  const breakdownParts = [];
+  if (totalErrors > 0) {
+    breakdownParts.push(`${totalErrors} error${totalErrors === 1 ? "" : "s"}`);
+  }
+
+  if (totalWarnings > 0) {
+    breakdownParts.push(
+      `${totalWarnings} warning${totalWarnings === 1 ? "" : "s"}`
+    );
+  }
+  const breakdown =
+    breakdownParts.length > 0 ? ` (${breakdownParts.join(", ")})` : "";
+
+  const overallRow = [
+    `${overallIcon} Overall`,
+    "",
+    `${totalIssues} issue${totalIssues === 1 ? "" : "s"}${breakdown}`,
+    formatDuration(overallDurationMs),
+  ];
+
+  console.log(renderTable(TABLE_HEADERS, rows, overallRow));
 };
