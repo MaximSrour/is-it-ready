@@ -36,7 +36,10 @@ async function main() {
 
   const { totalIssues } = tasks.reduce<{ totalIssues: number }>(
     (acc, task) => {
-      return { totalIssues: task.getTotalErrors() + task.getTotalWarnings() };
+      return {
+        totalIssues:
+          acc.totalIssues + task.getTotalErrors() + task.getTotalWarnings(),
+      };
     },
     { totalIssues: 0 }
   );
