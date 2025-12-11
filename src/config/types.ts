@@ -1,4 +1,4 @@
-import { type ParsedFailure, type ToolName } from "parsers/types";
+import { type ToolName } from "parsers/types";
 
 export type TaskState = "pending" | "running" | "success" | "failure";
 
@@ -10,11 +10,4 @@ export type TaskConfig = {
   command: string;
   looseCommand?: string;
   fixCommand?: string;
-};
-
-export type Task = {
-  label: string;
-  tool: ToolName;
-  command: string;
-  parseFailure?: (output: string) => ParsedFailure | undefined;
 };

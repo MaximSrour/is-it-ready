@@ -3,14 +3,13 @@
 import chalk from "chalk";
 import { type ParsedFailure } from "parsers/types";
 
-import { type Task, type TaskState, type TaskStatus } from "@/config/types";
+import { type TaskState, type TaskStatus } from "@/config/types";
 
 import pkg from "../package.json";
-import { taskConfig } from "./config";
+import { Task, taskConfig } from "./config";
 import {
   formatDuration,
   runCommand,
-  selectCommand,
   stripAnsi,
   taskStateIcons,
 } from "./helpers";
@@ -27,14 +26,10 @@ import { type FailureDetails } from "./types";
 const runOptions = getRunOptions();
 
 const tasks: Task[] = taskConfig.map((config) => {
-  const executableCommand = selectCommand(config, runOptions);
-
-  return {
-    label: executableCommand.label,
-    tool: config.tool,
-    command: executableCommand.command,
-    parseFailure: parserMap[config.tool],
-  };
+  return new Task(
+    { ...config, parseFailure: parserMap[config.tool] },
+    runOptions
+  );
 });
 
 const tableHeaders = ["Label", "Tool", "Results", "Time"];
