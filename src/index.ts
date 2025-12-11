@@ -6,7 +6,6 @@ import {
   type FailureDetails,
   type ParsedFailure,
   type TaskState,
-  type TaskStatus,
 } from "@/config/types";
 
 import pkg from "../package.json";
@@ -33,12 +32,6 @@ const tasks: Task[] = taskConfig.map((config) => {
 
 const tableHeaders = ["Label", "Tool", "Results", "Time"];
 
-const statuses: TaskStatus[] = tasks.map(() => {
-  return {
-    state: "pending",
-    message: "",
-  };
-});
 const durations = tasks.map(() => {
   return null as number | null;
 });
@@ -69,7 +62,7 @@ async function main() {
 }
 
 function updateStatus(index: number, state: TaskState, message: string) {
-  statuses[index] = { state, message };
+  tasks[index].setStatus({ state, message });
   render(runOptions);
 }
 
@@ -116,7 +109,7 @@ function render(
   }
 
   const rows = tasks.map((task, idx) => {
-    const status = statuses[idx];
+    const status = task.getStatus();
     const message =
       status.state === "pending"
         ? ""
