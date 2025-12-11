@@ -94,7 +94,7 @@ export default defineConfig([
       "jsdoc/require-example": "off",
       "jsdoc/require-file-overview": "off",
       "jsdoc/require-hyphen-before-param-description": "off",
-      "jsdoc/require-jsdoc": "off",
+      "jsdoc/require-jsdoc": "warn",
       "jsdoc/require-next-description": "off",
       "jsdoc/require-next-type": "off",
       "jsdoc/require-param-description": "off",

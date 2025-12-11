@@ -277,7 +277,12 @@ export const printFailureDetails = (
   }
 };
 
-export const render = (tasks: Task[], runOptions: RunOptions) => {
+/**
+ * Renders the current status of all tasks to the console.
+ *
+ * @param {Task[]} tasks - Array of tasks to render
+ * @param {RunOptions} runOptions - Options that influenced the run
+ */
   if (process.stdout.isTTY) {
     console.clear();
   }
