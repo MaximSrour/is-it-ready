@@ -143,6 +143,14 @@ export class Task {
     }
   }
 
+  getStartTime() {
+    return this.startTime;
+  }
+
+  getEndTime() {
+    return this.endTime;
+  }
+
   getDuration() {
     return this.endTime !== null && this.startTime !== null
       ? this.endTime - this.startTime

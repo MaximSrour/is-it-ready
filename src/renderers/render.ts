@@ -334,18 +334,28 @@ export const render = (tasks: Task[], runOptions: RunOptions) => {
     { totalErrors: 0, totalWarnings: 0, totalIssues: 0 }
   );
 
-  const { suiteStartTime, suiteDurationMs } = suiteFinished
-    ? tasks.reduce(
-        (acc, task) => {
-          const duration = task.getDuration();
-          if (duration !== null) {
-            acc.suiteDurationMs = Math.max(acc.suiteDurationMs, duration);
-          }
-          return acc;
-        },
-        { suiteStartTime: Date.now(), suiteDurationMs: 0 }
-      )
-    : { suiteStartTime: null, suiteDurationMs: null };
+  const { suiteStartTime, suiteDurationMs } = (() => {
+    const result = tasks.reduce(
+      (acc, task) => {
+        const start = task.getStartTime();
+        const end = task.getEndTime();
+
+        if (start !== null && end !== null) {
+          acc.suiteStartTime = Math.max(acc.suiteStartTime, start);
+          acc.suiteEndTime = Math.max(acc.suiteEndTime, end);
+        }
+
+        return acc;
+      },
+      { suiteStartTime: 0, suiteEndTime: 0 }
+    );
+
+    return {
+      suiteStartTime:
+        result.suiteStartTime === Infinity ? null : result.suiteStartTime,
+      suiteDurationMs: result.suiteEndTime - result.suiteStartTime,
+    };
+  })();
 
   const overallIcon = suiteFinished
     ? totalIssues === 0
@@ -354,7 +364,7 @@ export const render = (tasks: Task[], runOptions: RunOptions) => {
     : taskStateIcons.running;
 
   const overallDurationMs = suiteFinished
-    ? (suiteDurationMs ?? 0)
+    ? suiteDurationMs
     : suiteStartTime
       ? Date.now() - suiteStartTime
       : 0;
