@@ -1,8 +1,8 @@
-import { type ParsedFailure } from "parsers/types";
+import { type ParsedFailure } from "../../types";
 
-import { registerParser } from "../registry";
-
-const parseMarkdownLint = (output: string): ParsedFailure | undefined => {
+export const parseMarkdownLint = (
+  output: string
+): ParsedFailure | undefined => {
   const summaryMatch = /Summary:\s*(\d+)\s*error\(s\)/i.exec(output);
 
   if (summaryMatch) {
@@ -19,5 +19,3 @@ const parseMarkdownLint = (output: string): ParsedFailure | undefined => {
 
   return undefined;
 };
-
-registerParser("MarkdownLint", parseMarkdownLint);

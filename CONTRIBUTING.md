@@ -83,7 +83,7 @@ You can run individual checks as needed:
 
 - **Files**: camelCase (e.g., `runOptions.ts`)
 - **Functions/Variables**: camelCase (e.g., `parseOptions`, `isReady`)
-- **Types/Interfaces**: PascalCase (e.g., `RunOptions`, `StepConfig`)
+- **Types/Interfaces**: PascalCase (e.g., `RunOptions`, `TaskConfig`)
 - **Test files**: `*.test.ts` suffix
 
 ## Testing

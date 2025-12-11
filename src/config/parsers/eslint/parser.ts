@@ -1,8 +1,6 @@
-import { type ParsedFailure } from "parsers/types";
+import { type ParsedFailure } from "@/config/types";
 
-import { registerParser } from "../registry";
-
-const parseEslint = (output: string): ParsedFailure | undefined => {
+export const parseEslint = (output: string): ParsedFailure | undefined => {
   const summary = output.match(
     /(\d+)\s+problems?\s+\((\d+)\s+errors?(?:,\s+(\d+)\s+warnings?)?/i
   );
@@ -40,5 +38,3 @@ const parseEslint = (output: string): ParsedFailure | undefined => {
     warnings: warningCount > 0 ? warningCount : undefined,
   };
 };
-
-registerParser("ESLint", parseEslint);

@@ -1,6 +1,6 @@
 import { spawn } from "child_process";
 
-import { type StepConfig } from "@/config/types";
+import { type TaskConfig } from "@/config/types";
 import { type RunOptions } from "@/runOptions/types";
 
 import { type CommandResult, type ExecutableCommand } from "./types";
@@ -8,7 +8,7 @@ import { type CommandResult, type ExecutableCommand } from "./types";
 /**
  * Adds an indicator to a label.
  *
- * @param {string} label - original step label
+ * @param {string} label - original label
  *
  * @returns {string} - label decorated with an asterisk
  */
@@ -17,15 +17,15 @@ export const decorateLabel = (label: string) => {
 };
 
 /**
- * Picks the correct command to execute from the provided step config.
+ * Picks the correct command to execute from the provided task config.
  *
- * @param {StepConfig} toolConfig - configuration for the step
+ * @param {TaskConfig} toolConfig - configuration for the task
  * @param {RunOptions} runOptions - the current run options
  *
- * @returns {ExecutableCommand} - command to execute for the step
+ * @returns {ExecutableCommand} - command to execute for the task
  */
 export const selectCommand = (
-  toolConfig: StepConfig,
+  toolConfig: TaskConfig,
   runOptions: RunOptions
 ): ExecutableCommand => {
   if (runOptions.isFixMode) {
@@ -59,7 +59,7 @@ export const selectCommand = (
 export const runCommand = async (command: string): Promise<CommandResult> => {
   const trimmed = command.trim();
   if (!trimmed) {
-    throw new Error("No command configured for this step");
+    throw new Error("No command configured for this task");
   }
 
   const finalCommand = addSilentFlag(trimmed);

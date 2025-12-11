@@ -1,6 +1,6 @@
-import { type StepState } from "@/config/types";
+import { type TaskState } from "@/config/types";
 
-export const stepIcons: Record<StepState, string> = {
+export const taskStateIcons: Record<TaskState, string> = {
   pending: "  ",
   running: "⏳",
   success: "✅",

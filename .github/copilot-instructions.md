@@ -27,7 +27,7 @@ is-it-ready project.
 
 - **Files**: camelCase (e.g., `runOptions.ts`)
 - **Functions/Variables**: camelCase (e.g., `parseOptions`, `isReady`)
-- **Types/Interfaces**: PascalCase (e.g., `RunOptions`, `StepConfig`)
+- **Types/Interfaces**: PascalCase (e.g., `RunOptions`, `TaskConfig`)
 - **Constants**: camelCase or UPPER_SNAKE_CASE for true constants
 - **Test files**: `*.test.ts` suffix
 
@@ -151,24 +151,14 @@ All checks must pass in strict mode (not loose mode).
 
 ```typescript
 /**
- * Adds the loose-mode indicator to step labels when required.
+ * Adds an indicator to a label.
  *
- * @param {string} label - base label for the step
- * @param {boolean} supportsLoose - whether this step supports loose mode
- * @param {boolean} isLooseMode - whether the overall run is in loose mode
+ * @param {string} label - original label
  *
- * @returns {string} - label optionally decorated with an asterisk
+ * @returns {string} - label decorated with an asterisk
  */
-export const decorateLabel = (
-  label: string,
-  supportsLoose: boolean,
-  isLooseMode: boolean
-) => {
-  if (isLooseMode && supportsLoose) {
-    return `${label}*`;
-  }
-
-  return label;
+export const decorateLabel = (label: string) => {
+  return `${label}*`;
 };
 ```
 

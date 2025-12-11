@@ -1,20 +1,29 @@
-import { type ParsedFailure, type ToolName } from "parsers/types";
+export type ParsedFailure = {
+  message: string;
+  errors?: number;
+  warnings?: number;
+};
 
-export type StepState = "pending" | "running" | "success" | "failure";
+export type TaskState = "pending" | "running" | "success" | "failure";
 
-export type StepStatus = { state: StepState; message: string };
+export type TaskStatus = { state: TaskState; message: string };
 
-export type StepConfig = {
+export type TaskConfig = {
   label: string;
-  tool: ToolName;
+  tool: string;
   command: string;
   looseCommand?: string;
   fixCommand?: string;
+  parseFailure: (output: string) => ParsedFailure | undefined;
 };
 
-export type Step = {
+export type FailureDetails = {
   label: string;
-  tool: ToolName;
+  tool: string;
   command: string;
-  parseFailure?: (output: string) => ParsedFailure | undefined;
+  output: string;
+  rawOutput: string;
+  errors?: number;
+  warnings?: number;
+  summary?: string;
 };

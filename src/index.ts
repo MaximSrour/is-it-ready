@@ -1,20 +1,12 @@
 #!/usr/bin/env node
 
 import chalk from "chalk";
-import { type ParsedFailure } from "parsers/types";
 
-import { type Step, type StepState, type StepStatus } from "@/config/types";
+import { type FailureDetails } from "@/config/types";
 
 import pkg from "../package.json";
-import { stepConfig } from "./config";
-import {
-  formatDuration,
-  runCommand,
-  selectCommand,
-  stepIcons,
-  stripAnsi,
-} from "./helpers";
-import { parserMap } from "./parsers";
+import { Task, taskConfig } from "./config";
+import { formatDuration, taskStateIcons } from "./helpers";
 import {
   colorStatusMessage,
   printFailureDetails,
@@ -22,32 +14,9 @@ import {
 } from "./renderers";
 import { getRunOptions } from "./runOptions/runOptions";
 import { type RunOptions } from "./runOptions/types";
-import { type FailureDetails } from "./types";
-
-const runOptions = getRunOptions();
-
-const steps: Step[] = stepConfig.map((config) => {
-  const executableCommand = selectCommand(config, runOptions);
-
-  return {
-    label: executableCommand.label,
-    tool: config.tool,
-    command: executableCommand.command,
-    parseFailure: parserMap[config.tool],
-  };
-});
 
 const tableHeaders = ["Label", "Tool", "Results", "Time"];
 
-const statuses: StepStatus[] = steps.map(() => {
-  return {
-    state: "pending",
-    message: "",
-  };
-});
-const durations = steps.map(() => {
-  return null as number | null;
-});
 const failures: FailureDetails[] = [];
 let totalErrors = 0;
 let totalWarnings = 0;
@@ -56,45 +25,49 @@ const suiteStartTime = Date.now();
 let suiteDurationMs: number | null = null;
 
 void main().catch((error) => {
-  console.error(chalk.red("Unexpected error while running steps."));
+  console.error(chalk.red("Unexpected error while running tasks."));
   console.error(error);
   process.exit(1);
 });
 
 async function main() {
-  render(runOptions);
+  const runOptions = getRunOptions();
+
+  const tasks: Task[] = taskConfig.map((config) => {
+    return new Task(config, runOptions);
+  });
+
+  render(tasks, runOptions);
+
   await Promise.all(
-    steps.map((step, index) => {
-      return executeStep(step, index);
+    tasks.map((task) => {
+      return task.execute({
+        onStart: () => {
+          render(tasks, runOptions);
+        },
+        onFinish: () => {
+          render(tasks, runOptions);
+        },
+      });
     })
   );
+
+  for (const task of tasks) {
+    totalErrors += task.getTotalErrors();
+    totalWarnings += task.getTotalWarnings();
+    failures.push(...task.getFailures());
+  }
+
   suiteFinished = true;
   suiteDurationMs = Date.now() - suiteStartTime;
-  render(runOptions, failures.length > 0 ? failures : null);
+
+  render(tasks, runOptions, failures.length > 0 ? failures : null);
+
   process.exit(failures.length > 0 ? 1 : 0);
 }
 
-function updateStatus(index: number, state: StepState, message: string) {
-  statuses[index] = { state, message };
-  render(runOptions);
-}
-
-function recordIssueCounts(parsedFailure?: ParsedFailure | null) {
-  if (!parsedFailure) {
-    totalErrors += 1;
-    return;
-  }
-  const errors = parsedFailure.errors ?? 0;
-  const warnings = parsedFailure.warnings ?? 0;
-  if (errors === 0 && warnings === 0) {
-    totalErrors += 1;
-    return;
-  }
-  totalErrors += errors;
-  totalWarnings += warnings;
-}
-
 function render(
+  tasks: Task[],
   runOptions: RunOptions,
   failures: FailureDetails[] | null = null
 ) {
@@ -121,25 +94,25 @@ function render(
     printFailureDetails(failures, runOptions);
   }
 
-  const rows = steps.map((step, idx) => {
-    const status = statuses[idx];
+  const rows = tasks.map((task) => {
+    const status = task.getStatus();
     const message =
       status.state === "pending"
         ? ""
         : colorStatusMessage(status.message, status.state);
     return [
-      `${stepIcons[status.state]} ${step.label}`,
-      step.tool,
+      `${taskStateIcons[status.state]} ${task.label}`,
+      task.tool,
       message,
-      formatDuration(durations[idx]),
+      formatDuration(task.getDuration()),
     ];
   });
   const overallIssues = totalErrors + totalWarnings;
   const overallIcon = suiteFinished
     ? overallIssues === 0
-      ? stepIcons.success
-      : stepIcons.failure
-    : stepIcons.running;
+      ? taskStateIcons.success
+      : taskStateIcons.failure
+    : taskStateIcons.running;
   const overallDurationMs = suiteFinished
     ? (suiteDurationMs ?? 0)
     : Date.now() - suiteStartTime;
@@ -161,61 +134,4 @@ function render(
     formatDuration(overallDurationMs),
   ];
   console.log(renderTable(tableHeaders, rows, overallRow));
-}
-
-async function executeStep(step: Step, index: number) {
-  updateStatus(index, "running", "Running...");
-  const startTime = Date.now();
-
-  try {
-    const result = await runCommand(step.command);
-    durations[index] = Date.now() - startTime;
-    const rawCombined = [result.stdout, result.stderr]
-      .filter(Boolean)
-      .join("\n");
-    const combined = stripAnsi(rawCombined);
-    const parsedFailure = step.parseFailure?.(combined);
-
-    if (result.status === 0 && !parsedFailure) {
-      updateStatus(index, "success", "Passed");
-      return;
-    }
-
-    const detail =
-      parsedFailure?.message ?? "Failed - see output below for details";
-    updateStatus(index, "failure", detail);
-
-    failures.push({
-      label: step.label,
-      tool: step.tool,
-      command: step.command,
-      errors: parsedFailure?.errors ?? undefined,
-      warnings: parsedFailure?.warnings ?? undefined,
-      summary: parsedFailure?.message ?? undefined,
-      output: combined.trim(),
-      rawOutput: rawCombined.trim() || combined.trim(),
-    });
-
-    recordIssueCounts(parsedFailure);
-  } catch (error) {
-    durations[index] = Date.now() - startTime;
-    const message =
-      error instanceof Error
-        ? error.message
-        : typeof error === "string"
-          ? error
-          : "Failed to execute command";
-    updateStatus(index, "failure", message);
-
-    failures.push({
-      label: step.label,
-      tool: step.tool,
-      command: step.command,
-      summary: message,
-      output: message,
-      rawOutput: message,
-    });
-
-    recordIssueCounts();
-  }
 }
