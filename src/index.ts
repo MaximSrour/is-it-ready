@@ -2,20 +2,11 @@
 
 import chalk from "chalk";
 
-import {
-  type FailureDetails,
-  type ParsedFailure,
-  type TaskState,
-} from "@/config/types";
+import { type FailureDetails } from "@/config/types";
 
 import pkg from "../package.json";
 import { Task, taskConfig } from "./config";
-import {
-  formatDuration,
-  runCommand,
-  stripAnsi,
-  taskStateIcons,
-} from "./helpers";
+import { formatDuration, taskStateIcons } from "./helpers";
 import {
   colorStatusMessage,
   printFailureDetails,
@@ -32,9 +23,6 @@ const tasks: Task[] = taskConfig.map((config) => {
 
 const tableHeaders = ["Label", "Tool", "Results", "Time"];
 
-const durations = tasks.map(() => {
-  return null as number | null;
-});
 const failures: FailureDetails[] = [];
 let totalErrors = 0;
 let totalWarnings = 0;
@@ -51,34 +39,14 @@ void main().catch((error) => {
 async function main() {
   render(runOptions);
   await Promise.all(
-    tasks.map((task, index) => {
-      return executeTask(task, index);
+    tasks.map((task) => {
+      return executeTask(task);
     })
   );
   suiteFinished = true;
   suiteDurationMs = Date.now() - suiteStartTime;
   render(runOptions, failures.length > 0 ? failures : null);
   process.exit(failures.length > 0 ? 1 : 0);
-}
-
-function updateStatus(index: number, state: TaskState, message: string) {
-  tasks[index].setStatus({ state, message });
-  render(runOptions);
-}
-
-function recordIssueCounts(parsedFailure?: ParsedFailure | null) {
-  if (!parsedFailure) {
-    totalErrors += 1;
-    return;
-  }
-  const errors = parsedFailure.errors ?? 0;
-  const warnings = parsedFailure.warnings ?? 0;
-  if (errors === 0 && warnings === 0) {
-    totalErrors += 1;
-    return;
-  }
-  totalErrors += errors;
-  totalWarnings += warnings;
 }
 
 function render(
@@ -108,7 +76,7 @@ function render(
     printFailureDetails(failures, runOptions);
   }
 
-  const rows = tasks.map((task, idx) => {
+  const rows = tasks.map((task) => {
     const status = task.getStatus();
     const message =
       status.state === "pending"
@@ -118,7 +86,7 @@ function render(
       `${taskStateIcons[status.state]} ${task.label}`,
       task.tool,
       message,
-      formatDuration(durations[idx]),
+      formatDuration(task.getDuration()),
     ];
   });
   const overallIssues = totalErrors + totalWarnings;
@@ -150,59 +118,17 @@ function render(
   console.log(renderTable(tableHeaders, rows, overallRow));
 }
 
-async function executeTask(task: Task, index: number) {
-  updateStatus(index, "running", "Running...");
-  const startTime = Date.now();
+async function executeTask(task: Task) {
+  await task.execute({
+    onStart: () => {
+      render(runOptions);
+    },
+    onFinish: () => {
+      render(runOptions);
+    },
+  });
 
-  try {
-    const result = await runCommand(task.command);
-    durations[index] = Date.now() - startTime;
-    const rawCombined = [result.stdout, result.stderr]
-      .filter(Boolean)
-      .join("\n");
-    const combined = stripAnsi(rawCombined);
-    const parsedFailure = task.parseFailure?.(combined);
-
-    if (result.status === 0 && !parsedFailure) {
-      updateStatus(index, "success", "Passed");
-      return;
-    }
-
-    const detail =
-      parsedFailure?.message ?? "Failed - see output below for details";
-    updateStatus(index, "failure", detail);
-
-    failures.push({
-      label: task.label,
-      tool: task.tool,
-      command: task.command,
-      errors: parsedFailure?.errors ?? undefined,
-      warnings: parsedFailure?.warnings ?? undefined,
-      summary: parsedFailure?.message ?? undefined,
-      output: combined.trim(),
-      rawOutput: rawCombined.trim() || combined.trim(),
-    });
-
-    recordIssueCounts(parsedFailure);
-  } catch (error) {
-    durations[index] = Date.now() - startTime;
-    const message =
-      error instanceof Error
-        ? error.message
-        : typeof error === "string"
-          ? error
-          : "Failed to execute command";
-    updateStatus(index, "failure", message);
-
-    failures.push({
-      label: task.label,
-      tool: task.tool,
-      command: task.command,
-      summary: message,
-      output: message,
-      rawOutput: message,
-    });
-
-    recordIssueCounts();
-  }
+  totalErrors += task.getTotalErrors();
+  totalWarnings += task.getTotalWarnings();
+  failures.push(...task.getFailures());
 }
