@@ -2,8 +2,12 @@
 
 import chalk from "chalk";
 
-import { type TaskState, type TaskStatus } from "@/config/types";
-import { type ParsedFailure } from "@/parsers/types";
+import {
+  type FailureDetails,
+  type ParsedFailure,
+  type TaskState,
+  type TaskStatus,
+} from "@/config/types";
 
 import pkg from "../package.json";
 import { Task, taskConfig } from "./config";
@@ -20,7 +24,6 @@ import {
 } from "./renderers";
 import { getRunOptions } from "./runOptions/runOptions";
 import { type RunOptions } from "./runOptions/types";
-import { type FailureDetails } from "./types";
 
 const runOptions = getRunOptions();
 

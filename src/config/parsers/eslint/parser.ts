@@ -1,4 +1,4 @@
-import { type ParsedFailure } from "@/parsers/types";
+import { type ParsedFailure } from "@/config/types";
 
 export const parseEslint = (output: string): ParsedFailure | undefined => {
   const summary = output.match(

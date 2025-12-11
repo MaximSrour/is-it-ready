@@ -1,4 +1,17 @@
-import { type ParserFunction, type ToolName } from "@/parsers/types";
+export type ToolName =
+  | "Prettier"
+  | "ESLint"
+  | "MarkdownLint"
+  | "TypeScript"
+  | "Vitest"
+  | "Knip"
+  | "npm audit";
+
+export type ParsedFailure = {
+  message: string;
+  errors?: number;
+  warnings?: number;
+};
 
 export type TaskState = "pending" | "running" | "success" | "failure";
 
@@ -10,5 +23,16 @@ export type TaskConfig = {
   command: string;
   looseCommand?: string;
   fixCommand?: string;
-  parseFailure: ParserFunction;
+  parseFailure: (output: string) => ParsedFailure | undefined;
+};
+
+export type FailureDetails = {
+  label: string;
+  tool: ToolName;
+  command: string;
+  output: string;
+  rawOutput: string;
+  errors?: number;
+  warnings?: number;
+  summary?: string;
 };

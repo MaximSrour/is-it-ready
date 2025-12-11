@@ -6,7 +6,7 @@ import {
   parsePrettier,
   parseTypeCheck,
   parseVitest,
-} from "../parsers";
+} from "./parsers";
 import { type TaskConfig } from "./types";
 
 export const taskConfig: TaskConfig[] = [

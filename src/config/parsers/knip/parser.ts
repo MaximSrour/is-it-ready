@@ -1,4 +1,4 @@
-import { type ParsedFailure } from "@/parsers/types";
+import { type ParsedFailure } from "../../types";
 
 export const parseKnip = (output: string): ParsedFailure | undefined => {
   const sectionPattern = /\((\d+)\)/g;

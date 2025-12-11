@@ -2,9 +2,8 @@ import chalk from "chalk";
 
 import { type RunOptions } from "@/runOptions/types";
 
-import { type TaskState } from "../config/types";
+import { type FailureDetails, type TaskState } from "../config/types";
 import { stripAnsi } from "../helpers";
-import { type FailureDetails } from "../types";
 import { type BorderChars, type BorderLevel } from "./types";
 
 const BORDER_CHARS: Record<BorderLevel, BorderChars> = {

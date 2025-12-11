@@ -1,4 +1,4 @@
-import { type ParsedFailure } from "@/parsers/types";
+import { type ParsedFailure } from "../../types";
 
 export const parseMarkdownLint = (
   output: string

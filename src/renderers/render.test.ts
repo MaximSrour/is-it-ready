@@ -1,8 +1,9 @@
 import chalk from "chalk";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
+import { type FailureDetails } from "@/config/types";
+
 import { noOp } from "../helpers";
-import { type FailureDetails } from "../types";
 import * as renderModule from "./render";
 import {
   colorStatusMessage,

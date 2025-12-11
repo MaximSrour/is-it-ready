@@ -1,8 +1,7 @@
-import { type ParsedFailure, type ToolName } from "@/parsers/types";
 import { type RunOptions } from "@/runOptions/types";
 
 import { selectCommand } from "../helpers";
-import { type TaskConfig } from "./types";
+import { type ParsedFailure, type TaskConfig, type ToolName } from "./types";
 
 export class Task {
   readonly label: string;

@@ -1,4 +1,4 @@
-import { type ParsedFailure } from "@/parsers/types";
+import { type ParsedFailure } from "../../types";
 
 export const parseVitest = (output: string): ParsedFailure | undefined => {
   const fileFailures = output.match(/Test Files\s+(\d+)\s+failed/i);
