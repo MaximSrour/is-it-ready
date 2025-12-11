@@ -15,12 +15,6 @@ import {
 import { getRunOptions } from "./runOptions/runOptions";
 import { type RunOptions } from "./runOptions/types";
 
-const runOptions = getRunOptions();
-
-const tasks: Task[] = taskConfig.map((config) => {
-  return new Task(config, runOptions);
-});
-
 const tableHeaders = ["Label", "Tool", "Results", "Time"];
 
 const failures: FailureDetails[] = [];
@@ -37,19 +31,32 @@ void main().catch((error) => {
 });
 
 async function main() {
-  render(runOptions);
+  const runOptions = getRunOptions();
+
+  const tasks: Task[] = taskConfig.map((config) => {
+    return new Task(config, runOptions);
+  });
+
+  render(tasks, runOptions);
+
   await Promise.all(
     tasks.map((task) => {
-      return executeTask(task);
+      return executeTask(task, () => {
+        render(tasks, runOptions);
+      });
     })
   );
+
   suiteFinished = true;
   suiteDurationMs = Date.now() - suiteStartTime;
-  render(runOptions, failures.length > 0 ? failures : null);
+
+  render(tasks, runOptions, failures.length > 0 ? failures : null);
+
   process.exit(failures.length > 0 ? 1 : 0);
 }
 
 function render(
+  tasks: Task[],
   runOptions: RunOptions,
   failures: FailureDetails[] | null = null
 ) {
@@ -118,13 +125,13 @@ function render(
   console.log(renderTable(tableHeaders, rows, overallRow));
 }
 
-async function executeTask(task: Task) {
+async function executeTask(task: Task, render: () => void) {
   await task.execute({
     onStart: () => {
-      render(runOptions);
+      render();
     },
     onFinish: () => {
-      render(runOptions);
+      render();
     },
   });
 
