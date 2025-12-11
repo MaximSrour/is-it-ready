@@ -17,7 +17,7 @@ export class Task {
 
   private status: TaskStatus;
   private startTime: number | null = null;
-  private duration: number | null = null;
+  private endTime: number | null = null;
   private failures: FailureDetails[] = [];
   private totalErrors = 0;
   private totalWarnings = 0;
@@ -134,17 +134,27 @@ export class Task {
 
   private startTimer() {
     this.startTime = Date.now();
-    this.duration = null;
+    this.endTime = null;
   }
 
   private stopTimer() {
     if (this.startTime !== null) {
-      this.duration = Date.now() - this.startTime;
+      this.endTime = Date.now();
     }
   }
 
+  getStartTime() {
+    return this.startTime;
+  }
+
+  getEndTime() {
+    return this.endTime;
+  }
+
   getDuration() {
-    return this.duration;
+    return this.endTime !== null && this.startTime !== null
+      ? this.endTime - this.startTime
+      : null;
   }
 
   getFailures() {
