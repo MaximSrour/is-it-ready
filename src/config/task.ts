@@ -6,13 +6,12 @@ import {
   type ParsedFailure,
   type TaskConfig,
   type TaskStatus,
-  type ToolName,
 } from "./types";
 
 export class Task {
   readonly label: string;
   readonly command: string;
-  readonly tool: ToolName;
+  readonly tool: string;
 
   readonly parseFailure: (output: string) => ParsedFailure | undefined;
 

@@ -1,12 +1,3 @@
-export type ToolName =
-  | "Prettier"
-  | "ESLint"
-  | "MarkdownLint"
-  | "TypeScript"
-  | "Vitest"
-  | "Knip"
-  | "npm audit";
-
 export type ParsedFailure = {
   message: string;
   errors?: number;
@@ -19,7 +10,7 @@ export type TaskStatus = { state: TaskState; message: string };
 
 export type TaskConfig = {
   label: string;
-  tool: ToolName;
+  tool: string;
   command: string;
   looseCommand?: string;
   fixCommand?: string;
@@ -28,7 +19,7 @@ export type TaskConfig = {
 
 export type FailureDetails = {
   label: string;
-  tool: ToolName;
+  tool: string;
   command: string;
   output: string;
   rawOutput: string;
