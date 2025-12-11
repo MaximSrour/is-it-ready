@@ -1,8 +1,6 @@
-import { type ParsedFailure } from "parsers/types";
+import { type ParsedFailure } from "@/parsers/types";
 
-import { registerParser } from "../registry";
-
-const parseVitest = (output: string): ParsedFailure | undefined => {
+export const parseVitest = (output: string): ParsedFailure | undefined => {
   const fileFailures = output.match(/Test Files\s+(\d+)\s+failed/i);
   const testFailures = output.match(/Tests\s+(\d+)\s+failed/i);
 
@@ -39,5 +37,3 @@ const parseVitest = (output: string): ParsedFailure | undefined => {
     errors: totalFailures || 1,
   };
 };
-
-registerParser("Vitest", parseVitest);

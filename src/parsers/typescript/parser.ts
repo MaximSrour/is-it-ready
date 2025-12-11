@@ -1,8 +1,6 @@
-import { type ParsedFailure } from "parsers/types";
+import { type ParsedFailure } from "@/parsers/types";
 
-import { registerParser } from "../registry";
-
-const parseTypeCheck = (output: string): ParsedFailure | undefined => {
+export const parseTypeCheck = (output: string): ParsedFailure | undefined => {
   const summary = output.match(
     /Found\s+(\d+)\s+errors?\s+in\s+(\d+)\s+files?/i
   );
@@ -58,5 +56,3 @@ const parseTypeCheck = (output: string): ParsedFailure | undefined => {
     errors: count,
   };
 };
-
-registerParser("TypeScript", parseTypeCheck);

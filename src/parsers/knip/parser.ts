@@ -1,8 +1,6 @@
-import { type ParsedFailure } from "parsers/types";
+import { type ParsedFailure } from "@/parsers/types";
 
-import { registerParser } from "../registry";
-
-const parseKnip = (output: string): ParsedFailure | undefined => {
+export const parseKnip = (output: string): ParsedFailure | undefined => {
   const sectionPattern = /\((\d+)\)/g;
   let total = 0;
 
@@ -32,5 +30,3 @@ const parseKnip = (output: string): ParsedFailure | undefined => {
     errors: total,
   };
 };
-
-registerParser("Knip", parseKnip);

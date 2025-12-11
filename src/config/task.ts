@@ -4,10 +4,6 @@ import { type RunOptions } from "@/runOptions/types";
 import { selectCommand } from "../helpers";
 import { type TaskConfig } from "./types";
 
-type ConfigType = TaskConfig & {
-  parseFailure?: (output: string) => ParsedFailure | undefined;
-};
-
 export class Task {
   readonly label: string;
   readonly command: string;
@@ -15,7 +11,7 @@ export class Task {
 
   readonly parseFailure?: (output: string) => ParsedFailure | undefined;
 
-  constructor(config: ConfigType, runOptions: RunOptions) {
+  constructor(config: TaskConfig, runOptions: RunOptions) {
     const executableCommand = selectCommand(config, runOptions);
 
     this.label = executableCommand.label;

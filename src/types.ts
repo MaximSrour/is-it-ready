@@ -1,4 +1,4 @@
-import { type ToolName } from "parsers/types";
+import { type ToolName } from "@/parsers/types";
 
 export type FailureDetails = {
   label: string;

@@ -1,10 +1,7 @@
-import "./eslint/parser";
-import "./knip/parser";
-import "./markdownlint/parser";
-import "./npm-audit/parser";
-import "./prettier/parser";
-import "./typescript/parser";
-import "./vitest/parser";
-
-export { getParser, parserMap } from "./registry";
-export { type ParserFunction } from "./types";
+export { parseEslint } from "./eslint";
+export { parseKnip } from "./knip";
+export { parseMarkdownLint } from "./markdownlint";
+export { parseNpmAudit } from "./npm-audit";
+export { parsePrettier } from "./prettier";
+export { parseTypeCheck } from "./typescript";
+export { parseVitest } from "./vitest";

@@ -1,4 +1,4 @@
-import { type ToolName } from "parsers/types";
+import { type ParserFunction, type ToolName } from "@/parsers/types";
 
 export type TaskState = "pending" | "running" | "success" | "failure";
 
@@ -10,4 +10,5 @@ export type TaskConfig = {
   command: string;
   looseCommand?: string;
   fixCommand?: string;
+  parseFailure: ParserFunction;
 };

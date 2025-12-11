@@ -1,0 +1,1 @@
+export { parsePrettier } from "./parser";

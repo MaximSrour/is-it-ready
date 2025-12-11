@@ -1,19 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { type ParserFunction, getParser } from "..";
-import "./parser";
-
-const resolveParser = (name: string): ParserFunction => {
-  const parser = getParser(name);
-
-  if (!parser) {
-    throw new Error(`Parser "${name}" not registered`);
-  }
-
-  return parser;
-};
-
-const parseVitest = resolveParser("Vitest");
+import { parseVitest } from "./parser";
 
 describe("parseVitest", () => {
   it("reports file and test failures", () => {

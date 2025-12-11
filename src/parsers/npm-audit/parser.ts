@@ -1,8 +1,6 @@
-import { type ParsedFailure } from "parsers/types";
+import { type ParsedFailure } from "@/parsers/types";
 
-import { registerParser } from "../registry";
-
-const parseNpmAudit = (output: string): ParsedFailure | undefined => {
+export const parseNpmAudit = (output: string): ParsedFailure | undefined => {
   const summaryRegex =
     /(?:found\s+)?(\d+)\s+vulnerabilities?(?:\s+\(([^)]+)\))?/gi;
   const summary = summaryRegex.exec(output);
@@ -39,5 +37,3 @@ const parseNpmAudit = (output: string): ParsedFailure | undefined => {
 
   return undefined;
 };
-
-registerParser("npm audit", parseNpmAudit);

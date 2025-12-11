@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
 import chalk from "chalk";
-import { type ParsedFailure } from "parsers/types";
 
 import { type TaskState, type TaskStatus } from "@/config/types";
+import { type ParsedFailure } from "@/parsers/types";
 
 import pkg from "../package.json";
 import { Task, taskConfig } from "./config";
@@ -13,7 +13,6 @@ import {
   stripAnsi,
   taskStateIcons,
 } from "./helpers";
-import { parserMap } from "./parsers";
 import {
   colorStatusMessage,
   printFailureDetails,
@@ -26,10 +25,7 @@ import { type FailureDetails } from "./types";
 const runOptions = getRunOptions();
 
 const tasks: Task[] = taskConfig.map((config) => {
-  return new Task(
-    { ...config, parseFailure: parserMap[config.tool] },
-    runOptions
-  );
+  return new Task(config, runOptions);
 });
 
 const tableHeaders = ["Label", "Tool", "Results", "Time"];

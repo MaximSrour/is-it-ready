@@ -13,6 +13,4 @@ export type ParsedFailure = {
   warnings?: number;
 };
 
-export type ParserName = ToolName | (string & {});
-
 export type ParserFunction = (output: string) => ParsedFailure | undefined;

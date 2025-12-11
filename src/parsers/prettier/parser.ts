@@ -1,8 +1,6 @@
-import { type ParsedFailure } from "parsers/types";
+import { type ParsedFailure } from "@/parsers/types";
 
-import { registerParser } from "../registry";
-
-const parsePrettier = (output: string): ParsedFailure | undefined => {
+export const parsePrettier = (output: string): ParsedFailure | undefined => {
   const summaryPatterns = [
     /(\d+)\s+files?\s+(?:are|is)\s+not\s+formatted/i,
     /(\d+)\s+files?\s+with\s+code\s+style\s+issues?/i,
@@ -38,5 +36,3 @@ const formatPrettierCount = (
     errors: value,
   };
 };
-
-registerParser("Prettier", parsePrettier);
