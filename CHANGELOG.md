@@ -1,3 +1,10 @@
+## [1.2.6](https://github.com/MaximSrour/is-it-ready/compare/v1.2.5...v1.2.6) (2025-12-12)
+
+
+### Bug Fixes
+
+* merge conflict resolution ([9ef7135](https://github.com/MaximSrour/is-it-ready/commit/9ef7135c5f3b2049a21ac800e25bf8fa6c4ffaf1))
+
 ## [1.2.5](https://github.com/MaximSrour/is-it-ready/compare/v1.2.4...v1.2.5) (2025-12-12)
 
 
