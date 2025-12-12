@@ -45,7 +45,6 @@ const looseOverrides = {
     "jsdoc/require-yields-type": "off",
     "jsdoc/require-yields": "off",
     "jsdoc/text-escaping": "off",
-    "jsdoc/ts-prefer-function-type": "off",
     "jsdoc/ts-method-signature-style": "off",
     "jsdoc/ts-prefer-function-type": "off",
     "jsdoc/ts-no-unnecessary-template-expression": "off",
