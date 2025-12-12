@@ -22,7 +22,6 @@ const TABLE_HEADERS = ["Label", "Tool", "Results", "Time"];
  * @param {string[]} headers - array of header titles
  * @param {string[][]} rows - array of rows, each row is an array of cell values
  * @param {string[]} [footerRow] - optional footer row
- *
  * @returns {string} - rendered table string
  */
 export const renderTable = (
@@ -71,7 +70,6 @@ export const renderTable = (
  *
  * @param {number[]} columnWidths - array of column widths
  * @param {BorderLevel} borderLevel - type of border to render
- *
  * @returns {string} - rendered border string
  */
 export const renderBorder = (
@@ -91,7 +89,6 @@ export const renderBorder = (
  *
  * @param {string[]} row - array of cell values
  * @param {number[]} columnWidths - array of column widths
- *
  * @returns {string} - rendered row string
  */
 export const renderRow = (row: string[], columnWidths: number[]) => {
@@ -107,7 +104,6 @@ export const renderRow = (row: string[], columnWidths: number[]) => {
  *
  * @param {string} value - cell value
  * @param {number} columnWidth - desired width
- *
  * @returns {string} - padded cell value
  */
 export const padCell = (value: string, columnWidth: number) => {
@@ -124,7 +120,6 @@ export const padCell = (value: string, columnWidth: number) => {
  * Calculates the display width of a string, accounting for full-width characters.
  *
  * @param {string} value - input string
- *
  * @returns {number} - display width of the string
  */
 export const getDisplayWidth = (value: string) => {
@@ -163,7 +158,6 @@ export const getDisplayWidth = (value: string) => {
  * Full-width characters typically occupy two character cells in terminal displays.
  *
  * @param {number | null} codePoint - The Unicode code point to check.
- *
  * @returns {boolean} - True if the code point is full-width, false otherwise.
  */
 export const isFullWidthCodePoint = (codePoint?: number | null) => {
@@ -197,7 +191,6 @@ export const isFullWidthCodePoint = (codePoint?: number | null) => {
  *
  * @param {string} message - The status message to color.
  * @param {TaskState} state - The state of the task ("pending", "running", "success", "failure").
- *
  * @returns {string} - The colored status message.
  */
 export const colorStatusMessage = (message: string, state: TaskState) => {
@@ -216,7 +209,6 @@ export const colorStatusMessage = (message: string, state: TaskState) => {
  * Builds a formatted string summarizing failure details for display.
  *
  * @param {FailureDetails} failure - metadata describing the failed task
- *
  * @returns {string} - decorated headline containing label, tool, command, and breakdown
  */
 export const formatFailureHeadline = (failure: FailureDetails) => {
