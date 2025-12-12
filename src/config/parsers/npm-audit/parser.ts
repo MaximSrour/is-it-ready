@@ -20,8 +20,8 @@ export const parseNpmAudit = (output: string): ParsedFailure | undefined => {
     const detail = breakdown.length > 0 ? ` (${breakdown.join(", ")})` : "";
 
     return {
-      message: `Failed - ${total} vulnerabilit${
-        total === 1 ? "y" : "ies"
+      message: `Failed - ${total} ${
+        total === 1 ? "vulnerability" : "vulnerabilities"
       }${detail}`,
       errors: total,
     };
