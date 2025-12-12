@@ -26,39 +26,51 @@ export const parseNpmOutdated = (output: string): ParsedFailure | undefined => {
   });
   const dataLines = headerIndex >= 0 ? lines.slice(headerIndex + 1) : lines;
 
-  const outdatedPackages = dataLines.reduce<string[]>((acc, line) => {
-    const trimmedLine = line.trim();
-    if (!trimmedLine) {
+  const { outdatedPackages, pinnedPackages } = dataLines.reduce<{
+    outdatedPackages: string[];
+    pinnedPackages: string[];
+  }>(
+    (acc, line) => {
+      const trimmedLine = line.trim();
+      if (!trimmedLine) {
+        return acc;
+      }
+
+      if (/^npm\s+/i.test(trimmedLine)) {
+        return acc;
+      }
+
+      const match = rowRegex.exec(trimmedLine);
+      if (!match) {
+        return acc;
+      }
+
+      const [, packageName, current, wanted, latest] = match;
+      const latestIsUnknown = latest.toLowerCase() === "n/a";
+
+      if (current !== wanted) {
+        acc.outdatedPackages.push(packageName);
+      } else if (!latestIsUnknown && wanted !== latest) {
+        acc.pinnedPackages.push(packageName);
+      }
+
       return acc;
-    }
+    },
+    { outdatedPackages: [], pinnedPackages: [] }
+  );
 
-    if (/^npm\s+/i.test(trimmedLine)) {
-      return acc;
-    }
+  const outdatedCount = outdatedPackages.length;
+  const pinnedCount = pinnedPackages.length;
 
-    const match = rowRegex.exec(trimmedLine);
-    if (!match) {
-      return acc;
-    }
-
-    const [, packageName, current, wanted] = match;
-    if (current === wanted) {
-      return acc;
-    }
-
-    acc.push(packageName);
-
-    return acc;
-  }, []);
-
-  if (outdatedPackages.length === 0) {
+  if (outdatedCount === 0 && pinnedCount === 0) {
     return undefined;
   }
 
-  const packageLabel = outdatedPackages.length === 1 ? "package" : "packages";
+  const totalIssues = outdatedCount + pinnedCount;
 
   return {
-    message: `Failed - ${outdatedPackages.length} outdated ${packageLabel}`,
-    errors: outdatedPackages.length,
+    message: `Failed - ${totalIssues} outdated ${totalIssues === 1 ? "package" : "packages"}`,
+    errors: outdatedCount > 0 ? outdatedCount : undefined,
+    warnings: pinnedCount > 0 ? pinnedCount : undefined,
   };
 };
