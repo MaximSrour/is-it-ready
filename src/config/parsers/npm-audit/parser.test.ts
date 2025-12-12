@@ -19,6 +19,20 @@ describe("parseNpmAudit", () => {
     expect(parseNpmAudit("found 0 vulnerabilities")).toBeUndefined();
   });
 
+  it("reports singular vulnerability count with breakdown", () => {
+    const output = [
+      "1 vulnerability (1 error)",
+      "0 vulnerabilities require manual review.",
+    ].join("\n");
+
+    const result = parseNpmAudit(output);
+
+    expect(result).toEqual({
+      message: "Failed - 1 vulnerability (1 error)",
+      errors: 1,
+    });
+  });
+
   it("parses summary without 'found' prefix", () => {
     const output = [
       "# npm audit report",
