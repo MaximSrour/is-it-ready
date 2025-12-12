@@ -44,7 +44,6 @@ const looseOverrides = {
     "jsdoc/require-description": "off",
     "jsdoc/require-description-complete-sentence": "off",
     "jsdoc/require-example": "off",
-    "jsdoc/require-hyphen-before-param-description": "off",
     "jsdoc/require-next-description": "off",
     "jsdoc/require-next-type": "off",
     "jsdoc/require-param-description": "off",
@@ -126,6 +125,7 @@ export default defineConfig([
       "unused-imports/no-unused-imports": "warn",
 
       "jsdoc/require-file-overview": "off",
+      "jsdoc/require-hyphen-before-param-description": "warn",
       "jsdoc/require-jsdoc": "warn",
       "jsdoc/sort-tags": "warn",
       "jsdoc/tag-lines": ["warn", "any", { startLines: 1, endLines: 1 }],
