@@ -283,6 +283,7 @@ export const printFailureDetails = (
  * @param {Task[]} tasks - Array of tasks to render
  * @param {RunOptions} runOptions - Options that influenced the run
  */
+export const render = (tasks: Task[], runOptions: RunOptions) => {
   if (process.stdout.isTTY) {
     console.clear();
   }
