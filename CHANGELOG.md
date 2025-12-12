@@ -1,3 +1,10 @@
+## [1.2.5](https://github.com/MaximSrour/is-it-ready/compare/v1.2.4...v1.2.5) (2025-12-12)
+
+
+### Bug Fixes
+
+* update regex to correctly parse singular vulnerability in npm audit output ([a8cb0fb](https://github.com/MaximSrour/is-it-ready/commit/a8cb0fba7d5161105278b176f6b55221f68c94fc))
+
 ## [1.2.4](https://github.com/MaximSrour/is-it-ready/compare/v1.2.3...v1.2.4) (2025-12-10)
 
 
