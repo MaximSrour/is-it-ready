@@ -2,7 +2,7 @@ import { type ParsedFailure } from "../../types";
 
 export const parseNpmAudit = (output: string): ParsedFailure | undefined => {
   const summaryRegex =
-    /(?:found\s+)?(\d+)\s+vulnerabilities?(?:\s+\(([^)]+)\))?/gi;
+    /(?:found\s+)?(\d+)\s+vulnerabilit(?:y|ies)(?:\s+\(([^)]+)\))?/gi;
   const summary = summaryRegex.exec(output);
 
   if (summary) {
@@ -20,8 +20,8 @@ export const parseNpmAudit = (output: string): ParsedFailure | undefined => {
     const detail = breakdown.length > 0 ? ` (${breakdown.join(", ")})` : "";
 
     return {
-      message: `Failed - ${total} vulnerabilit${
-        total === 1 ? "y" : "ies"
+      message: `Failed - ${total} ${
+        total === 1 ? "vulnerability" : "vulnerabilities"
       }${detail}`,
       errors: total,
     };
