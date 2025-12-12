@@ -8,9 +8,8 @@ import { type CommandResult, type ExecutableCommand } from "./types";
 /**
  * Adds an indicator to a label.
  *
- * @param {string} label - original label
- *
- * @returns {string} - label decorated with an asterisk
+ * @param {string} label - Original label.
+ * @returns {string} - Label decorated with an asterisk.
  */
 export const decorateLabel = (label: string) => {
   return `${label}*`;
@@ -19,10 +18,9 @@ export const decorateLabel = (label: string) => {
 /**
  * Picks the correct command to execute from the provided task config.
  *
- * @param {TaskConfig} toolConfig - configuration for the task
- * @param {RunOptions} runOptions - the current run options
- *
- * @returns {ExecutableCommand} - command to execute for the task
+ * @param {TaskConfig} toolConfig - Configuration for the task.
+ * @param {RunOptions} runOptions - The current run options.
+ * @returns {ExecutableCommand} - Command to execute for the task.
  */
 export const selectCommand = (
   toolConfig: TaskConfig,
@@ -50,11 +48,9 @@ export const selectCommand = (
 /**
  * Executes the provided command asynchronously after validating it.
  *
- * @param {string} command - command string to execute
- *
- * @returns {Promise<CommandResult>} - child process result
- *
- * @throws when the command is empty
+ * @param {string} command - Command string to execute.
+ * @returns {Promise<CommandResult>} - Child process result.
+ * @throws {Error} When the command is empty.
  */
 export const runCommand = async (command: string): Promise<CommandResult> => {
   const trimmed = command.trim();
@@ -100,9 +96,8 @@ export const runCommand = async (command: string): Promise<CommandResult> => {
 /**
  * Ensures npm run commands are executed with --silent to reduce noise.
  *
- * @param {string} command - input command string
- *
- * @returns {string} - command, adding --silent for npm run invocations
+ * @param {string} command - Input command string.
+ * @returns {string} - Command, adding --silent for npm run invocations.
  */
 export const addSilentFlag = (command: string) => {
   if (!/^npm\b/.test(command.trim())) {
@@ -119,9 +114,8 @@ export const addSilentFlag = (command: string) => {
 /**
  * Removes ANSI escape codes from a string.
  *
- * @param {string} value - input string
- *
- * @returns {string} - string without ANSI escape codes
+ * @param {string} value - Input string.
+ * @returns {string} - String without ANSI escape codes.
  */
 export const stripAnsi = (value: string) => {
   return value.replace(/\u001b\[.*?m/g, "");
@@ -130,9 +124,8 @@ export const stripAnsi = (value: string) => {
 /**
  * Formats a duration in milliseconds into a human-readable string.
  *
- * @param {number | null} durationMs - duration in milliseconds
- *
- * @returns {string} - formatted duration string
+ * @param {number | null} durationMs - Duration in milliseconds.
+ * @returns {string} - Formatted duration string.
  */
 export const formatDuration = (durationMs: number | null) => {
   if (durationMs === null) {

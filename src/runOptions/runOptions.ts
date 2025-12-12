@@ -8,7 +8,7 @@ import { type RunOptions } from "./types";
  * Parses command-line arguments to determine run options.
  * Processes arguments one by one, exiting immediately if --help or --version is encountered.
  *
- * @returns {RunOptions} - object indicating active modes
+ * @returns {RunOptions} - Object indicating active modes.
  */
 export const getRunOptions = (): RunOptions => {
   const args = process.argv.slice(2);

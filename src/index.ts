@@ -12,6 +12,9 @@ void main().catch((error) => {
   process.exit(1);
 });
 
+/**
+ * Main entry point for executing tasks.
+ */
 async function main() {
   const runOptions = getRunOptions();
 
