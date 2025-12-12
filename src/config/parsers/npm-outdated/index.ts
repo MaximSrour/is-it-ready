@@ -1,0 +1,1 @@
+export { parseNpmOutdated } from "./parser";

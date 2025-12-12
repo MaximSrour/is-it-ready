@@ -3,6 +3,7 @@ import {
   parseKnip,
   parseMarkdownLint,
   parseNpmAudit,
+  parseNpmOutdated,
   parsePrettier,
   parseTypeCheck,
   parseVitest,
@@ -58,5 +59,11 @@ export const taskConfig: TaskConfig[] = [
     tool: "npm audit",
     command: "npm audit",
     parseFailure: parseNpmAudit,
+  },
+  {
+    label: "Outdated Packages",
+    tool: "npm outdated",
+    command: "npm outdated",
+    parseFailure: parseNpmOutdated,
   },
 ];
