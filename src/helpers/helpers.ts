@@ -9,7 +9,6 @@ import { type CommandResult, type ExecutableCommand } from "./types";
  * Adds an indicator to a label.
  *
  * @param {string} label - original label
- *
  * @returns {string} - label decorated with an asterisk
  */
 export const decorateLabel = (label: string) => {
@@ -21,7 +20,6 @@ export const decorateLabel = (label: string) => {
  *
  * @param {TaskConfig} toolConfig - configuration for the task
  * @param {RunOptions} runOptions - the current run options
- *
  * @returns {ExecutableCommand} - command to execute for the task
  */
 export const selectCommand = (
@@ -51,9 +49,7 @@ export const selectCommand = (
  * Executes the provided command asynchronously after validating it.
  *
  * @param {string} command - command string to execute
- *
  * @returns {Promise<CommandResult>} - child process result
- *
  * @throws when the command is empty
  */
 export const runCommand = async (command: string): Promise<CommandResult> => {
@@ -101,7 +97,6 @@ export const runCommand = async (command: string): Promise<CommandResult> => {
  * Ensures npm run commands are executed with --silent to reduce noise.
  *
  * @param {string} command - input command string
- *
  * @returns {string} - command, adding --silent for npm run invocations
  */
 export const addSilentFlag = (command: string) => {
@@ -120,7 +115,6 @@ export const addSilentFlag = (command: string) => {
  * Removes ANSI escape codes from a string.
  *
  * @param {string} value - input string
- *
  * @returns {string} - string without ANSI escape codes
  */
 export const stripAnsi = (value: string) => {
@@ -131,7 +125,6 @@ export const stripAnsi = (value: string) => {
  * Formats a duration in milliseconds into a human-readable string.
  *
  * @param {number | null} durationMs - duration in milliseconds
- *
  * @returns {string} - formatted duration string
  */
 export const formatDuration = (durationMs: number | null) => {
