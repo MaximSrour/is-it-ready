@@ -52,7 +52,9 @@
     "check:fix": "ts-node --transpile-only src/index.ts --fix"
   },
   "dependencies": {
-    "chalk": "^4.1.2"
+    "chalk": "^4.1.2",
+    "cosmiconfig": "^9.0.0",
+    "is-installed-globally": "^1.0.0"
   },
   "devDependencies": {
     "@cspell/eslint-plugin": "^9.4.0",

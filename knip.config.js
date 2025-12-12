@@ -1,3 +1,3 @@
 module.exports = {
-  ignore: ["dist/**"],
+  ignore: ["dist/**", ".is-it-ready.config.*"],
 };

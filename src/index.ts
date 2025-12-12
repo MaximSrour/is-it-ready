@@ -2,7 +2,7 @@
 
 import chalk from "chalk";
 
-import { Task, taskConfig } from "./config";
+import { loadUserConfig } from "./config";
 import { render } from "./renderers";
 import { getRunOptions } from "./runOptions/runOptions";
 
@@ -18,9 +18,13 @@ void main().catch((error) => {
 async function main() {
   const runOptions = getRunOptions();
 
-  const tasks: Task[] = taskConfig.map((config) => {
-    return new Task(config, runOptions);
-  });
+  const tasks = await loadUserConfig(runOptions);
+
+  if (tasks === null) {
+    throw new Error(
+      "No user configuration found. Please create a .is-it-ready.config.js file."
+    );
+  }
 
   render(tasks, runOptions);
 
