@@ -19,10 +19,10 @@ const TABLE_HEADERS = ["Label", "Tool", "Results", "Time"];
 /**
  * Renders a table with borders, headers, rows, and an optional footer.
  *
- * @param {string[]} headers - array of header titles
- * @param {string[][]} rows - array of rows, each row is an array of cell values
- * @param {string[]} [footerRow] - optional footer row
- * @returns {string} - rendered table string
+ * @param {string[]} headers - Array of header titles.
+ * @param {string[][]} rows - Array of rows, each row is an array of cell values.
+ * @param {string[]} [footerRow] - Optional footer row.
+ * @returns {string} - Rendered table string.
  */
 export const renderTable = (
   headers: string[],
@@ -68,9 +68,9 @@ export const renderTable = (
 /**
  * Renders a table border using specified characters.
  *
- * @param {number[]} columnWidths - array of column widths
- * @param {BorderLevel} borderLevel - type of border to render
- * @returns {string} - rendered border string
+ * @param {number[]} columnWidths - Array of column widths.
+ * @param {BorderLevel} borderLevel - Type of border to render.
+ * @returns {string} - Rendered border string.
  */
 export const renderBorder = (
   columnWidths: number[],
@@ -87,9 +87,9 @@ export const renderBorder = (
 /**
  * Renders a table row with padded cells.
  *
- * @param {string[]} row - array of cell values
- * @param {number[]} columnWidths - array of column widths
- * @returns {string} - rendered row string
+ * @param {string[]} row - Array of cell values.
+ * @param {number[]} columnWidths - Array of column widths.
+ * @returns {string} - Rendered row string.
  */
 export const renderRow = (row: string[], columnWidths: number[]) => {
   const paddedCells = row.map((cell, idx) => {
@@ -102,9 +102,9 @@ export const renderRow = (row: string[], columnWidths: number[]) => {
 /**
  * Pads a cell value to the specified width.
  *
- * @param {string} value - cell value
- * @param {number} columnWidth - desired width
- * @returns {string} - padded cell value
+ * @param {string} value - Cell value.
+ * @param {number} columnWidth - Desired width.
+ * @returns {string} - Padded cell value.
  */
 export const padCell = (value: string, columnWidth: number) => {
   const currentWidth = getDisplayWidth(value);
@@ -119,8 +119,8 @@ export const padCell = (value: string, columnWidth: number) => {
 /**
  * Calculates the display width of a string, accounting for full-width characters.
  *
- * @param {string} value - input string
- * @returns {number} - display width of the string
+ * @param {string} value - Input string.
+ * @returns {number} - Display width of the string.
  */
 export const getDisplayWidth = (value: string) => {
   if (!value) {
@@ -208,8 +208,8 @@ export const colorStatusMessage = (message: string, state: TaskState) => {
 /**
  * Builds a formatted string summarizing failure details for display.
  *
- * @param {FailureDetails} failure - metadata describing the failed task
- * @returns {string} - decorated headline containing label, tool, command, and breakdown
+ * @param {FailureDetails} failure - Metadata describing the failed task.
+ * @returns {string} - Decorated headline containing label, tool, command, and breakdown.
  */
 export const formatFailureHeadline = (failure: FailureDetails) => {
   const breakdownParts: string[] = [];
@@ -244,8 +244,8 @@ export const formatFailureHeadline = (failure: FailureDetails) => {
 /**
  * Prints detailed information about failed tasks.
  *
- * @param {FailureDetails[]} failures - Array of failure details to print
- * @param {RunOptions} runOptions - Options that influenced the run
+ * @param {FailureDetails[]} failures - Array of failure details to print.
+ * @param {RunOptions} runOptions - Options that influenced the run.
  */
 export const printFailureDetails = (
   failures: FailureDetails[],
@@ -272,8 +272,8 @@ export const printFailureDetails = (
 /**
  * Renders the current status of all tasks to the console.
  *
- * @param {Task[]} tasks - Array of tasks to render
- * @param {RunOptions} runOptions - Options that influenced the run
+ * @param {Task[]} tasks - Array of tasks to render.
+ * @param {RunOptions} runOptions - Options that influenced the run.
  */
 export const render = (tasks: Task[], runOptions: RunOptions) => {
   if (process.stdout.isTTY) {
