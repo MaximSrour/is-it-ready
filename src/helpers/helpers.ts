@@ -1,7 +1,7 @@
 import { spawn } from "child_process";
 
-import { type TaskConfig } from "@/config/types";
 import { type RunOptions } from "@/runOptions/types";
+import { type TaskConfig } from "@/task/types";
 
 import { type CommandResult, type ExecutableCommand } from "./types";
 

@@ -1,7 +1,7 @@
 import chalk from "chalk";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { type FailureDetails } from "@/config/types";
+import { type FailureDetails } from "@/task/types";
 
 import { noOp } from "../helpers";
 import * as renderModule from "./render";

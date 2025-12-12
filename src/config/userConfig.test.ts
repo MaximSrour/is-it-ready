@@ -6,7 +6,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { type RunOptions } from "@/runOptions/types";
 
-import { taskConfig } from "./config";
+import { taskConfig } from "../task";
 import { loadUserConfig } from "./userConfig";
 
 const withTempDir = (

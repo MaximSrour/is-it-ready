@@ -5,13 +5,9 @@ import isInstalledGlobally from "is-installed-globally";
 
 import { type RunOptions } from "@/runOptions/types";
 
-import { taskConfig } from "./config";
-import { Task } from "./task";
-import {
-  type TaskConfig,
-  type UserFileConfig,
-  type UserTaskConfig,
-} from "./types";
+import { Task, taskConfig } from "../task";
+import { type TaskConfig } from "../task/types";
+import { type UserFileConfig, type UserTaskConfig } from "./types";
 
 const DEFAULT_TASKS = new Map(
   taskConfig.map((config) => {
