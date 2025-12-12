@@ -50,7 +50,7 @@ export const selectCommand = (
  *
  * @param {string} command - Command string to execute.
  * @returns {Promise<CommandResult>} - Child process result.
- * @throws When the command is empty.
+ * @throws {Error} When the command is empty.
  */
 export const runCommand = async (command: string): Promise<CommandResult> => {
   const trimmed = command.trim();
