@@ -1,1 +1,1 @@
-export { loadUserConfig } from "./userConfig";
+export { loadUserConfig } from "./config";
