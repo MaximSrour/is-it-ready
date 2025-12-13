@@ -384,4 +384,10 @@ export const render = (tasks: Task[], runOptions: RunOptions) => {
   ];
 
   console.log(renderTable(TABLE_HEADERS, rows, overallRow));
+
+  if (runOptions.isWatchMode) {
+    console.log(
+      chalk.cyan("\nWatching for file changes... (press Ctrl+C to exit)")
+    );
+  }
 };
