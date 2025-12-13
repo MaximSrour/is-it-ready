@@ -38,7 +38,7 @@ const makeRunOptions = (overrides: Partial<RunOptions> = {}): RunOptions => {
   };
 };
 
-describe("loadUserConfigTasks", () => {
+describe("loadUserConfig", () => {
   afterEach(() => {
     vi.restoreAllMocks();
   });
