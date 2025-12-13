@@ -1,3 +1,10 @@
+## [1.3.1](https://github.com/MaximSrour/is-it-ready/compare/v1.3.0...v1.3.1) (2025-12-13)
+
+
+### Bug Fixes
+
+* remove the concept of loose commands entirely ([127d1e7](https://github.com/MaximSrour/is-it-ready/commit/127d1e7298ac5af5e2f931e87941068a5423d8a8))
+
 # [1.3.0](https://github.com/MaximSrour/is-it-ready/compare/v1.2.6...v1.3.0) (2025-12-13)
 
 
