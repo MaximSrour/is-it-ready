@@ -95,7 +95,7 @@ const startWatcher = (tasks: Task[], runOptions: RunOptions) => {
   console.log(chalk.cyan("Watch mode enabled. Waiting for file changes..."));
 
   const watcher = chokidar.watch(".", {
-    ignored: "**/node_modules/**",
+    ignored: ["**/node_modules/**", "**/.git/**"],
     persistent: true,
     ignoreInitial: true,
   });
