@@ -176,6 +176,14 @@ describe("getRunOptions", () => {
     expect(exitSpy).toHaveBeenCalledWith(0);
     expect(logSpy).toHaveBeenCalled();
   });
+
+  it("throws when unsupported options are provided", () => {
+    process.argv = ["node", "script.js", "--unknown"];
+
+    expect(() => {
+      getRunOptions();
+    }).toThrowError(/unknown option: --unknown/i);
+  });
 });
 
 describe("printHelp", () => {
