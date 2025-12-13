@@ -1,3 +1,10 @@
+## [1.4.2](https://github.com/MaximSrour/is-it-ready/compare/v1.4.1...v1.4.2) (2025-12-13)
+
+
+### Bug Fixes
+
+* update failure messages for suite handling in parseVitest ([230f934](https://github.com/MaximSrour/is-it-ready/commit/230f934b013b618d166d646347171fc17616c63d))
+
 ## [1.4.1](https://github.com/MaximSrour/is-it-ready/compare/v1.4.0...v1.4.1) (2025-12-13)
 
 
