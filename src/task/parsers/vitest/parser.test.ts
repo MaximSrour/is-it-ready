@@ -22,4 +22,18 @@ describe("parseVitest", () => {
   it("returns undefined when success", () => {
     expect(parseVitest("Test Files 0 failed | Tests 0 failed")).toBeUndefined();
   });
+
+  it("handles single suite failure", () => {
+    expect(parseVitest("Failed Suites 1")).toEqual({
+      message: "Failed - 1 suite misconfigured",
+      errors: 1,
+    });
+  });
+
+  it("handles multiple suite failures", () => {
+    expect(parseVitest("Failed Suites 2")).toEqual({
+      message: "Failed - 2 suites misconfigured",
+      errors: 2,
+    });
+  });
 });
