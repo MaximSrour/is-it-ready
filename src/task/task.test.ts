@@ -24,6 +24,7 @@ export const createMockTask = (
       isFixMode: false,
       isLooseMode: false,
       isSilentMode: false,
+      configPath: undefined,
       ...optionsOverrides,
     }
   );

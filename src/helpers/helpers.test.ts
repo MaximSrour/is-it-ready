@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
-import { type TaskConfig } from "@/config/types";
 import { type RunOptions } from "@/runOptions/types";
+import { type TaskConfig } from "@/task/types";
 
 import {
   addSilentFlag,
@@ -28,6 +28,7 @@ describe("selectCommand", () => {
       isLooseMode: isLoose,
       isFixMode: isFix,
       isSilentMode: false,
+      configPath: undefined,
     };
   };
 

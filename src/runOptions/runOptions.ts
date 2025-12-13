@@ -9,26 +9,70 @@ import { type RunOptions } from "./types";
  * Processes arguments one by one, exiting immediately if --help or --version is encountered.
  *
  * @returns {RunOptions} - Object indicating active modes.
+ * @throws {Error} - If required values for options are missing.
  */
 export const getRunOptions = (): RunOptions => {
   const args = process.argv.slice(2);
 
-  for (const arg of args) {
+  let isLooseMode = false;
+  let isSilentMode = false;
+  let isFixMode = false;
+  let configPath: string | undefined;
+
+  for (let index = 0; index < args.length; index += 1) {
+    const arg = args[index];
+
     if (arg === "--help" || arg === "-h") {
       printHelp();
       process.exit(0);
     }
+
     if (arg === "--version" || arg === "-v") {
       printVersion();
       process.exit(0);
     }
+
+    if (arg === "--config") {
+      const value = args[index + 1];
+
+      if (!value || value.startsWith("-")) {
+        throw new Error("Missing value for --config");
+      }
+
+      if (configPath) {
+        throw new Error("Multiple configs provided");
+      }
+
+      configPath = value;
+      index += 1;
+      continue;
+    }
+
+    if (arg.startsWith("--config=")) {
+      const value = arg.split("=", 2)[1];
+
+      if (!value) {
+        throw new Error("Missing value for --config");
+      }
+
+      configPath = value;
+      continue;
+    }
+
+    if (arg === "--loose") {
+      isLooseMode = true;
+    }
+
+    if (arg === "--silent") {
+      isSilentMode = true;
+    }
+
+    if (arg === "--fix") {
+      isFixMode = true;
+    }
   }
 
-  const isLooseMode = args.includes("--loose");
-  const isSilentMode = args.includes("--silent");
-  const isFixMode = args.includes("--fix");
-
-  return { isLooseMode, isSilentMode, isFixMode };
+  return { isLooseMode, isSilentMode, isFixMode, configPath };
 };
 
 export const printHelp = () => {

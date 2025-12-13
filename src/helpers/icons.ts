@@ -1,4 +1,4 @@
-import { type TaskState } from "@/config/types";
+import { type TaskState } from "@/task/types";
 
 export const taskStateIcons: Record<TaskState, string> = {
   pending: "  ",

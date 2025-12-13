@@ -1,11 +1,11 @@
 import chalk from "chalk";
 
-import { type Task } from "@/config/task";
 import { type RunOptions } from "@/runOptions/types";
+import { type Task } from "@/task/task";
 
 import pkg from "../../package.json";
-import { type FailureDetails, type TaskState } from "../config/types";
 import { formatDuration, stripAnsi, taskStateIcons } from "../helpers";
+import { type FailureDetails, type TaskState } from "../task/types";
 import { type BorderChars, type BorderLevel } from "./types";
 
 const BORDER_CHARS: Record<BorderLevel, BorderChars> = {
