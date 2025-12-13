@@ -1,3 +1,19 @@
+# [1.4.0](https://github.com/MaximSrour/is-it-ready/compare/v1.3.1...v1.4.0) (2025-12-13)
+
+
+### Bug Fixes
+
+* ensure isRunning flag is reset after rerunning tasks ([2730030](https://github.com/MaximSrour/is-it-ready/commit/27300306cac552df88ffb130c3a70f3a2eb6a233))
+* update file watcher to ignore .git directory ([8f3132a](https://github.com/MaximSrour/is-it-ready/commit/8f3132aa0e854c77ae405558b28e400f5c03b738))
+
+
+### Features
+
+* add --watch flag to re-run tasks on file changes ([124f51d](https://github.com/MaximSrour/is-it-ready/commit/124f51dfa78d8e4fec1a9282976008a652f49644))
+* add chokidar for file watching and rerun tasks on changes ([dc365e8](https://github.com/MaximSrour/is-it-ready/commit/dc365e87a12348b106f0804fc955304cb3b93750))
+* add support for watchIgnore files in config ([c83a8c9](https://github.com/MaximSrour/is-it-ready/commit/c83a8c9da9c6161904c6dfcada7b3145ed2252dd))
+* enables configuration of watchIgnore files ([401d533](https://github.com/MaximSrour/is-it-ready/commit/401d533a138329dfe9243e6f499b832fa76169f5))
+
 ## [1.3.1](https://github.com/MaximSrour/is-it-ready/compare/v1.3.0...v1.3.1) (2025-12-13)
 
 
