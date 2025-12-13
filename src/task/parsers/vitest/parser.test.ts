@@ -24,15 +24,15 @@ describe("parseVitest", () => {
   });
 
   it("handles single suite failure", () => {
-    expect(parseVitest("Failed Suites 1")).toEqual({
-      message: "Failed - 1 suite misconfigured",
+    expect(parseVitest(" Failed Suites 1 ")).toEqual({
+      message: "Failed - 1 suite failed",
       errors: 1,
     });
   });
 
   it("handles multiple suite failures", () => {
-    expect(parseVitest("Failed Suites 2")).toEqual({
-      message: "Failed - 2 suites misconfigured",
+    expect(parseVitest(" Failed Suites 2 ")).toEqual({
+      message: "Failed - 2 suites failed",
       errors: 2,
     });
   });

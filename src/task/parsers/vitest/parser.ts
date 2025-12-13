@@ -1,20 +1,20 @@
 import { type ParsedFailure } from "../../types";
 
 export const parseVitest = (output: string): ParsedFailure | undefined => {
-  const fileFailures = output.match(/Test Files\s+(\d+)\s+failed/i);
-  const testFailures = output.match(/Tests\s+(\d+)\s+failed/i);
+  const suiteFailures = output.match(/ Failed Suites\s+(\d+) /i);
 
-  const suiteFailures = output.match(/Failed Suites\s+(\d+)/i);
   if (suiteFailures) {
     const suiteCount = Number(suiteFailures[1]);
     if (Number.isFinite(suiteCount) && suiteCount > 0) {
       return {
-        message: `Failed - ${suiteCount} suite${suiteCount === 1 ? "" : "s"} misconfigured`,
+        message: `Failed - ${suiteCount} suite${suiteCount === 1 ? "" : "s"} failed`,
         errors: suiteCount,
       };
     }
-    // If suiteCount is invalid, fall through to check file/test failures
   }
+
+  const fileFailures = output.match(/Test Files\s+(\d+)\s+failed/i);
+  const testFailures = output.match(/Tests\s+(\d+)\s+failed/i);
 
   if (!fileFailures && !testFailures) {
     return undefined;
