@@ -1,3 +1,10 @@
+## [1.4.4](https://github.com/MaximSrour/is-it-ready/compare/v1.4.3...v1.4.4) (2025-12-13)
+
+
+### Bug Fixes
+
+* add watch mode notification in render function ([6392143](https://github.com/MaximSrour/is-it-ready/commit/63921436b01182da9258e5b75791f56db602f7ab))
+
 ## [1.4.3](https://github.com/MaximSrour/is-it-ready/compare/v1.4.2...v1.4.3) (2025-12-13)
 
 
