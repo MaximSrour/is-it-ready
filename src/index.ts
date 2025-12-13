@@ -22,7 +22,7 @@ async function main() {
 
   if (tasks === null) {
     throw new Error(
-      "No user configuration found. Please create a .is-it-ready.config.js file."
+      "No user configuration found. Please create an is-it-ready config (refer to the README for more information) file."
     );
   }
 
