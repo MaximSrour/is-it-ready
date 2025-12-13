@@ -3,8 +3,8 @@
 import chalk from "chalk";
 
 import { loadUserConfig } from "./config";
-import { render } from "./renderers";
 import { getRunOptions } from "./runOptions/runOptions";
+import { calculateTotalIssues, runTasks, startWatcher } from "./task";
 
 void main().catch((error) => {
   console.error(chalk.red("Unexpected error while running tasks."));
@@ -18,38 +18,22 @@ void main().catch((error) => {
 async function main() {
   const runOptions = getRunOptions();
 
-  const tasks = await loadUserConfig(runOptions);
+  const config = await loadUserConfig(runOptions);
 
-  if (tasks === null) {
+  if (config === null) {
     throw new Error(
       "No user configuration found. Please create an is-it-ready config (refer to the README for more information) file."
     );
   }
 
-  render(tasks, runOptions);
+  if (!runOptions.isWatchMode) {
+    await runTasks(config, runOptions);
+    const totalIssues = calculateTotalIssues(config.tasks);
 
-  await Promise.all(
-    tasks.map((task) => {
-      return task.execute({
-        onStart: () => {
-          render(tasks, runOptions);
-        },
-        onFinish: () => {
-          render(tasks, runOptions);
-        },
-      });
-    })
-  );
+    process.exit(totalIssues > 0 ? 1 : 0);
+  }
 
-  const { totalIssues } = tasks.reduce<{ totalIssues: number }>(
-    (acc, task) => {
-      return {
-        totalIssues:
-          acc.totalIssues + task.getTotalErrors() + task.getTotalWarnings(),
-      };
-    },
-    { totalIssues: 0 }
-  );
+  await runTasks(config, runOptions);
 
-  process.exit(totalIssues > 0 ? 1 : 0);
+  startWatcher(config, runOptions);
 }

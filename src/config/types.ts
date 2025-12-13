@@ -1,3 +1,5 @@
+import { type Task } from "../task";
+
 export type UserTaskConfig = {
   tool: string;
   command: string;
@@ -5,5 +7,11 @@ export type UserTaskConfig = {
 };
 
 export type UserFileConfig = {
+  watchIgnore?: string[];
   tasks: UserTaskConfig[];
+};
+
+export type Config = {
+  watchIgnore?: string[];
+  tasks: Task[];
 };

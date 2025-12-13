@@ -23,6 +23,7 @@ describe("getRunOptions", () => {
     expect(getRunOptions()).toEqual({
       isSilentMode: false,
       isFixMode: false,
+      isWatchMode: false,
       configPath: undefined,
     });
   });
@@ -32,6 +33,7 @@ describe("getRunOptions", () => {
     expect(getRunOptions()).toEqual({
       isSilentMode: true,
       isFixMode: false,
+      isWatchMode: false,
       configPath: undefined,
     });
   });
@@ -41,6 +43,17 @@ describe("getRunOptions", () => {
     expect(getRunOptions()).toEqual({
       isSilentMode: true,
       isFixMode: true,
+      isWatchMode: false,
+      configPath: undefined,
+    });
+  });
+
+  it("enables watch mode when --watch passed", () => {
+    process.argv = ["node", "script.js", "--watch"];
+    expect(getRunOptions()).toEqual({
+      isSilentMode: false,
+      isFixMode: false,
+      isWatchMode: true,
       configPath: undefined,
     });
   });
@@ -51,6 +64,7 @@ describe("getRunOptions", () => {
     expect(getRunOptions()).toEqual({
       isSilentMode: false,
       isFixMode: false,
+      isWatchMode: false,
       configPath: "custom.config.js",
     });
   });
@@ -61,6 +75,7 @@ describe("getRunOptions", () => {
     expect(getRunOptions()).toEqual({
       isSilentMode: false,
       isFixMode: false,
+      isWatchMode: false,
       configPath: "custom.mjs",
     });
   });

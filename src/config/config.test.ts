@@ -6,7 +6,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { type RunOptions } from "@/runOptions/types";
 
-import { taskConfig } from "../task";
+import { defaultTasks } from "../task";
 import { loadUserConfig } from "./config";
 
 const withTempDir = (
@@ -32,6 +32,7 @@ const makeRunOptions = (overrides: Partial<RunOptions> = {}): RunOptions => {
   return {
     isFixMode: false,
     isSilentMode: false,
+    isWatchMode: false,
     configPath: undefined,
     ...overrides,
   };
@@ -110,11 +111,11 @@ describe("loadUserConfig", () => {
       ".is-it-ready.config.mjs"
     );
 
-    const tasks = await loadUserConfig(makeRunOptions());
+    const config = await loadUserConfig(makeRunOptions());
 
-    expect(tasks).not.toBeNull();
-    expect(tasks).toHaveLength(1);
-    expect(tasks?.[0]?.tool).toBe("Prettier");
+    expect(config).not.toBeNull();
+    expect(config?.tasks).toHaveLength(1);
+    expect(config?.tasks[0]?.tool).toBe("Prettier");
 
     cleanupDir(directory);
   });
@@ -132,12 +133,12 @@ describe("loadUserConfig", () => {
       };
     `);
 
-    const tasks = await loadUserConfig(makeRunOptions());
+    const config = await loadUserConfig(makeRunOptions());
 
-    expect(tasks).not.toBeNull();
-    expect(tasks).toHaveLength(1);
-    const task = tasks?.[0];
-    expect(task?.label).toBe(taskConfig[0]?.label);
+    expect(config).not.toBeNull();
+    expect(config?.tasks).toHaveLength(1);
+    const task = config?.tasks[0];
+    expect(task?.label).toBe(defaultTasks[0]?.label);
     expect(task?.tool).toBe("Prettier");
     expect(task?.command).toBe("npm run prettier:custom");
 
@@ -160,13 +161,13 @@ describe("loadUserConfig", () => {
       filename
     );
 
-    const tasks = await loadUserConfig(
+    const config = await loadUserConfig(
       makeRunOptions({ configPath: filename })
     );
 
-    expect(tasks).not.toBeNull();
-    expect(tasks).toHaveLength(1);
-    expect(tasks?.[0]?.tool).toBe("Prettier");
+    expect(config).not.toBeNull();
+    expect(config?.tasks).toHaveLength(1);
+    expect(config?.tasks[0]?.tool).toBe("Prettier");
 
     cleanupDir(directory);
   });
@@ -194,11 +195,11 @@ describe("loadUserConfig", () => {
       };
     `);
 
-    const tasks = await loadUserConfig(makeRunOptions({ isFixMode: true }));
+    const config = await loadUserConfig(makeRunOptions({ isFixMode: true }));
 
-    expect(tasks).not.toBeNull();
-    expect(tasks?.[0]?.command).toBe("npm run prettier:override-fix");
-    expect(tasks?.[0]?.label).toBe("Formatting*");
+    expect(config).not.toBeNull();
+    expect(config?.tasks[0]?.command).toBe("npm run prettier:override-fix");
+    expect(config?.tasks[0]?.label).toBe("Formatting*");
 
     cleanupDir(directory);
   });
@@ -215,10 +216,10 @@ describe("loadUserConfig", () => {
       };
     `);
 
-    const tasks = await loadUserConfig(makeRunOptions({ isFixMode: true }));
+    const config = await loadUserConfig(makeRunOptions({ isFixMode: true }));
 
-    expect(tasks).not.toBeNull();
-    expect(tasks?.[0]?.command).toBe("npm run lint");
+    expect(config).not.toBeNull();
+    expect(config?.tasks[0]?.command).toBe("npm run lint");
 
     cleanupDir(directory);
   });
@@ -244,12 +245,33 @@ describe("loadUserConfig", () => {
     const { loadUserConfig: loadUserConfigWhenGlobal } =
       await import("./config");
 
-    const tasks = await loadUserConfigWhenGlobal(makeRunOptions());
+    const config = await loadUserConfigWhenGlobal(makeRunOptions());
 
-    expect(tasks).not.toBeNull();
-    expect(tasks?.[0]?.tool).toBe("Prettier");
+    expect(config).not.toBeNull();
+    expect(config?.tasks[0]?.tool).toBe("Prettier");
 
     cleanupDir(directory);
     vi.resetModules();
+  });
+
+  it("includes watchIgnore patterns from user config", async () => {
+    const directory = withTempDir(`
+      module.exports = {
+        watchIgnore: ["dist/**", "build/**"],
+        tasks: [
+          {
+            tool: "Prettier",
+            command: "npm run prettier"
+          }
+        ]
+      };
+    `);
+
+    const config = await loadUserConfig(makeRunOptions());
+
+    expect(config).not.toBeNull();
+    expect(config?.watchIgnore).toEqual(["dist/**", "build/**"]);
+
+    cleanupDir(directory);
   });
 });
