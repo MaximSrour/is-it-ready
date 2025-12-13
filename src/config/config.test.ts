@@ -223,4 +223,34 @@ describe("loadUserConfigTasks", () => {
 
     cleanupDir(directory);
   });
+
+  it("loads project configuration when installed globally", async () => {
+    vi.resetModules();
+
+    vi.doMock("is-installed-globally", () => {
+      return { __esModule: true, default: true };
+    });
+
+    const directory = withTempDir(`
+      module.exports = {
+        tasks: [
+          {
+            tool: "Prettier",
+            command: "npm run prettier"
+          }
+        ]
+      };
+    `);
+
+    const { loadUserConfig: loadUserConfigWhenGlobal } =
+      await import("./config");
+
+    const tasks = await loadUserConfigWhenGlobal(makeRunOptions());
+
+    expect(tasks).not.toBeNull();
+    expect(tasks?.[0]?.tool).toBe("Prettier");
+
+    cleanupDir(directory);
+    vi.resetModules();
+  });
 });

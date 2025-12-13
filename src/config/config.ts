@@ -24,21 +24,18 @@ const DEFAULT_TASKS = new Map(
  * @returns {Promise<UserFileConfig | null>} The user configuration or null if not found.
  */
 const getConfig = async (rootDirectory: string, configPath?: string) => {
-  const searchDirectory = isInstalledGlobally ? os.homedir() : rootDirectory;
+  const searchDirectory = rootDirectory;
 
   const searchPlaces = [
     ".is-it-ready.config.js",
     ".is-it-ready.config.mjs",
     ".is-it-ready.config.cjs",
+    "package.json",
   ];
-
-  if (!isInstalledGlobally) {
-    searchPlaces.push("package.json");
-  }
 
   const explorer = cosmiconfig("is-it-ready", {
     searchPlaces,
-    stopDir: searchDirectory,
+    stopDir: isInstalledGlobally ? os.homedir() : searchDirectory,
   });
 
   if (configPath) {
