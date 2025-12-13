@@ -16,6 +16,7 @@ export const getRunOptions = (): RunOptions => {
 
   let isSilentMode = false;
   let isFixMode = false;
+  let isWatchMode = false;
   let configPath: string | undefined;
 
   for (let index = 0; index < args.length; index += 1) {
@@ -65,9 +66,13 @@ export const getRunOptions = (): RunOptions => {
     if (arg === "--fix") {
       isFixMode = true;
     }
+
+    if (arg === "--watch") {
+      isWatchMode = true;
+    }
   }
 
-  return { isSilentMode, isFixMode, configPath };
+  return { isSilentMode, isFixMode, isWatchMode, configPath };
 };
 
 export const printHelp = () => {

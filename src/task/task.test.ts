@@ -22,6 +22,7 @@ export const createMockTask = (
     {
       isFixMode: false,
       isSilentMode: false,
+      isWatchMode: false,
       configPath: undefined,
       ...optionsOverrides,
     }

@@ -32,6 +32,7 @@ const makeRunOptions = (overrides: Partial<RunOptions> = {}): RunOptions => {
   return {
     isFixMode: false,
     isSilentMode: false,
+    isWatchMode: false,
     configPath: undefined,
     ...overrides,
   };

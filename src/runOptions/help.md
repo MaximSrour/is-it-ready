@@ -6,7 +6,7 @@ security checks in one dashboard.
 ## Usage
 
 ```sh
-is-it-ready [--silent] [--fix] [--config <path>] [-h | --help] [-v | --version]
+is-it-ready [--silent] [--fix] [--watch] [--config <path>] [-h | --help] [-v | --version]
 ```
 
 ### Flags
@@ -17,6 +17,7 @@ is-it-ready [--silent] [--fix] [--config <path>] [-h | --help] [-v | --version]
 - `--silent` - Keep the summary table but skip the detailed failure output.
 - `--fix` - Automatically run fix commands for tasks that support it (labels
   show `*`).
+- `--watch` - Re-run tasks whenever project files change.
 
 The table shows live status, timings, and overall issue counts. Exit code is `0`
 when everything passes and `1` otherwise.

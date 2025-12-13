@@ -26,6 +26,7 @@ describe("selectCommand", () => {
     return {
       isFixMode: isFix,
       isSilentMode: false,
+      isWatchMode: false,
       configPath: undefined,
     };
   };
