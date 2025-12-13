@@ -96,6 +96,21 @@ describe("getRunOptions", () => {
     }).toThrowError(/missing value for --config/i);
   });
 
+  it("throws when multiple configs are provided", () => {
+    process.argv = [
+      "node",
+      "script.js",
+      "--config",
+      "one.js",
+      "--config",
+      "two.js",
+    ];
+
+    expect(() => {
+      getRunOptions();
+    }).toThrowError(/multiple configs provided/i);
+  });
+
   it("exits immediately when --help is supplied", () => {
     const logSpy = vi.spyOn(console, "log").mockImplementation(noOp);
     const errorSpy = vi.spyOn(console, "error").mockImplementation(noOp);

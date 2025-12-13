@@ -39,6 +39,10 @@ export const getRunOptions = (): RunOptions => {
         throw new Error("Missing value for --config");
       }
 
+      if (configPath) {
+        throw new Error("Multiple configs provided");
+      }
+
       configPath = value;
       index += 1;
       continue;
