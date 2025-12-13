@@ -253,4 +253,25 @@ describe("loadUserConfig", () => {
     cleanupDir(directory);
     vi.resetModules();
   });
+
+  it("includes watchIgnore patterns from user config", async () => {
+    const directory = withTempDir(`
+      module.exports = {
+        watchIgnore: ["dist/**", "build/**"],
+        tasks: [
+          {
+            tool: "Prettier",
+            command: "npm run prettier"
+          }
+        ]
+      };
+    `);
+
+    const config = await loadUserConfig(makeRunOptions());
+
+    expect(config).not.toBeNull();
+    expect(config?.watchIgnore).toEqual(["dist/**", "build/**"]);
+
+    cleanupDir(directory);
+  });
 });
