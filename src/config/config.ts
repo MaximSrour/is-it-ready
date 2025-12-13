@@ -24,8 +24,6 @@ const DEFAULT_TASKS = new Map(
  * @returns {Promise<UserFileConfig | null>} The user configuration or null if not found.
  */
 const getConfig = async (rootDirectory: string, configPath?: string) => {
-  const searchDirectory = rootDirectory;
-
   const searchPlaces = [
     ".is-it-ready.config.js",
     ".is-it-ready.config.mjs",
@@ -35,7 +33,7 @@ const getConfig = async (rootDirectory: string, configPath?: string) => {
 
   const explorer = cosmiconfig("is-it-ready", {
     searchPlaces,
-    stopDir: isInstalledGlobally ? os.homedir() : searchDirectory,
+    ...(isInstalledGlobally ? { stopDir: os.homedir() } : {}),
   });
 
   if (configPath) {
@@ -52,14 +50,25 @@ const getConfig = async (rootDirectory: string, configPath?: string) => {
       const maybeNodeError = error as NodeJS.ErrnoException;
 
       if (maybeNodeError.code === "ENOENT") {
-        throw new Error(`Config file not found at ${resolvedPath}`);
+        const isNodeErrorWithCode = (err: unknown): err is { code: string } => {
+          return (
+            typeof err === "object" &&
+            err !== null &&
+            "code" in err &&
+            typeof (err as { code: unknown }).code === "string"
+          );
+        };
+
+        if (isNodeErrorWithCode(error) && error.code === "ENOENT") {
+          throw new Error(`Config file not found at ${resolvedPath}`);
+        }
       }
 
       throw error;
     }
   }
 
-  const result = await explorer.search(searchDirectory);
+  const result = await explorer.search(rootDirectory);
   const config: unknown = result?.config ?? null;
 
   return config;
