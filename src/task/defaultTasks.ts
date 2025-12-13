@@ -9,7 +9,7 @@ import {
 } from "./parsers";
 import { type TaskConfig } from "./types";
 
-export const taskConfig: TaskConfig[] = [
+export const defaultTasks: TaskConfig[] = [
   {
     label: "Formatting",
     tool: "Prettier",
