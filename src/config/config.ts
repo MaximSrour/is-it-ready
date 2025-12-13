@@ -118,7 +118,6 @@ const isUserTaskConfig = (value: unknown): value is UserTaskConfig => {
   return (
     isNonEmptyString(value.tool) &&
     isNonEmptyString(value.command) &&
-    isOptionalString(value.looseCommand) &&
     isOptionalString(value.fixCommand)
   );
 };
@@ -159,7 +158,6 @@ const mergeTaskConfig = (userTask: UserTaskConfig): TaskConfig => {
     label: baseConfig.label,
     tool: baseConfig.tool,
     command: userTask.command,
-    looseCommand: userTask.looseCommand,
     fixCommand: userTask.fixCommand,
     parseFailure: baseConfig.parseFailure,
   };

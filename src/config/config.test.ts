@@ -31,7 +31,6 @@ const cleanupDir = (directory: string) => {
 const makeRunOptions = (overrides: Partial<RunOptions> = {}): RunOptions => {
   return {
     isFixMode: false,
-    isLooseMode: false,
     isSilentMode: false,
     configPath: undefined,
     ...overrides,

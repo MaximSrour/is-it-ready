@@ -163,7 +163,7 @@ export default defineConfig([
       "unused-imports/no-unused-vars": [
         "warn",
         {
-          args: "after-used",
+          args: "all",
           argsIgnorePattern: "^_",
           vars: "all",
           varsIgnorePattern: "^_",

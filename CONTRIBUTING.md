@@ -56,8 +56,7 @@ Before every commit, run `npm run check` to validate all quality gates:
 6. **Knip** - No unused dependencies or exports
 7. **npm audit** - No known security vulnerabilities
 
-**All checks must pass in strict mode** (not loose mode) before your pull
-request will be accepted.
+**All checks must pass** before your pull request will be accepted.
 
 ### Individual Quality Checks
 

@@ -13,7 +13,6 @@ export const createMockTask = (
       label: "Echo Task",
       tool: "Echo",
       command: "echo 'Echo command'",
-      looseCommand: "echo 'Echo command loose'",
       fixCommand: "echo 'Echo command fix'",
       parseFailure: () => {
         return undefined;
@@ -22,7 +21,6 @@ export const createMockTask = (
     },
     {
       isFixMode: false,
-      isLooseMode: false,
       isSilentMode: false,
       configPath: undefined,
       ...optionsOverrides,
@@ -58,38 +56,6 @@ describe("Task", () => {
     expect(result).toBeUndefined();
     expect(runCommandSpy).toHaveBeenCalledWith("echo 'Echo command'");
     expect(commandOutput.trim()).toBe("Echo command");
-  });
-
-  it("runs the loose task when triggering the execute method", async () => {
-    const runCommandSpy = vi.spyOn(helpers, "runCommand").mockResolvedValue({
-      status: 0,
-      stdout: "Echo command loose\n",
-      stderr: "",
-    });
-    let commandOutput = "";
-
-    const task = createMockTask(
-      {
-        parseFailure: (output) => {
-          commandOutput = output;
-
-          return undefined;
-        },
-      },
-      {
-        isLooseMode: true,
-      }
-    );
-
-    expect(task.label).toBe("Echo Task*");
-    expect(task.command).toBe("echo 'Echo command loose'");
-    expect(task.tool).toBe("Echo");
-
-    const result = await task.execute();
-
-    expect(result).toBeUndefined();
-    expect(runCommandSpy).toHaveBeenCalledWith("echo 'Echo command loose'");
-    expect(commandOutput.trim()).toBe("Echo command loose");
   });
 
   it("runs the fix task when triggering the execute method", async () => {

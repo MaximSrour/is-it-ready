@@ -20,12 +20,10 @@ describe("decorateLabel", () => {
 
 describe("selectCommand", () => {
   const baseCommand = "npm run lint";
-  const looseCommand = "npm run lint:loose";
   const fixCommand = "npm run lint:fix";
 
-  const makeOptions = (isLoose: boolean, isFix: boolean): RunOptions => {
+  const makeOptions = (isFix: boolean): RunOptions => {
     return {
-      isLooseMode: isLoose,
       isFixMode: isFix,
       isSilentMode: false,
       configPath: undefined,
@@ -37,11 +35,10 @@ describe("selectCommand", () => {
       label: "Linting",
       tool: "ESLint",
       command: baseCommand,
-      looseCommand,
       fixCommand,
     } as TaskConfig;
 
-    const result = selectCommand(config, makeOptions(false, true));
+    const result = selectCommand(config, makeOptions(true));
 
     expect(result.command).toBe(fixCommand);
     expect(result.label).toBe("Linting*");
@@ -52,56 +49,10 @@ describe("selectCommand", () => {
       label: "Linting",
       tool: "ESLint",
       command: baseCommand,
-      looseCommand,
       fixCommand: undefined,
     } as TaskConfig;
 
-    const result = selectCommand(config, makeOptions(false, true));
-
-    expect(result.command).toBe(baseCommand);
-    expect(result.label).toBe("Linting");
-  });
-
-  it("prioritizes fix over loose", () => {
-    const config: TaskConfig = {
-      label: "Linting",
-      tool: "ESLint",
-      command: baseCommand,
-      looseCommand,
-      fixCommand,
-    } as TaskConfig;
-
-    const result = selectCommand(config, makeOptions(true, true));
-
-    expect(result.command).toBe(fixCommand);
-    expect(result.label).toBe("Linting*");
-  });
-
-  it("returns loose command when loose mode enabled", () => {
-    const config: TaskConfig = {
-      label: "Linting",
-      tool: "ESLint",
-      command: baseCommand,
-      looseCommand,
-      fixCommand,
-    } as TaskConfig;
-
-    const result = selectCommand(config, makeOptions(true, false));
-
-    expect(result.command).toBe(looseCommand);
-    expect(result.label).toBe("Linting*");
-  });
-
-  it("falls back to base when loose mode enabled but no loose command", () => {
-    const config: TaskConfig = {
-      label: "Linting",
-      tool: "ESLint",
-      command: baseCommand,
-      looseCommand: undefined,
-      fixCommand,
-    } as TaskConfig;
-
-    const result = selectCommand(config, makeOptions(true, false));
+    const result = selectCommand(config, makeOptions(true));
 
     expect(result.command).toBe(baseCommand);
     expect(result.label).toBe("Linting");
@@ -114,22 +65,7 @@ describe("selectCommand", () => {
       command: baseCommand,
     } as TaskConfig;
 
-    const result = selectCommand(config, makeOptions(false, false));
-
-    expect(result.command).toBe(baseCommand);
-    expect(result.label).toBe("Linting");
-  });
-
-  it("prioritizes fix mode over loose mode, even if fix isn't supported", () => {
-    const config: TaskConfig = {
-      label: "Linting",
-      tool: "ESLint",
-      command: baseCommand,
-      looseCommand,
-      fixCommand: undefined,
-    } as TaskConfig;
-
-    const result = selectCommand(config, makeOptions(true, true));
+    const result = selectCommand(config, makeOptions(false));
 
     expect(result.command).toBe(baseCommand);
     expect(result.label).toBe("Linting");
