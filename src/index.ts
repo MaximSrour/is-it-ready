@@ -80,9 +80,11 @@ const rerunTasks = async (tasks: Task[], runOptions: RunOptions) => {
 
   isRunning = true;
 
-  await runTasks(tasks, runOptions);
-
-  isRunning = false;
+  try {
+    await runTasks(tasks, runOptions);
+  } finally {
+    isRunning = false;
+  }
 };
 
 /**
