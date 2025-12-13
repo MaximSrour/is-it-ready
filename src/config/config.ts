@@ -16,6 +16,18 @@ const DEFAULT_TASKS = new Map(
   })
 );
 
+const SEARCH_PLACES = [
+  ".is-it-ready.config.js",
+  ".is-it-ready.config.mjs",
+  ".is-it-ready.config.cjs",
+  "package.json",
+];
+
+const explorer = cosmiconfig("is-it-ready", {
+  searchPlaces: SEARCH_PLACES,
+  ...(isInstalledGlobally ? { stopDir: os.homedir() } : {}),
+});
+
 /**
  * Get the user configuration for the project.
  *
@@ -24,18 +36,6 @@ const DEFAULT_TASKS = new Map(
  * @returns {Promise<UserFileConfig | null>} The user configuration or null if not found.
  */
 const getConfig = async (rootDirectory: string, configPath?: string) => {
-  const searchPlaces = [
-    ".is-it-ready.config.js",
-    ".is-it-ready.config.mjs",
-    ".is-it-ready.config.cjs",
-    "package.json",
-  ];
-
-  const explorer = cosmiconfig("is-it-ready", {
-    searchPlaces,
-    ...(isInstalledGlobally ? { stopDir: os.homedir() } : {}),
-  });
-
   if (configPath) {
     const resolvedPath = path.isAbsolute(configPath)
       ? configPath
