@@ -12,7 +12,6 @@ export type TaskConfig = {
   label: string;
   tool: string;
   command: string;
-  looseCommand?: string;
   fixCommand?: string;
   parseFailure: (output: string) => ParsedFailure | undefined;
 };

@@ -288,10 +288,6 @@ export const render = (tasks: Task[], runOptions: RunOptions) => {
     console.log(
       "(* indicates fix mode; some tasks will automatically apply fixes to your code)\n"
     );
-  } else if (runOptions.isLooseMode) {
-    console.log(
-      "(* indicates loose mode; some rules are disabled or set to warnings)\n"
-    );
   }
 
   const suiteFinished = tasks.every((task) => {

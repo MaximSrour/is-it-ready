@@ -21,17 +21,6 @@ describe("getRunOptions", () => {
   it("returns false flags when options omitted", () => {
     process.argv = ["node", "script.js"];
     expect(getRunOptions()).toEqual({
-      isLooseMode: false,
-      isSilentMode: false,
-      isFixMode: false,
-      configPath: undefined,
-    });
-  });
-
-  it("enables loose mode when --loose passed", () => {
-    process.argv = ["node", "script.js", "--loose"];
-    expect(getRunOptions()).toEqual({
-      isLooseMode: true,
       isSilentMode: false,
       isFixMode: false,
       configPath: undefined,
@@ -41,7 +30,6 @@ describe("getRunOptions", () => {
   it("enables silent mode when --silent passed", () => {
     process.argv = ["node", "script.js", "--silent"];
     expect(getRunOptions()).toEqual({
-      isLooseMode: false,
       isSilentMode: true,
       isFixMode: false,
       configPath: undefined,
@@ -49,11 +37,10 @@ describe("getRunOptions", () => {
   });
 
   it("enables both flags when both arguments supplied", () => {
-    process.argv = ["node", "script.js", "--silent", "--loose"];
+    process.argv = ["node", "script.js", "--silent", "--fix"];
     expect(getRunOptions()).toEqual({
-      isLooseMode: true,
       isSilentMode: true,
-      isFixMode: false,
+      isFixMode: true,
       configPath: undefined,
     });
   });
@@ -62,7 +49,6 @@ describe("getRunOptions", () => {
     process.argv = ["node", "script.js", "--config", "custom.config.js"];
 
     expect(getRunOptions()).toEqual({
-      isLooseMode: false,
       isSilentMode: false,
       isFixMode: false,
       configPath: "custom.config.js",
@@ -73,7 +59,6 @@ describe("getRunOptions", () => {
     process.argv = ["node", "script.js", "--config=custom.mjs"];
 
     expect(getRunOptions()).toEqual({
-      isLooseMode: false,
       isSilentMode: false,
       isFixMode: false,
       configPath: "custom.mjs",

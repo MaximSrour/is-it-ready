@@ -12,7 +12,7 @@ security checks in one dashboard.
 ## Usage
 
 ```sh
-is-it-ready [--loose] [--silent] [--fix] [--config <path>] [-h | --help] [-v | --version]
+is-it-ready [--silent] [--fix] [--config <path>] [-h | --help] [-v | --version]
 ```
 
 ### Flags
@@ -21,7 +21,6 @@ is-it-ready [--loose] [--silent] [--fix] [--config <path>] [-h | --help] [-v | -
 - `-v, --version` - Show version number.
 - `--config <path>` - Use a specific config file instead of searching defaults.
 - `--silent` - Keep the summary table but skip the detailed failure output.
-- `--loose` - Use the loose variant for tasks that support it (labels show `*`).
 - `--fix` - Automatically run fix commands for tasks that support it (labels
   show `*`).
 
@@ -42,8 +41,7 @@ for global support.
 - Pass `--config <path>` (e.g., `is-it-ready --config configs/staging.mjs`)
   to point the CLI at a specific file.
 - Each file must export an object with a `tasks` array. Every task entry must
-  specify the `tool` name and its `command`, and may provide `looseCommand` and
-  `fixCommand` overrides.
+  specify the `tool` name and its `command`, and may provide `fixCommand` overrides.
 
 Example `.is-it-ready.config.mjs`:
 
@@ -58,7 +56,6 @@ export default {
     {
       tool: "ESLint",
       command: "npm run lint",
-      looseCommand: "npm run lint -- --max-warnings 100",
     },
   ],
 };

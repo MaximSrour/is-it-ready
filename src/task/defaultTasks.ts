@@ -21,7 +21,6 @@ export const taskConfig: TaskConfig[] = [
     label: "Linting",
     tool: "ESLint",
     command: "npm run lint",
-    looseCommand: "npm run lint:loose",
     fixCommand: "npm run lint:fix",
     parseFailure: parseEslint,
   },
@@ -36,7 +35,6 @@ export const taskConfig: TaskConfig[] = [
     label: "Type Checking",
     tool: "TypeScript",
     command: "npm run type-check",
-    looseCommand: "npm run type-check:loose",
     parseFailure: parseTypeCheck,
   },
   {
@@ -49,7 +47,6 @@ export const taskConfig: TaskConfig[] = [
     label: "Inventory",
     tool: "Knip",
     command: "npm run knip",
-    looseCommand: "npm run knip:loose",
     fixCommand: "npm run knip:fix",
     parseFailure: parseKnip,
   },

@@ -14,7 +14,6 @@ import { type RunOptions } from "./types";
 export const getRunOptions = (): RunOptions => {
   const args = process.argv.slice(2);
 
-  let isLooseMode = false;
   let isSilentMode = false;
   let isFixMode = false;
   let configPath: string | undefined;
@@ -59,10 +58,6 @@ export const getRunOptions = (): RunOptions => {
       continue;
     }
 
-    if (arg === "--loose") {
-      isLooseMode = true;
-    }
-
     if (arg === "--silent") {
       isSilentMode = true;
     }
@@ -72,7 +67,7 @@ export const getRunOptions = (): RunOptions => {
     }
   }
 
-  return { isLooseMode, isSilentMode, isFixMode, configPath };
+  return { isSilentMode, isFixMode, configPath };
 };
 
 export const printHelp = () => {

@@ -84,8 +84,6 @@ Run `npm run check` to validate all quality gates:
 6. **Knip** - No unused dependencies or exports
 7. **npm audit** - No known security vulnerabilities
 
-All checks must pass in strict mode (not loose mode).
-
 ### Individual Quality Checks
 
 - `npm run prettier` or `npm run prettier:fix`

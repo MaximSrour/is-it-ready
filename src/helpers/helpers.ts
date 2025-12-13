@@ -26,20 +26,11 @@ export const selectCommand = (
   toolConfig: TaskConfig,
   runOptions: RunOptions
 ): ExecutableCommand => {
-  if (runOptions.isFixMode) {
-    if (toolConfig.fixCommand) {
-      return {
-        label: decorateLabel(toolConfig.label),
-        command: toolConfig.fixCommand,
-      };
-    }
-  } else if (runOptions.isLooseMode) {
-    if (toolConfig.looseCommand) {
-      return {
-        label: decorateLabel(toolConfig.label),
-        command: toolConfig.looseCommand,
-      };
-    }
+  if (runOptions.isFixMode && toolConfig.fixCommand) {
+    return {
+      label: decorateLabel(toolConfig.label),
+      command: toolConfig.fixCommand,
+    };
   }
 
   return { label: toolConfig.label, command: toolConfig.command };

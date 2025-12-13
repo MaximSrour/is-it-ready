@@ -147,7 +147,6 @@ describe("printFailureDetails", () => {
     rawOutput: "raw output",
   };
   const baseRunOptions = {
-    isLooseMode: false,
     isSilentMode: false,
     isFixMode: false,
     configPath: undefined,
