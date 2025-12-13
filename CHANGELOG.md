@@ -1,3 +1,22 @@
+# [1.3.0](https://github.com/MaximSrour/is-it-ready/compare/v1.2.6...v1.3.0) (2025-12-13)
+
+
+### Bug Fixes
+
+* add error handling for multiple config arguments in getRunOptions ([097e3a8](https://github.com/MaximSrour/is-it-ready/commit/097e3a8b879b4f6a241009805e415d97b89073dc))
+* correct MarkdownLint syntax in documentation ([b139ef9](https://github.com/MaximSrour/is-it-ready/commit/b139ef9c1f82d2e7daf7c22717f3ffae6bb25d56))
+* corrected global install config loading logic ([6b0fc1c](https://github.com/MaximSrour/is-it-ready/commit/6b0fc1c5c86edd8eca61c2330c4cccf503d616f5))
+* improve configuration loading logic and error handling in getConfig function ([cd2b72d](https://github.com/MaximSrour/is-it-ready/commit/cd2b72d2ab9c9b5944002016ec40fbf96cd9388b))
+* refactor configuration loading to use constants for search places ([0040592](https://github.com/MaximSrour/is-it-ready/commit/0040592e36d4077f20f400f1729367b93d87f193))
+* remove unnecessary peer dependencies from package-lock.json ([432faad](https://github.com/MaximSrour/is-it-ready/commit/432faad4b03189815420ee730bf16749604afae8))
+* update error message for missing user configuration to include README reference ([4d6c83c](https://github.com/MaximSrour/is-it-ready/commit/4d6c83c896db56f2ec8928530ad77cd61998f7d2))
+
+
+### Features
+
+* add support for custom configuration file path in CLI and update related tests ([8969616](https://github.com/MaximSrour/is-it-ready/commit/8969616ad428b3edb94b5a966207b23b943597c7))
+* add user configuration support and update task loading mechanism ([c202bf7](https://github.com/MaximSrour/is-it-ready/commit/c202bf76c1a8da57f1d22ac14d2e94ac14ced76e))
+
 ## [1.2.6](https://github.com/MaximSrour/is-it-ready/compare/v1.2.5...v1.2.6) (2025-12-12)
 
 
