@@ -33,7 +33,7 @@ const explorer = cosmiconfig("is-it-ready", {
  *
  * @param {string} rootDirectory - The root directory of the project.
  * @param {string} [configPath] - Optional path to a specific configuration file.
- * @returns {Promise<UserFileConfig | null>} The user configuration or null if not found.
+ * @returns {Promise<unknown | null>} The user configuration or null if not found.
  */
 const getConfig = async (rootDirectory: string, configPath?: string) => {
   if (configPath) {
