@@ -1,3 +1,10 @@
+## [1.4.3](https://github.com/MaximSrour/is-it-ready/compare/v1.4.2...v1.4.3) (2025-12-13)
+
+
+### Bug Fixes
+
+* add error handling for unsupported CLI options in getRunOptions ([c876389](https://github.com/MaximSrour/is-it-ready/commit/c8763899f98839a175366629497db4cf4c859890))
+
 ## [1.4.2](https://github.com/MaximSrour/is-it-ready/compare/v1.4.1...v1.4.2) (2025-12-13)
 
 
