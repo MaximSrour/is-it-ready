@@ -25,14 +25,10 @@ export const getRunOptions = (): RunOptions => {
     if (arg === "--help" || arg === "-h") {
       printHelp();
       process.exit(0);
-    }
-
-    if (arg === "--version" || arg === "-v") {
+    } else if (arg === "--version" || arg === "-v") {
       printVersion();
       process.exit(0);
-    }
-
-    if (arg === "--config") {
+    } else if (arg === "--config") {
       const value = args[index + 1];
 
       if (!value || value.startsWith("-")) {
@@ -46,9 +42,7 @@ export const getRunOptions = (): RunOptions => {
       configPath = value;
       index += 1;
       continue;
-    }
-
-    if (arg.startsWith("--config=")) {
+    } else if (arg.startsWith("--config=")) {
       const value = arg.split("=", 2)[1];
 
       if (!value) {
@@ -57,18 +51,14 @@ export const getRunOptions = (): RunOptions => {
 
       configPath = value;
       continue;
-    }
-
-    if (arg === "--silent") {
+    } else if (arg === "--silent") {
       isSilentMode = true;
-    }
-
-    if (arg === "--fix") {
+    } else if (arg === "--fix") {
       isFixMode = true;
-    }
-
-    if (arg === "--watch") {
+    } else if (arg === "--watch") {
       isWatchMode = true;
+    } else {
+      throw new Error(`Unknown option: ${arg}`);
     }
   }
 
