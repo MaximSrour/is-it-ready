@@ -6,17 +6,21 @@ security checks in one dashboard.
 ## Usage
 
 ```sh
-is-it-ready [--loose] [--silent] [--fix] [-h | --help] [-v | --version]
+is-it-ready [--loose] [--silent] [--fix] [--config <path>] [-h | --help] [-v | --version]
 ```
 
 ### Flags
 
 - `-h, --help` - Show usage.
 - `-v, --version` - Show version number.
+- `--config <path>` - Use a specific config file instead of searching defaults.
 - `--silent` - Keep the summary table but skip the detailed failure output.
 - `--loose` - Use the loose variant for tasks that support it (labels show `*`).
 - `--fix` - Automatically run fix commands for tasks that support it (labels
   show `*`).
+
+The table shows live status, timings, and overall issue counts. Exit code is `0`
+when everything passes and `1` otherwise.
 
 ## Configuration
 
@@ -29,6 +33,8 @@ for global support.
   `.is-it-ready.config.mjs` (CommonJS `module.exports` or ESM `export default`).
 - When installed locally the tool also looks for a `"is-it-ready"` key inside
   `package.json`.
+- Pass `--config <path>` (e.g., `is-it-ready --config configs/staging.mjs`)
+  to point the CLI at a specific file.
 - Each file must export an object with a `tasks` array. Every task entry must
   specify the `tool` name and its `command`, and may provide `looseCommand` and
   `fixCommand` overrides.

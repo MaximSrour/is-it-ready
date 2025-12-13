@@ -33,6 +33,7 @@ const makeRunOptions = (overrides: Partial<RunOptions> = {}): RunOptions => {
     isFixMode: false,
     isLooseMode: false,
     isSilentMode: false,
+    configPath: undefined,
     ...overrides,
   };
 };
@@ -140,6 +141,43 @@ describe("loadUserConfigTasks", () => {
     expect(task?.label).toBe(taskConfig[0]?.label);
     expect(task?.tool).toBe("Prettier");
     expect(task?.command).toBe("npm run prettier:custom");
+
+    cleanupDir(directory);
+  });
+
+  it("loads configuration from a custom path when provided via run options", async () => {
+    const filename = "custom.config.mjs";
+    const directory = withTempDir(
+      `
+        export default {
+          tasks: [
+            {
+              tool: "Prettier",
+              command: "npm run prettier"
+            }
+          ]
+        };
+      `,
+      filename
+    );
+
+    const tasks = await loadUserConfig(
+      makeRunOptions({ configPath: filename })
+    );
+
+    expect(tasks).not.toBeNull();
+    expect(tasks).toHaveLength(1);
+    expect(tasks?.[0]?.tool).toBe("Prettier");
+
+    cleanupDir(directory);
+  });
+
+  it("throws a helpful error when the provided config path does not exist", async () => {
+    const directory = withTempDir();
+
+    await expect(
+      loadUserConfig(makeRunOptions({ configPath: "missing.config.js" }))
+    ).rejects.toThrowError(/config file not found/i);
 
     cleanupDir(directory);
   });

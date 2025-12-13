@@ -1,4 +1,5 @@
 import os from "node:os";
+import path from "node:path";
 
 import { cosmiconfig } from "cosmiconfig";
 import isInstalledGlobally from "is-installed-globally";
@@ -19,9 +20,10 @@ const DEFAULT_TASKS = new Map(
  * Get the user configuration for the project.
  *
  * @param {string} rootDirectory - The root directory of the project.
+ * @param {string} [configPath] - Optional path to a specific configuration file.
  * @returns {Promise<UserFileConfig | null>} The user configuration or null if not found.
  */
-const getConfig = async (rootDirectory: string) => {
+const getConfig = async (rootDirectory: string, configPath?: string) => {
   const searchDirectory = isInstalledGlobally ? os.homedir() : rootDirectory;
 
   const searchPlaces = [
@@ -38,6 +40,27 @@ const getConfig = async (rootDirectory: string) => {
     searchPlaces,
     stopDir: searchDirectory,
   });
+
+  if (configPath) {
+    const resolvedPath = path.isAbsolute(configPath)
+      ? configPath
+      : path.resolve(rootDirectory, configPath);
+
+    try {
+      const result = await explorer.load(resolvedPath);
+      const config: unknown = result?.config ?? null;
+
+      return config;
+    } catch (error) {
+      const maybeNodeError = error as NodeJS.ErrnoException;
+
+      if (maybeNodeError.code === "ENOENT") {
+        throw new Error(`Config file not found at ${resolvedPath}`);
+      }
+
+      throw error;
+    }
+  }
 
   const result = await explorer.search(searchDirectory);
   const config: unknown = result?.config ?? null;
@@ -145,7 +168,7 @@ const mergeTaskConfig = (userTask: UserTaskConfig): TaskConfig => {
 export const loadUserConfig = async (
   runOptions: RunOptions
 ): Promise<Task[] | null> => {
-  const exportedConfig = await getConfig(process.cwd());
+  const exportedConfig = await getConfig(process.cwd(), runOptions.configPath);
 
   if (!exportedConfig) {
     return null;

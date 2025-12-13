@@ -150,6 +150,7 @@ describe("printFailureDetails", () => {
     isLooseMode: false,
     isSilentMode: false,
     isFixMode: false,
+    configPath: undefined,
     showHelp: false,
     showVersion: false,
   };

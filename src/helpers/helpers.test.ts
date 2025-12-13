@@ -28,6 +28,7 @@ describe("selectCommand", () => {
       isLooseMode: isLoose,
       isFixMode: isFix,
       isSilentMode: false,
+      configPath: undefined,
     };
   };
 

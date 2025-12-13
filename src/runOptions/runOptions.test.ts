@@ -24,6 +24,7 @@ describe("getRunOptions", () => {
       isLooseMode: false,
       isSilentMode: false,
       isFixMode: false,
+      configPath: undefined,
     });
   });
 
@@ -33,6 +34,7 @@ describe("getRunOptions", () => {
       isLooseMode: true,
       isSilentMode: false,
       isFixMode: false,
+      configPath: undefined,
     });
   });
 
@@ -42,6 +44,7 @@ describe("getRunOptions", () => {
       isLooseMode: false,
       isSilentMode: true,
       isFixMode: false,
+      configPath: undefined,
     });
   });
 
@@ -51,7 +54,46 @@ describe("getRunOptions", () => {
       isLooseMode: true,
       isSilentMode: true,
       isFixMode: false,
+      configPath: undefined,
     });
+  });
+
+  it("captures a config path when provided with --config", () => {
+    process.argv = ["node", "script.js", "--config", "custom.config.js"];
+
+    expect(getRunOptions()).toEqual({
+      isLooseMode: false,
+      isSilentMode: false,
+      isFixMode: false,
+      configPath: "custom.config.js",
+    });
+  });
+
+  it("captures a config path when provided inline with --config=", () => {
+    process.argv = ["node", "script.js", "--config=custom.mjs"];
+
+    expect(getRunOptions()).toEqual({
+      isLooseMode: false,
+      isSilentMode: false,
+      isFixMode: false,
+      configPath: "custom.mjs",
+    });
+  });
+
+  it("throws when --config is provided without a value", () => {
+    process.argv = ["node", "script.js", "--config"];
+
+    expect(() => {
+      getRunOptions();
+    }).toThrowError(/missing value for --config/i);
+  });
+
+  it("throws when --config= is provided without a value", () => {
+    process.argv = ["node", "script.js", "--config="];
+
+    expect(() => {
+      getRunOptions();
+    }).toThrowError(/missing value for --config/i);
   });
 
   it("exits immediately when --help is supplied", () => {
