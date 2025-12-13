@@ -5,6 +5,8 @@ import chalk from "chalk";
 import { loadUserConfig } from "./config";
 import { render } from "./renderers";
 import { getRunOptions } from "./runOptions/runOptions";
+import { type RunOptions } from "./runOptions/types";
+import { type Task } from "./task";
 
 void main().catch((error) => {
   console.error(chalk.red("Unexpected error while running tasks."));
@@ -26,6 +28,28 @@ async function main() {
     );
   }
 
+  await runTasks(tasks, runOptions);
+
+  const { totalIssues } = tasks.reduce<{ totalIssues: number }>(
+    (acc, task) => {
+      return {
+        totalIssues:
+          acc.totalIssues + task.getTotalErrors() + task.getTotalWarnings(),
+      };
+    },
+    { totalIssues: 0 }
+  );
+
+  process.exit(totalIssues > 0 ? 1 : 0);
+}
+
+/**
+ * Runs the specified tasks with the given run options.
+ *
+ * @param {Task[]} tasks - The tasks to run.
+ * @param {RunOptions} runOptions - The options to use when running the tasks.
+ */
+const runTasks = async (tasks: Task[], runOptions: RunOptions) => {
   render(tasks, runOptions);
 
   await Promise.all(
@@ -40,16 +64,4 @@ async function main() {
       });
     })
   );
-
-  const { totalIssues } = tasks.reduce<{ totalIssues: number }>(
-    (acc, task) => {
-      return {
-        totalIssues:
-          acc.totalIssues + task.getTotalErrors() + task.getTotalWarnings(),
-      };
-    },
-    { totalIssues: 0 }
-  );
-
-  process.exit(totalIssues > 0 ? 1 : 0);
-}
+};
