@@ -1,3 +1,11 @@
+## [1.4.1](https://github.com/MaximSrour/is-it-ready/compare/v1.4.0...v1.4.1) (2025-12-13)
+
+
+### Bug Fixes
+
+* enhance parseVitest to handle suite failures ([66a3888](https://github.com/MaximSrour/is-it-ready/commit/66a3888ff3ae51a6d622679625b25418c3e7346a))
+* properly validate integer input ([a9dd81a](https://github.com/MaximSrour/is-it-ready/commit/a9dd81a088357f47de5683c300cb57cdcb4dd46d))
+
 # [1.4.0](https://github.com/MaximSrour/is-it-ready/compare/v1.3.1...v1.4.0) (2025-12-13)
 
 
