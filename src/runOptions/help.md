@@ -64,7 +64,7 @@ Currently, this tool only provides support for the following packages/tools:
 
 - ESLint
 - Knip
-- MarkdownLint (`markdownlint-cli2)
+- MarkdownLint (`markdownlint-cli2`)
 - Prettier
 - TypeScript
 - Vitest
