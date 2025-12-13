@@ -1,5 +1,11 @@
 # is-it-ready
 
+[![NPM version](https://img.shields.io/npm/v/is-it-ready.svg?style=for-the-badge)](https://www.npmjs.org/package/is-it-ready)
+[![NPM Last Update](https://img.shields.io/npm/last-update/is-it-ready?style=for-the-badge)](https://www.npmjs.com/package/is-it-ready?activeTab=versions)
+[![NPM Downloads](https://img.shields.io/npm/dw/is-it-ready?style=for-the-badge)](https://www.npmjs.org/package/is-it-ready)
+[![GitHub contributors](https://img.shields.io/github/contributors/MaximSrour/is-it-ready?style=for-the-badge)](https://github.com/MaximSrour/is-it-ready/graphs/contributors)
+[![NPM License](https://img.shields.io/npm/l/is-it-ready?style=for-the-badge)](https://github.com/MaximSrour/is-it-ready/blob/master/LICENSE)
+
 CLI that runs your project's formatting, linting, tests, inventory, and
 security checks in one dashboard.
 
