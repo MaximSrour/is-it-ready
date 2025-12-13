@@ -8,7 +8,7 @@ import { type RunOptions } from "@/runOptions/types";
 
 import { Task, taskConfig } from "../task";
 import { type TaskConfig } from "../task/types";
-import { type UserFileConfig, type UserTaskConfig } from "./types";
+import { type Config, type UserFileConfig, type UserTaskConfig } from "./types";
 
 const DEFAULT_TASKS = new Map(
   taskConfig.map((config) => {
@@ -105,6 +105,22 @@ const isOptionalString = (value: unknown): value is string | undefined => {
 };
 
 /**
+ * Checks if a value is an optional array (array of strings or undefined).
+ *
+ * @param {unknown} value - The value to check.
+ * @returns {boolean} True if the value is an optional array, false otherwise.
+ */
+const isOptionalArray = (value: unknown): value is string[] | undefined => {
+  return (
+    value === undefined ||
+    (Array.isArray(value) &&
+      value.every((item) => {
+        return isNonEmptyString(item);
+      }))
+  );
+};
+
+/**
  * Checks if a value is a user task configuration.
  *
  * @param {unknown} value - The value to check.
@@ -131,6 +147,7 @@ const isUserTaskConfig = (value: unknown): value is UserTaskConfig => {
 const isUserFileConfig = (value: unknown): value is UserFileConfig => {
   return (
     isRecord(value) &&
+    isOptionalArray(value.watchIgnore) &&
     Array.isArray(value.tasks) &&
     value.tasks.every((task) => {
       return isUserTaskConfig(task);
@@ -171,7 +188,7 @@ const mergeTaskConfig = (userTask: UserTaskConfig): TaskConfig => {
  */
 export const loadUserConfig = async (
   runOptions: RunOptions
-): Promise<Task[] | null> => {
+): Promise<Config | null> => {
   const exportedConfig = await getConfig(process.cwd(), runOptions.configPath);
 
   if (!exportedConfig) {
@@ -184,10 +201,12 @@ export const loadUserConfig = async (
     );
   }
 
+  const watchIgnore = exportedConfig.watchIgnore;
+
   const tasks = exportedConfig.tasks.map((taskDefinition) => {
     const mergedConfig = mergeTaskConfig(taskDefinition);
     return new Task(mergedConfig, runOptions);
   });
 
-  return tasks;
+  return { watchIgnore, tasks };
 };

@@ -4,6 +4,7 @@ import chalk from "chalk";
 import chokidar from "chokidar";
 
 import { loadUserConfig } from "./config";
+import { type Config } from "./config/types";
 import { render } from "./renderers";
 import { getRunOptions } from "./runOptions/runOptions";
 import { type RunOptions } from "./runOptions/types";
@@ -23,43 +24,43 @@ void main().catch((error) => {
 async function main() {
   const runOptions = getRunOptions();
 
-  const tasks = await loadUserConfig(runOptions);
+  const config = await loadUserConfig(runOptions);
 
-  if (tasks === null) {
+  if (config === null) {
     throw new Error(
       "No user configuration found. Please create an is-it-ready config (refer to the README for more information) file."
     );
   }
 
   if (!runOptions.isWatchMode) {
-    await runTasks(tasks, runOptions);
-    const totalIssues = calculateTotalIssues(tasks);
+    await runTasks(config, runOptions);
+    const totalIssues = calculateTotalIssues(config.tasks);
 
     process.exit(totalIssues > 0 ? 1 : 0);
   }
 
-  await runTasks(tasks, runOptions);
+  await runTasks(config, runOptions);
 
-  startWatcher(tasks, runOptions);
+  startWatcher(config, runOptions);
 }
 
 /**
  * Runs the specified tasks with the given run options.
  *
- * @param {Task[]} tasks - The tasks to run.
+ * @param {Config} config - The configuration containing the tasks to run.
  * @param {RunOptions} runOptions - The options to use when running the tasks.
  */
-const runTasks = async (tasks: Task[], runOptions: RunOptions) => {
-  render(tasks, runOptions);
+const runTasks = async (config: Config, runOptions: RunOptions) => {
+  render(config.tasks, runOptions);
 
   await Promise.all(
-    tasks.map((task) => {
+    config.tasks.map((task) => {
       return task.execute({
         onStart: () => {
-          render(tasks, runOptions);
+          render(config.tasks, runOptions);
         },
         onFinish: () => {
-          render(tasks, runOptions);
+          render(config.tasks, runOptions);
         },
       });
     })
@@ -69,11 +70,11 @@ const runTasks = async (tasks: Task[], runOptions: RunOptions) => {
 /**
  * Reruns the specified tasks with the given run options.
  *
- * @param {Task[]} tasks - The tasks to rerun.
+ * @param {Config} config - The configuration containing the tasks to rerun.
  * @param {RunOptions} runOptions - The options to use when rerunning the tasks.
  * @returns {Promise<void>}
  */
-const rerunTasks = async (tasks: Task[], runOptions: RunOptions) => {
+const rerunTasks = async (config: Config, runOptions: RunOptions) => {
   if (isRunning) {
     return;
   }
@@ -81,7 +82,7 @@ const rerunTasks = async (tasks: Task[], runOptions: RunOptions) => {
   isRunning = true;
 
   try {
-    await runTasks(tasks, runOptions);
+    await runTasks(config, runOptions);
   } finally {
     isRunning = false;
   }
@@ -90,10 +91,10 @@ const rerunTasks = async (tasks: Task[], runOptions: RunOptions) => {
 /**
  * Starts the file watcher for the specified tasks.
  *
- * @param {Task[]} tasks - The tasks to watch for changes.
+ * @param {Config} config - The configuration containing the tasks to watch.
  * @param {RunOptions} runOptions - The options to use when running the tasks.
  */
-const startWatcher = (tasks: Task[], runOptions: RunOptions) => {
+const startWatcher = (config: Config, runOptions: RunOptions) => {
   console.log(chalk.cyan("Watch mode enabled. Waiting for file changes..."));
 
   const watcher = chokidar.watch(".", {
@@ -103,12 +104,12 @@ const startWatcher = (tasks: Task[], runOptions: RunOptions) => {
   });
 
   watcher.on("all", () => {
-    void rerunTasks(tasks, runOptions);
+    void rerunTasks(config, runOptions);
   });
 
   const handleExit = () => {
     void watcher.close();
-    process.exit(calculateTotalIssues(tasks) > 0 ? 1 : 0);
+    process.exit(calculateTotalIssues(config.tasks) > 0 ? 1 : 0);
   };
 
   process.on("SIGINT", handleExit);

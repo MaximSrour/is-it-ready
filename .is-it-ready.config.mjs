@@ -1,4 +1,5 @@
 export default {
+  watchIgnore: [".git", "node_modules"],
   tasks: [
     {
       tool: "Prettier",
