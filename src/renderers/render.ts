@@ -335,7 +335,10 @@ export const render = (tasks: Task[], runOptions: RunOptions) => {
         const end = task.getEndTime();
 
         if (start !== null && end !== null) {
-          acc.suiteStartTime = Math.max(acc.suiteStartTime, start);
+          acc.suiteStartTime =
+            acc.suiteStartTime === 0
+              ? start
+              : Math.min(acc.suiteStartTime, start);
           acc.suiteEndTime = Math.max(acc.suiteEndTime, end);
         }
 
