@@ -37,7 +37,7 @@ describe("parseCSpell", () => {
   });
 
   it("returns undefined when nothing reported", () => {
-    const output = "All clean";
+    const output = "CSpell: Files checked: 59, Issues found: 0 in 0 files.";
 
     const result = parseCSpell(output);
 
