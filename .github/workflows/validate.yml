@@ -29,6 +29,9 @@ jobs:
       - name: MarkdownLint
         run: npm run markdownlint
 
+      - name: CSpell
+        run: npm run spelling
+
       - name: Type checking
         run: npm run type-check
 
