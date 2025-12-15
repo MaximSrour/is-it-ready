@@ -2,7 +2,7 @@ import { type ParsedFailure } from "../../types";
 
 export const parseNpmAudit = (output: string): ParsedFailure | undefined => {
   const summaryRegex =
-    /(?:found\s+)?(\d+)\s+vulnerabilit(?:y|ies)(?:\s+\(([^)]+)\))?/gi;
+    /(?:found\s+)?(\d+)\s+(?:vulnerability|vulnerabilities)(?:\s+\(([^)]+)\))?/gi;
   const summary = summaryRegex.exec(output);
 
   if (summary) {
@@ -31,7 +31,10 @@ export const parseNpmAudit = (output: string): ParsedFailure | undefined => {
     return undefined;
   }
 
-  if (/npm err!/i.test(output) || /vulnerabilit/i.test(output)) {
+  if (
+    /npm err!/i.test(output) ||
+    /(?:vulnerability|vulnerabilities)/i.test(output)
+  ) {
     return { message: "Failed - vulnerabilities detected", errors: 1 };
   }
 

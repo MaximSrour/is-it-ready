@@ -1,3 +1,4 @@
+export { parseCSpell } from "./cspell";
 export { parseEslint } from "./eslint";
 export { parseKnip } from "./knip";
 export { parseMarkdownLint } from "./markdownlint";

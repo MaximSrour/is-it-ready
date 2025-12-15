@@ -45,6 +45,7 @@
     "prettier": "prettier --check 'src/**/*.{js,ts,mjs,cjs,json}' '*.{js,ts,mjs,cjs,json}'",
     "prettier:fix": "prettier --write 'src/**/*.{js,ts,mjs,cjs,json}' '*.{js,ts,mjs,cjs,json}'",
     "prettier:watch": "chokidar \"src/**/*.{js,ts,mjs,cjs,json}\" \"*.{js,ts,mjs,cjs,json}\" -c \"npm run --silent prettier:fix\"",
+    "spelling": "cspell --no-progress 'src/**/*.{js,ts,mjs,cjs,json}' '*.{js,ts,mjs,cjs,json}'",
     "test": "vitest",
     "type-check": "tsc --noEmit",
     "check": "ts-node --transpile-only src/index.ts",
@@ -58,7 +59,6 @@
     "is-installed-globally": "^1.0.0"
   },
   "devDependencies": {
-    "@cspell/eslint-plugin": "^9.4.0",
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/exec": "^7.1.0",
     "@semantic-release/git": "^10.0.1",
@@ -67,6 +67,7 @@
     "@typescript-eslint/eslint-plugin": "^8.48.1",
     "@typescript-eslint/parser": "^8.48.1",
     "chokidar-cli": "^3.0.0",
+    "cspell": "^9.4.0",
     "eslint": "^9.39.1",
     "eslint-import-resolver-typescript": "^4.4.4",
     "eslint-plugin-import": "^2.32.0",

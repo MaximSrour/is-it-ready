@@ -1,4 +1,3 @@
-import cspellESLintPluginRecommended from "@cspell/eslint-plugin/recommended";
 import jsdoc from "eslint-plugin-jsdoc";
 import unusedImports from "eslint-plugin-unused-imports";
 import { defineConfig, globalIgnores } from "eslint/config";
@@ -57,7 +56,6 @@ const pluginImportConfig = {
 export default defineConfig([
   globalIgnores(["prettier.config.cjs", "eslint.config.mjs", "knip.config.js"]),
   tseslint.configs.recommendedTypeChecked,
-  cspellESLintPluginRecommended,
   {
     languageOptions: {
       parserOptions: {
