@@ -17,6 +17,10 @@ export default {
       fixCommand: "npm run markdownlint:fix",
     },
     {
+      tool: "CSpell",
+      command: "npm run spelling",
+    },
+    {
       tool: "TypeScript",
       command: "npm run type-check",
     },

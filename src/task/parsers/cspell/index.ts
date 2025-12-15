@@ -1,0 +1,1 @@
+export { parseCSpell } from "./parser";

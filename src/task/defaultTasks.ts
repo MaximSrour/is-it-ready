@@ -1,4 +1,5 @@
 import {
+  parseCSpell,
   parseEslint,
   parseKnip,
   parseMarkdownLint,
@@ -30,6 +31,12 @@ export const defaultTasks: TaskConfig[] = [
     command: "npm run markdownlint",
     fixCommand: "npm run markdownlint:fix",
     parseFailure: parseMarkdownLint,
+  },
+  {
+    label: "Spell Checking",
+    tool: "CSpell",
+    command: "npm run spelling",
+    parseFailure: parseCSpell,
   },
   {
     label: "Type Checking",
