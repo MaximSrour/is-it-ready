@@ -1,3 +1,15 @@
+# [1.5.0](https://github.com/MaximSrour/is-it-ready/compare/v1.4.4...v1.5.0) (2025-12-15)
+
+
+### Bug Fixes
+
+* update cspell config and test for zero issues reported ([ccc9374](https://github.com/MaximSrour/is-it-ready/commit/ccc93740020b4b0651107b5277c9cb9d9b107ceb))
+
+
+### Features
+
+* add support for cspell cli ([60ab4ad](https://github.com/MaximSrour/is-it-ready/commit/60ab4ad3e97485e916bbf71b986cca761dd3b8d5))
+
 ## [1.4.4](https://github.com/MaximSrour/is-it-ready/compare/v1.4.3...v1.4.4) (2025-12-13)
 
 
