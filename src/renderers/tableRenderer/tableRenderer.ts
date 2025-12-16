@@ -3,7 +3,7 @@ import chalk from "chalk";
 import { type Task } from "@/task";
 
 import { formatDuration, stripAnsi, taskStateIcons } from "../../helpers";
-import { colorStatusMessage } from "../render";
+import { colorStatusMessage } from "../colorStatusMessage";
 import { type BorderChars, type BorderLevel } from "./types";
 
 const BORDER_CHARS: Record<BorderLevel, BorderChars> = {

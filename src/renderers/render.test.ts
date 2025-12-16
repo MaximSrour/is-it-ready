@@ -5,31 +5,7 @@ import { type FailureDetails } from "@/task/types";
 
 import { noOp } from "../helpers";
 import * as renderModule from "./render";
-import {
-  colorStatusMessage,
-  formatFailureHeadline,
-  printFailureDetails,
-} from "./render";
-
-describe("colorStatusMessage", () => {
-  beforeEach(() => {
-    chalk.level = 1;
-  });
-
-  it("returns empty string when message missing", () => {
-    expect(colorStatusMessage("", "pending")).toBe("");
-  });
-
-  it("colors message red for failure state", () => {
-    expect(colorStatusMessage("Failed", "failure")).toBe(
-      "\u001b[31mFailed\u001b[39m"
-    );
-  });
-
-  it("leaves other states uncolored", () => {
-    expect(colorStatusMessage("Working", "running")).toBe("Working");
-  });
-});
+import { formatFailureHeadline, printFailureDetails } from "./render";
 
 describe("formatFailureHeadline", () => {
   const baseFailure: FailureDetails = {
