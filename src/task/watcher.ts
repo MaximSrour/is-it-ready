@@ -1,7 +1,6 @@
 import chokidar from "chokidar";
-
-import { type Config } from "@/config/types";
-import { type RunOptions } from "@/runOptions/types";
+import { type Config } from "config/types";
+import { type RunOptions } from "runOptions/types";
 
 import { calculateTotalIssues, runTasks } from "./execute";
 

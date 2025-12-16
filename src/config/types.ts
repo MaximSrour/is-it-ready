@@ -1,4 +1,4 @@
-import { type Task } from "../task";
+import { type Task } from "task";
 
 export type UserTaskConfig = {
   tool: string;

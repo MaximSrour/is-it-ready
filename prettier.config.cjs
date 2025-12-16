@@ -4,7 +4,12 @@ module.exports = {
   trailingComma: "es5",
   semi: true,
   plugins: ["@trivago/prettier-plugin-sort-imports"],
-  importOrder: ["^node:", "<THIRD_PARTY_MODULES>", "^@/", "^[./]"],
+  importOrder: [
+    "^node:|child_process|fs|path",
+    "<THIRD_PARTY_MODULES>",
+    "^@/",
+    "^[./]",
+  ],
   importOrderSeparation: true,
   importOrderSortSpecifiers: true,
 };

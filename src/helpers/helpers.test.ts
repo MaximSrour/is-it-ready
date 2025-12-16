@@ -1,7 +1,6 @@
+import { type RunOptions } from "runOptions/types";
+import { type TaskConfig } from "task/types";
 import { describe, expect, it } from "vitest";
-
-import { type RunOptions } from "@/runOptions/types";
-import { type TaskConfig } from "@/task/types";
 
 import {
   addSilentFlag,

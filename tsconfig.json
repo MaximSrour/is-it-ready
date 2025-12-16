@@ -11,8 +11,7 @@
     "noEmit": true,
     "noFallthroughCasesInSwitch": true,
     "paths": {
-      "@/*": ["*"],
-      "@": ["."]
+      "~/*": ["./src/*"]
     },
     "resolveJsonModule": true,
     "skipLibCheck": true,

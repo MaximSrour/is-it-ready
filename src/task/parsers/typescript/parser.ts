@@ -1,4 +1,4 @@
-import { type ParsedFailure } from "../../types";
+import { type ParsedFailure } from "task/types";
 
 export const parseTypeCheck = (output: string): ParsedFailure | undefined => {
   const summary = output.match(

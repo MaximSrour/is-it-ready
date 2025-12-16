@@ -1,4 +1,4 @@
-import { type ParsedFailure } from "../../types";
+import { type ParsedFailure } from "task/types";
 
 export const parsePrettier = (output: string): ParsedFailure | undefined => {
   const summaryPatterns = [

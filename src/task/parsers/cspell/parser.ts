@@ -1,4 +1,4 @@
-import { type ParsedFailure } from "../../types";
+import { type ParsedFailure } from "task/types";
 
 export const parseCSpell = (output: string): ParsedFailure | undefined => {
   const summaryPattern = /issues?\s+found:\s*(\d+)(?:\s+in\s+(\d+)\s+files?)?/i;

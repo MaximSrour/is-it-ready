@@ -3,11 +3,10 @@ import path from "node:path";
 
 import { cosmiconfig } from "cosmiconfig";
 import isInstalledGlobally from "is-installed-globally";
+import { type RunOptions } from "runOptions/types";
+import { Task, defaultTasks } from "task";
+import { type TaskConfig } from "task/types";
 
-import { type RunOptions } from "@/runOptions/types";
-
-import { Task, defaultTasks } from "../task";
-import { type TaskConfig } from "../task/types";
 import { type Config, type UserFileConfig, type UserTaskConfig } from "./types";
 
 const DEFAULT_TASKS = new Map(
