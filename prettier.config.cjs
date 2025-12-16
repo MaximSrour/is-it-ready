@@ -8,7 +8,6 @@ module.exports = {
     "^node:|child_process|fs|path",
     "<THIRD_PARTY_MODULES>",
     "^~/",
-    "^@/",
     "^[./]",
   ],
   importOrderSeparation: true,
