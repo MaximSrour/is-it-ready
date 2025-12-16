@@ -1,4 +1,4 @@
-import { type ParsedFailure } from "task/types";
+import { type ParsedFailure } from "~/task/types";
 
 export const parseVitest = (output: string): ParsedFailure | undefined => {
   const suiteFailures = output.match(/ Failed Suites\s+(\d+) /i);

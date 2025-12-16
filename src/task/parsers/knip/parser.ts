@@ -1,4 +1,4 @@
-import { type ParsedFailure } from "task/types";
+import { type ParsedFailure } from "~/task/types";
 
 export const parseKnip = (output: string): ParsedFailure | undefined => {
   const sectionPattern = /\((\d+)\)/g;

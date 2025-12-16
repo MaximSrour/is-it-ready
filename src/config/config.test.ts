@@ -2,9 +2,10 @@ import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-import { type RunOptions } from "runOptions/types";
-import { defaultTasks } from "task";
 import { afterEach, describe, expect, it, vi } from "vitest";
+
+import { type RunOptions } from "~/runOptions/types";
+import { defaultTasks } from "~/task";
 
 import { loadUserConfig } from "./config";
 

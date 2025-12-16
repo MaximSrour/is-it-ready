@@ -1,11 +1,11 @@
 import chalk from "chalk";
 
-import { type RunOptions } from "@/runOptions/types";
-import { type Task } from "@/task/task";
+import { formatDuration, taskStateIcons } from "~/helpers";
+import { type RunOptions } from "~/runOptions/types";
+import { type Task } from "~/task/task";
+import { type FailureDetails } from "~/task/types";
 
 import pkg from "../../package.json";
-import { formatDuration, taskStateIcons } from "../helpers";
-import { type FailureDetails } from "../task/types";
 import { renderTable } from "./tableRenderer";
 
 /**

@@ -1,6 +1,6 @@
 import chalk from "chalk";
 
-import { type TaskState } from "../task/types";
+import { type TaskState } from "~/task/types";
 
 /**
  * Colors a status message based on the task state.

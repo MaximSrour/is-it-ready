@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "allowJs": false,
-    "baseUrl": "src",
+    "baseUrl": ".",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "isolatedModules": true,

@@ -1,4 +1,4 @@
-import { type ParsedFailure } from "task/types";
+import { type ParsedFailure } from "~/task/types";
 
 export const parseMarkdownLint = (
   output: string

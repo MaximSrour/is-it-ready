@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 
 import chalk from "chalk";
-import { loadUserConfig } from "config";
-import { getRunOptions } from "runOptions/runOptions";
+
+import { loadUserConfig } from "~/config";
+import { getRunOptions } from "~/runOptions/runOptions";
 
 import { calculateTotalIssues, runTasks, startWatcher } from "./task";
 

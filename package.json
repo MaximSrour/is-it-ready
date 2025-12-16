@@ -49,9 +49,9 @@
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "type-check": "tsc --noEmit",
-    "check": "ts-node --transpile-only src/index.ts",
-    "check:fix": "ts-node --transpile-only src/index.ts --fix",
-    "check:watch": "ts-node --transpile-only src/index.ts --watch"
+    "check": "ts-node -r tsconfig-paths/register --transpile-only src/index.ts",
+    "check:fix": "ts-node -r tsconfig-paths/register --transpile-only src/index.ts --fix",
+    "check:watch": "ts-node -r tsconfig-paths/register --transpile-only src/index.ts --watch"
   },
   "dependencies": {
     "chalk": "^4.1.2",
@@ -80,6 +80,7 @@
     "prettier": "^3.7.4",
     "semantic-release": "^25.0.2",
     "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.48.1",
     "vitest": "^4.0.15"

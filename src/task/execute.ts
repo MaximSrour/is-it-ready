@@ -1,6 +1,6 @@
-import { type Config } from "config/types";
-import { render } from "renderers";
-import { type RunOptions } from "runOptions/types";
+import { type Config } from "~/config/types";
+import { render } from "~/renderers";
+import { type RunOptions } from "~/runOptions/types";
 
 import { type Task } from "./task";
 

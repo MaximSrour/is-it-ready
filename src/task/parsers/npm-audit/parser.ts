@@ -1,4 +1,4 @@
-import { type ParsedFailure } from "task/types";
+import { type ParsedFailure } from "~/task/types";
 
 export const parseNpmAudit = (output: string): ParsedFailure | undefined => {
   const summaryRegex =
