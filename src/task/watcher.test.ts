@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { type Config } from "@/config/types";
-import { type RunOptions } from "@/runOptions/types";
+import { type Config } from "~/config/types";
+import { type RunOptions } from "~/runOptions/types";
 
 import { startWatcher } from "./watcher";
 

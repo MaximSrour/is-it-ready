@@ -1,13 +1,13 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { type Config } from "@/config/types";
-import { type RunOptions } from "@/runOptions/types";
+import { type Config } from "~/config/types";
+import { render } from "~/renderers";
+import { type RunOptions } from "~/runOptions/types";
 
-import { render } from "../renderers";
 import { calculateTotalIssues, runTasks } from "./execute";
 import { Task } from "./task";
 
-vi.mock("../renderers", () => {
+vi.mock("~/renderers", () => {
   return {
     render: vi.fn(),
   };

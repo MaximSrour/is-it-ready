@@ -1,7 +1,8 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import * as helpers from "../helpers";
-import { noOp } from "../helpers";
+import * as helpers from "~/helpers";
+import { noOp } from "~/helpers";
+
 import { Task } from "./task";
 
 export const createMockTask = (

@@ -1,6 +1,6 @@
-import { type RunOptions } from "@/runOptions/types";
+import { runCommand, selectCommand, stripAnsi } from "~/helpers";
+import { type RunOptions } from "~/runOptions/types";
 
-import { runCommand, selectCommand, stripAnsi } from "../helpers";
 import {
   type FailureDetails,
   type ParsedFailure,
