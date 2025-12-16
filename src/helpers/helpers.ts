@@ -1,4 +1,4 @@
-import { spawn } from "child_process";
+import { spawn } from "node:child_process";
 
 import { type RunOptions } from "~/runOptions/types";
 import { type TaskConfig } from "~/task/types";
