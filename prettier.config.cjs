@@ -5,7 +5,7 @@ module.exports = {
   semi: true,
   plugins: ["@trivago/prettier-plugin-sort-imports"],
   importOrder: [
-    "^node:|child_process|fs|path",
+    "^(node:|child_process|fs|path)",
     "<THIRD_PARTY_MODULES>",
     "^~/",
     "^[./]",
