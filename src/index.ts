@@ -4,8 +4,7 @@ import chalk from "chalk";
 
 import { loadUserConfig } from "~/config";
 import { getRunOptions } from "~/runOptions/runOptions";
-
-import { calculateTotalIssues, runTasks, startWatcher } from "./task";
+import { calculateTotalIssues, runTasks, startWatcher } from "~/task";
 
 void main().catch((error) => {
   console.error(chalk.red("Unexpected error while running tasks."));
