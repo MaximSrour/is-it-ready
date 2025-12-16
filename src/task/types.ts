@@ -8,12 +8,15 @@ export type TaskState = "pending" | "running" | "success" | "failure";
 
 export type TaskStatus = { state: TaskState; message: string };
 
-export type TaskConfig = {
+export type ToolConfig = {
   label: string;
   tool: string;
+  parseFailure: (output: string) => ParsedFailure | undefined;
+};
+
+export type TaskConfig = ToolConfig & {
   command: string;
   fixCommand?: string;
-  parseFailure: (output: string) => ParsedFailure | undefined;
 };
 
 export type FailureDetails = {
