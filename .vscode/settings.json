@@ -13,5 +13,7 @@
   },
   "eslint.validate": ["javascript", "typescript"],
   "typescript.tsdk": "node_modules/typescript/lib",
-  "cSpell.enabled": false
+  "cSpell.enabled": true,
+  "cSpell.language": "en-US",
+  "cSpell.userWords": []
 }
