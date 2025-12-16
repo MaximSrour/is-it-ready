@@ -1,6 +1,9 @@
 import chalk from "chalk";
 
-import { stripAnsi } from "../../helpers";
+import { type Task } from "@/task";
+
+import { formatDuration, stripAnsi, taskStateIcons } from "../../helpers";
+import { colorStatusMessage } from "../render";
 import { type BorderChars, type BorderLevel } from "./types";
 
 const BORDER_CHARS: Record<BorderLevel, BorderChars> = {
@@ -14,11 +17,25 @@ const TABLE_HEADERS = ["Label", "Tool", "Results", "Time"];
 /**
  * Renders a table with borders, headers, rows, and an optional footer.
  *
- * @param {string[][]} rows - Array of rows, each row is an array of cell values.
+ * @param {Task[]} tasks - Array of tasks to render in the table.
  * @param {string[]} [footerRow] - Optional footer row.
  * @returns {string} - Rendered table string.
  */
-export const renderTable = (rows: string[][], footerRow?: string[]) => {
+export const renderTable = (tasks: Task[], footerRow?: string[]) => {
+  const rows = tasks.map((task) => {
+    const status = task.getStatus();
+    const message =
+      status.state === "pending"
+        ? ""
+        : colorStatusMessage(status.message, status.state);
+    return [
+      `${taskStateIcons[status.state]} ${task.label}`,
+      task.tool,
+      message,
+      formatDuration(task.getDuration()),
+    ];
+  });
+
   const columnWidths = TABLE_HEADERS.map((header, idx) => {
     return Math.max(
       getDisplayWidth(header),

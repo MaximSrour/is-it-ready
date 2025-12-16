@@ -126,20 +126,6 @@ export const render = (tasks: Task[], runOptions: RunOptions) => {
     printFailureDetails(failures, runOptions);
   }
 
-  const rows = tasks.map((task) => {
-    const status = task.getStatus();
-    const message =
-      status.state === "pending"
-        ? ""
-        : colorStatusMessage(status.message, status.state);
-    return [
-      `${taskStateIcons[status.state]} ${task.label}`,
-      task.tool,
-      message,
-      formatDuration(task.getDuration()),
-    ];
-  });
-
   const { totalErrors, totalWarnings, totalIssues } = tasks.reduce(
     (sum, task) => {
       sum.totalErrors += task.getTotalErrors();
@@ -208,7 +194,7 @@ export const render = (tasks: Task[], runOptions: RunOptions) => {
     formatDuration(overallDurationMs),
   ];
 
-  console.log(renderTable(rows, overallRow));
+  console.log(renderTable(tasks, overallRow));
 
   if (runOptions.isWatchMode) {
     console.log(
