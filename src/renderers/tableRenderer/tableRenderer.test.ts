@@ -6,7 +6,7 @@ import {
   padCell,
   renderBorder,
   renderRow,
-} from "./index";
+} from "./tableRenderer";
 
 describe("renderBorder", () => {
   it("renders top border with provided widths", () => {
