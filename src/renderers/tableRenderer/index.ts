@@ -1,0 +1,1 @@
+export { renderTable } from "./tableRenderer";
