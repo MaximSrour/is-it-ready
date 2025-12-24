@@ -10,7 +10,7 @@ import {
 } from "./parsers";
 import { type ToolConfig } from "./types";
 
-export const defaultTasks: ToolConfig[] = [
+export const defaultTools: ToolConfig[] = [
   {
     label: "Formatting",
     tool: "Prettier",

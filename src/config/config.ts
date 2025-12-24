@@ -5,13 +5,13 @@ import { cosmiconfig } from "cosmiconfig";
 import isInstalledGlobally from "is-installed-globally";
 
 import { type RunOptions } from "~/runOptions/types";
-import { Task, defaultTasks } from "~/task";
+import { Task, defaultTools } from "~/task";
 import { type TaskConfig } from "~/task/types";
 
 import { type Config, type UserFileConfig, type UserTaskConfig } from "./types";
 
 const DEFAULT_TASKS = new Map(
-  defaultTasks.map((config) => {
+  defaultTools.map((config) => {
     return [config.tool, config];
   })
 );

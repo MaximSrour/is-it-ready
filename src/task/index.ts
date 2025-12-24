@@ -1,4 +1,4 @@
 export { Task } from "./task";
-export { defaultTasks } from "./defaultTasks";
+export { defaultTools } from "./defaultTools";
 export { runTasks, calculateTotalIssues } from "./execute";
 export { startWatcher } from "./watcher";

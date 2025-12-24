@@ -6,7 +6,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { loadUserConfig } from "~/config";
 import { type RunOptions } from "~/runOptions/types";
-import { defaultTasks } from "~/task";
+import { defaultTools } from "~/task";
 
 const withTempDir = (
   contents?: string,
@@ -137,7 +137,7 @@ describe("loadUserConfig", () => {
     expect(config).not.toBeNull();
     expect(config?.tasks).toHaveLength(1);
     const task = config?.tasks[0];
-    expect(task?.label).toBe(defaultTasks[0]?.label);
+    expect(task?.label).toBe(defaultTools[0]?.label);
     expect(task?.tool).toBe("Prettier");
     expect(task?.command).toBe("npm run prettier:custom");
 
