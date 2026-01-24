@@ -18,6 +18,13 @@ void main().catch((error) => {
 async function main() {
   const runOptions = getRunOptions();
 
+  if (runOptions.isNoColor) {
+    chalk.level = 0;
+    process.env.NO_COLOR = "1";
+    process.env.FORCE_COLOR = "0";
+    process.env.npm_config_color = "never";
+  }
+
   const config = await loadUserConfig(runOptions);
 
   if (config === null) {

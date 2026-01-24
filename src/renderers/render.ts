@@ -65,7 +65,10 @@ export const printFailureDetails = (
     failures.forEach((failure) => {
       const headline = formatFailureHeadline(failure);
       console.log(`\n${headline}`);
-      console.log(failure.rawOutput || failure.output || "(no output)");
+      const output = runOptions.isNoColor
+        ? failure.output || "(no output)"
+        : failure.rawOutput || failure.output || "(no output)";
+      console.log(output);
     });
 
     console.log();

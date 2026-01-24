@@ -6,7 +6,14 @@ security checks in one dashboard.
 ## Usage
 
 ```sh
-is-it-ready [--silent] [--fix] [--watch] [--config <path>] [-h | --help] [-v | --version]
+is-it-ready \
+  [--silent] \
+  [--fix] \
+  [--watch] \
+  [--no-color] \
+  [--config <path>] \
+  [-h | --help] \
+  [-v | --version]
 ```
 
 ### Flags
@@ -18,6 +25,7 @@ is-it-ready [--silent] [--fix] [--watch] [--config <path>] [-h | --help] [-v | -
 - `--fix` - Automatically run fix commands for tasks that support it (labels
   show `*`).
 - `--watch` - Re-run tasks whenever project files change.
+- `--no-color` - Disable ANSI colors in CLI output.
 
 The table shows live status, timings, and overall issue counts. Exit code is `0`
 when everything passes and `1` otherwise.
