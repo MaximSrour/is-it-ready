@@ -1,4 +1,11 @@
-import { describe, expect, it } from "vitest";
+import {
+  type ChildProcess,
+  type SpawnOptions,
+  spawn,
+} from "node:child_process";
+import { EventEmitter } from "node:events";
+
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { type RunOptions } from "~/runOptions/types";
 import { type TaskConfig } from "~/task/types";
@@ -11,6 +18,12 @@ import {
   selectCommand,
   stripAnsi,
 } from "./helpers";
+
+vi.mock("node:child_process", () => {
+  return {
+    spawn: vi.fn(),
+  };
+});
 
 describe("decorateLabel", () => {
   it("appends asterisk", () => {
@@ -75,8 +88,99 @@ describe("selectCommand", () => {
 });
 
 describe("runCommand", () => {
+  const spawnMock = vi.mocked(spawn);
+
+  const restoreEnv = (originalEnv: NodeJS.ProcessEnv) => {
+    for (const key of Object.keys(process.env)) {
+      if (!(key in originalEnv)) {
+        delete process.env[key];
+      }
+    }
+    Object.assign(process.env, originalEnv);
+  };
+
+  const createMockChild = (): ChildProcess => {
+    const stdout = new EventEmitter() as EventEmitter & {
+      setEncoding: (encoding: string) => void;
+    };
+    const stderr = new EventEmitter() as EventEmitter & {
+      setEncoding: (encoding: string) => void;
+    };
+    stdout.setEncoding = vi.fn();
+    stderr.setEncoding = vi.fn();
+
+    return Object.assign(new EventEmitter(), {
+      stdout,
+      stderr,
+    }) as ChildProcess;
+  };
+
+  beforeEach(() => {
+    spawnMock.mockReset();
+  });
+
   it("throws when command is empty", async () => {
     await expect(runCommand("  ")).rejects.toThrow(/No command configured/);
+  });
+
+  it("sets no-color env when enabled", async () => {
+    const originalEnv = { ...process.env };
+    delete process.env.NO_COLOR;
+    delete process.env.FORCE_COLOR;
+    delete process.env.npm_config_color;
+
+    const child = createMockChild();
+    spawnMock.mockReturnValue(child);
+
+    const promise = runCommand("npm run lint", {
+      isFixMode: false,
+      isSilentMode: false,
+      isWatchMode: false,
+      isNoColor: true,
+      configPath: undefined,
+    });
+
+    expect(spawnMock).toHaveBeenCalledOnce();
+    const options = spawnMock.mock.calls[0][1] as SpawnOptions;
+    const env = options.env ?? ({} as NodeJS.ProcessEnv);
+    child.emit("close", 0);
+    await promise;
+
+    expect(env.NO_COLOR).toBe("1");
+    expect(env.FORCE_COLOR).toBe("0");
+    expect(env.npm_config_color).toBe("never");
+
+    restoreEnv(originalEnv);
+  });
+
+  it("defaults color env when no-color disabled", async () => {
+    const originalEnv = { ...process.env };
+    const initialNoColor = process.env.NO_COLOR;
+    delete process.env.FORCE_COLOR;
+    delete process.env.npm_config_color;
+
+    const child = createMockChild();
+    spawnMock.mockReturnValue(child);
+
+    const promise = runCommand("npm run lint", {
+      isFixMode: false,
+      isSilentMode: false,
+      isWatchMode: false,
+      isNoColor: false,
+      configPath: undefined,
+    });
+
+    expect(spawnMock).toHaveBeenCalledOnce();
+    const options = spawnMock.mock.calls[0][1] as SpawnOptions;
+    const env = options.env ?? ({} as NodeJS.ProcessEnv);
+    child.emit("close", 0);
+    await promise;
+
+    expect(env.NO_COLOR).toBe(initialNoColor);
+    expect(env.FORCE_COLOR).toBe("1");
+    expect(env.npm_config_color).toBe("always");
+
+    restoreEnv(originalEnv);
   });
 });
 
