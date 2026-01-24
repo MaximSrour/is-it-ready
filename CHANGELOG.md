@@ -1,3 +1,10 @@
+## [1.5.1](https://github.com/MaximSrour/is-it-ready/compare/v1.5.0...v1.5.1) (2026-01-24)
+
+
+### Bug Fixes
+
+* resolve incorrect npm audit error reporting ([d61acaa](https://github.com/MaximSrour/is-it-ready/commit/d61acaadcbe67e1e09a0204c5213161b796635c3))
+
 # [1.5.0](https://github.com/MaximSrour/is-it-ready/compare/v1.4.4...v1.5.0) (2025-12-15)
 
 
