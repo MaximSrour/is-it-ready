@@ -45,4 +45,13 @@ describe("parseNpmAudit", () => {
       errors: 13,
     });
   });
+
+  it("reports severity-only summaries", () => {
+    const output = "2 moderate severity vulnerabilities";
+
+    expect(parseNpmAudit(output)).toEqual({
+      message: "Failed - 2 vulnerabilities (2 moderate)",
+      errors: 2,
+    });
+  });
 });

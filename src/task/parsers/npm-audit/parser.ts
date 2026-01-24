@@ -1,6 +1,23 @@
 import { type ParsedFailure } from "~/task/types";
 
 export const parseNpmAudit = (output: string): ParsedFailure | undefined => {
+  const severitySummary =
+    /(\d+)\s+([a-z]+)\s+severity\s+vulnerabilities?/i.exec(output);
+  if (severitySummary) {
+    const total = Number(severitySummary[1]);
+    if (!Number.isFinite(total) || total === 0) {
+      return undefined;
+    }
+
+    const severity = severitySummary[2].trim();
+    return {
+      message: `Failed - ${total} ${
+        total === 1 ? "vulnerability" : "vulnerabilities"
+      } (${total} ${severity})`,
+      errors: total,
+    };
+  }
+
   const summaryRegex =
     /(?:found\s+)?(\d+)\s+(?:vulnerability|vulnerabilities)(?:\s+\(([^)]+)\))?/gi;
   const summary = summaryRegex.exec(output);
