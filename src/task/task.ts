@@ -15,6 +15,7 @@ export class Task {
 
   readonly parseFailure: (output: string) => ParsedFailure | undefined;
 
+  private readonly runOptions: RunOptions;
   private status: TaskStatus;
   private startTime: number | null = null;
   private endTime: number | null = null;
@@ -31,6 +32,7 @@ export class Task {
 
     this.parseFailure = config.parseFailure;
 
+    this.runOptions = runOptions;
     this.status = { state: "pending", message: "" };
   }
 
@@ -48,7 +50,7 @@ export class Task {
     onStart?.();
 
     try {
-      const result = await runCommand(this.command);
+      const result = await runCommand(this.command, this.runOptions);
 
       this.stopTimer();
 

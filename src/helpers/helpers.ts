@@ -40,23 +40,33 @@ export const selectCommand = (
  * Executes the provided command asynchronously after validating it.
  *
  * @param {string} command - Command string to execute.
+ * @param {RunOptions} [runOptions] - The current run options.
  * @returns {Promise<CommandResult>} - Child process result.
  * @throws {Error} When the command is empty.
  */
-export const runCommand = async (command: string): Promise<CommandResult> => {
+export const runCommand = async (
+  command: string,
+  runOptions?: RunOptions
+): Promise<CommandResult> => {
   const trimmed = command.trim();
   if (!trimmed) {
     throw new Error("No command configured for this task");
   }
 
   const finalCommand = addSilentFlag(trimmed);
+  const env = { ...process.env };
+  if (runOptions?.isNoColor) {
+    env.FORCE_COLOR = "0";
+    env.npm_config_color = "never";
+    env.NO_COLOR = "1";
+  } else {
+    env.FORCE_COLOR = env.FORCE_COLOR ?? "1";
+    env.npm_config_color = env.npm_config_color ?? "always";
+  }
+
   return new Promise((resolve, reject) => {
     const child = spawn(finalCommand, {
-      env: {
-        ...process.env,
-        FORCE_COLOR: process.env.FORCE_COLOR ?? "1",
-        npm_config_color: process.env.npm_config_color ?? "always",
-      },
+      env,
       shell: true,
     });
 

@@ -24,6 +24,7 @@ export const createMockTask = (
       isFixMode: false,
       isSilentMode: false,
       isWatchMode: false,
+      isNoColor: false,
       configPath: undefined,
       ...optionsOverrides,
     }
@@ -56,7 +57,16 @@ describe("Task", () => {
     const result = await task.execute();
 
     expect(result).toBeUndefined();
-    expect(runCommandSpy).toHaveBeenCalledWith("echo 'Echo command'");
+    expect(runCommandSpy).toHaveBeenCalledWith(
+      "echo 'Echo command'",
+      expect.objectContaining({
+        isFixMode: false,
+        isSilentMode: false,
+        isWatchMode: false,
+        isNoColor: false,
+        configPath: undefined,
+      })
+    );
     expect(commandOutput.trim()).toBe("Echo command");
   });
 
@@ -88,7 +98,12 @@ describe("Task", () => {
     const result = await task.execute();
 
     expect(result).toBeUndefined();
-    expect(runCommandSpy).toHaveBeenCalledWith("echo 'Echo command fix'");
+    expect(runCommandSpy).toHaveBeenCalledWith(
+      "echo 'Echo command fix'",
+      expect.objectContaining({
+        isFixMode: true,
+      })
+    );
     expect(commandOutput.trim()).toBe("Echo command fix");
   });
 
@@ -107,7 +122,12 @@ describe("Task", () => {
 
     const duration = task.getDuration();
 
-    expect(runCommandSpy).toHaveBeenCalledWith("echo 'Echo command'");
+    expect(runCommandSpy).toHaveBeenCalledWith(
+      "echo 'Echo command'",
+      expect.objectContaining({
+        isFixMode: false,
+      })
+    );
     expect(duration).not.toBeNull();
     expect(duration as number).toBe(1050);
 
@@ -139,7 +159,12 @@ describe("Task", () => {
     });
 
     expect(result).toBeUndefined();
-    expect(runCommandSpy).toHaveBeenCalledWith("echo 'Echo command'");
+    expect(runCommandSpy).toHaveBeenCalledWith(
+      "echo 'Echo command'",
+      expect.objectContaining({
+        isFixMode: false,
+      })
+    );
     expect(logSpy).toHaveBeenCalledTimes(2);
     expect(commandOutput.trim()).toBe("Echo command");
   });

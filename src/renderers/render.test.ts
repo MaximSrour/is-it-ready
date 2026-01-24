@@ -71,6 +71,7 @@ describe("printFailureDetails", () => {
     isSilentMode: false,
     isFixMode: false,
     isWatchMode: false,
+    isNoColor: false,
     configPath: undefined,
     showHelp: false,
     showVersion: false,
@@ -112,5 +113,17 @@ describe("printFailureDetails", () => {
 
     expect(logSpy).toHaveBeenNthCalledWith(3, failureWithoutRaw.output);
     expect(logSpy).toHaveBeenNthCalledWith(5, "(no output)");
+  });
+
+  it("prints stripped output when no-color is enabled", () => {
+    const logSpy = vi.spyOn(console, "log").mockImplementation(noOp);
+    vi.spyOn(renderModule, "formatFailureHeadline").mockReturnValue("failed");
+
+    printFailureDetails([baseFailure], {
+      ...baseRunOptions,
+      isNoColor: true,
+    });
+
+    expect(logSpy).toHaveBeenNthCalledWith(3, baseFailure.output);
   });
 });

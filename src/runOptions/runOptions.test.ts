@@ -26,6 +26,7 @@ describe("getRunOptions", () => {
       isSilentMode: false,
       isFixMode: false,
       isWatchMode: false,
+      isNoColor: false,
       configPath: undefined,
     });
   });
@@ -36,6 +37,7 @@ describe("getRunOptions", () => {
       isSilentMode: true,
       isFixMode: false,
       isWatchMode: false,
+      isNoColor: false,
       configPath: undefined,
     });
   });
@@ -46,6 +48,7 @@ describe("getRunOptions", () => {
       isSilentMode: true,
       isFixMode: true,
       isWatchMode: false,
+      isNoColor: false,
       configPath: undefined,
     });
   });
@@ -56,6 +59,7 @@ describe("getRunOptions", () => {
       isSilentMode: false,
       isFixMode: false,
       isWatchMode: true,
+      isNoColor: false,
       configPath: undefined,
     });
   });
@@ -67,6 +71,7 @@ describe("getRunOptions", () => {
       isSilentMode: false,
       isFixMode: false,
       isWatchMode: false,
+      isNoColor: false,
       configPath: "custom.config.js",
     });
   });
@@ -78,7 +83,20 @@ describe("getRunOptions", () => {
       isSilentMode: false,
       isFixMode: false,
       isWatchMode: false,
+      isNoColor: false,
       configPath: "custom.mjs",
+    });
+  });
+
+  it("disables color when --no-color is supplied", () => {
+    process.argv = ["node", "script.js", "--no-color"];
+
+    expect(getRunOptions()).toEqual({
+      isSilentMode: false,
+      isFixMode: false,
+      isWatchMode: false,
+      isNoColor: true,
+      configPath: undefined,
     });
   });
 

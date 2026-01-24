@@ -17,6 +17,7 @@ export const getRunOptions = (): RunOptions => {
   let isSilentMode = false;
   let isFixMode = false;
   let isWatchMode = false;
+  let isNoColor = false;
   let configPath: string | undefined;
 
   for (let index = 0; index < args.length; index += 1) {
@@ -57,12 +58,14 @@ export const getRunOptions = (): RunOptions => {
       isFixMode = true;
     } else if (arg === "--watch") {
       isWatchMode = true;
+    } else if (arg === "--no-color") {
+      isNoColor = true;
     } else {
       throw new Error(`Unknown option: ${arg}`);
     }
   }
 
-  return { isSilentMode, isFixMode, isWatchMode, configPath };
+  return { isSilentMode, isFixMode, isWatchMode, isNoColor, configPath };
 };
 
 export const printHelp = () => {

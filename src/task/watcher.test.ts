@@ -32,6 +32,7 @@ const baseRunOptions: RunOptions = {
   isFixMode: false,
   isSilentMode: false,
   isWatchMode: true,
+  isNoColor: false,
   configPath: undefined,
 };
 
