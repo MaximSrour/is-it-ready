@@ -1,3 +1,15 @@
+# [1.6.0](https://github.com/MaximSrour/is-it-ready/compare/v1.5.1...v1.6.0) (2026-01-24)
+
+
+### Bug Fixes
+
+* add additional tests ([71da8a5](https://github.com/MaximSrour/is-it-ready/commit/71da8a5b509b7fa22ad127a1d170f0c453f784ab))
+
+
+### Features
+
+* add no color option ([717940d](https://github.com/MaximSrour/is-it-ready/commit/717940de980ab1b1c4358ee425db158ca44c0e5c))
+
 ## [1.5.1](https://github.com/MaximSrour/is-it-ready/compare/v1.5.0...v1.5.1) (2026-01-24)
 
 
