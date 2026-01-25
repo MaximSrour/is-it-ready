@@ -1,3 +1,10 @@
+## [1.6.1](https://github.com/MaximSrour/is-it-ready/compare/v1.6.0...v1.6.1) (2026-01-25)
+
+
+### Bug Fixes
+
+* remove path aliasing ([3c022bb](https://github.com/MaximSrour/is-it-ready/commit/3c022bbc64d0248c1cc84dad88d91749b939e764))
+
 # [1.6.0](https://github.com/MaximSrour/is-it-ready/compare/v1.5.1...v1.6.0) (2026-01-24)
 
 
