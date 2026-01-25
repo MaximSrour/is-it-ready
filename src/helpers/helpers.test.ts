@@ -7,8 +7,8 @@ import { EventEmitter } from "node:events";
 
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { type RunOptions } from "~/runOptions/types";
-import { type TaskConfig } from "~/task/types";
+import { type RunOptions } from "../runOptions/types";
+import { type TaskConfig } from "../task/types";
 
 import {
   addSilentFlag,

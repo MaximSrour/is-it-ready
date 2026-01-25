@@ -3,7 +3,7 @@ import path from "node:path";
 
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { noOp, noOpNever } from "~/helpers";
+import { noOp, noOpNever } from "../helpers";
 
 import { getRunOptions, printHelp, printVersion } from "./runOptions";
 

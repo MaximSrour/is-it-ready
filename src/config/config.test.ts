@@ -4,9 +4,9 @@ import path from "node:path";
 
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { loadUserConfig } from "~/config";
-import { type RunOptions } from "~/runOptions/types";
-import { defaultTools } from "~/task";
+import { loadUserConfig } from "../config";
+import { type RunOptions } from "../runOptions/types";
+import { defaultTools } from "../task";
 
 const withTempDir = (
   contents?: string,

@@ -1,8 +1,8 @@
 import chalk from "chalk";
 
-import { formatDuration, stripAnsi, taskStateIcons } from "~/helpers";
-import { colorStatusMessage } from "~/renderers/colorStatusMessage";
-import { type Task } from "~/task";
+import { formatDuration, stripAnsi, taskStateIcons } from "../../helpers";
+import { type Task } from "../../task";
+import { colorStatusMessage } from "../colorStatusMessage";
 
 import { type BorderChars, type BorderLevel } from "./types";
 
