@@ -39,3 +39,4 @@ yarn-error.log*
 # stryker temp files
 /reports/mutation
 .stryker-tmp
+.stryker-render-tmp

@@ -2,10 +2,21 @@ import chalk from "chalk";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { noOp } from "../helpers";
+import { type RunOptions } from "../runOptions/types";
+import { type Task } from "../task/task";
 import { type FailureDetails } from "../task/types";
 
 import * as renderModule from "./render";
-import { formatFailureHeadline, printFailureDetails } from "./render";
+import { formatFailureHeadline, printFailureDetails, render } from "./render";
+import { renderTable } from "./tableRenderer";
+
+vi.mock("./tableRenderer", () => {
+  return {
+    renderTable: vi.fn(() => {
+      return "TABLE";
+    }),
+  };
+});
 
 describe("formatFailureHeadline", () => {
   const baseFailure: FailureDetails = {
@@ -51,6 +62,28 @@ describe("formatFailureHeadline", () => {
   it("defaults to generic message when neither counts nor summary provided", () => {
     const result = formatFailureHeadline(baseFailure);
     const detail = chalk.red("See output");
+    const expected = `${chalk.blue.underline("Linting")} - ESLint [${chalk.yellow(
+      "npm run lint"
+    )}] (${detail})`;
+
+    expect(result).toBe(expected);
+  });
+
+  it("uses singular noun when exactly one error is present", () => {
+    const failure = { ...baseFailure, errors: 1 };
+    const result = formatFailureHeadline(failure);
+    const detail = chalk.red(chalk.red("1 error"));
+    const expected = `${chalk.blue.underline("Linting")} - ESLint [${chalk.yellow(
+      "npm run lint"
+    )}] (${detail})`;
+
+    expect(result).toBe(expected);
+  });
+
+  it("uses plural noun when multiple warnings are present", () => {
+    const failure = { ...baseFailure, warnings: 2 };
+    const result = formatFailureHeadline(failure);
+    const detail = chalk.red(chalk.yellow("2 warnings"));
     const expected = `${chalk.blue.underline("Linting")} - ESLint [${chalk.yellow(
       "npm run lint"
     )}] (${detail})`;
@@ -125,5 +158,210 @@ describe("printFailureDetails", () => {
     });
 
     expect(logSpy).toHaveBeenNthCalledWith(3, baseFailure.output);
+  });
+
+  it("prints nothing when no failures are provided", () => {
+    const logSpy = vi.spyOn(console, "log").mockImplementation(noOp);
+
+    printFailureDetails([], baseRunOptions);
+
+    expect(logSpy).not.toHaveBeenCalled();
+  });
+
+  it("prints details header and each failure headline", () => {
+    const logSpy = vi.spyOn(console, "log").mockImplementation(noOp);
+    const expectedHeadline = renderModule.formatFailureHeadline(baseFailure);
+
+    printFailureDetails([baseFailure, baseFailure], baseRunOptions);
+
+    expect(logSpy).toHaveBeenNthCalledWith(1, "Details:");
+    expect(logSpy).toHaveBeenNthCalledWith(2, `\n${expectedHeadline}`);
+    expect(logSpy).toHaveBeenNthCalledWith(4, `\n${expectedHeadline}`);
+    expect(logSpy).toHaveBeenLastCalledWith();
+  });
+});
+
+describe("render", () => {
+  const renderTableMock = vi.mocked(renderTable);
+  const baseRunOptions: RunOptions = {
+    isSilentMode: false,
+    isFixMode: false,
+    isWatchMode: false,
+    isNoColor: false,
+    configPath: undefined,
+  };
+
+  type TaskDoubleInput = {
+    label: string;
+    tool: string;
+    state: "pending" | "running" | "success" | "failure";
+    message: string;
+    failures?: FailureDetails[];
+    errors?: number;
+    warnings?: number;
+    startTime?: number | null;
+    endTime?: number | null;
+  };
+
+  const createTaskDouble = (input: TaskDoubleInput): Task => {
+    return {
+      label: input.label,
+      tool: input.tool,
+      getStatus: () => {
+        return { state: input.state, message: input.message };
+      },
+      getFailures: () => {
+        return input.failures ?? [];
+      },
+      getTotalErrors: () => {
+        return input.errors ?? 0;
+      },
+      getTotalWarnings: () => {
+        return input.warnings ?? 0;
+      },
+      getStartTime: () => {
+        return input.startTime ?? null;
+      },
+      getEndTime: () => {
+        return input.endTime ?? null;
+      },
+    } as unknown as Task;
+  };
+
+  beforeEach(() => {
+    chalk.level = 1;
+    renderTableMock.mockReset();
+    renderTableMock.mockReturnValue("TABLE");
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+    vi.restoreAllMocks();
+  });
+
+  it("renders running summary and watch hint for unfinished suite", () => {
+    vi.useFakeTimers();
+    const now = new Date("2026-02-24T00:00:02.500Z");
+    vi.setSystemTime(now);
+
+    const logSpy = vi.spyOn(console, "log").mockImplementation(noOp);
+    const clearSpy = vi.spyOn(console, "clear").mockImplementation(noOp);
+    Object.defineProperty(process.stdout, "isTTY", {
+      configurable: true,
+      value: true,
+    });
+
+    const tasks = [
+      createTaskDouble({
+        label: "Lint",
+        tool: "ESLint",
+        state: "success",
+        message: "Done",
+        startTime: now.getTime() - 1_500,
+        endTime: now.getTime() - 500,
+      }),
+      createTaskDouble({
+        label: "Type Check",
+        tool: "TypeScript",
+        state: "running",
+        message: "Running...",
+        warnings: 1,
+        startTime: null,
+        endTime: null,
+      }),
+    ];
+
+    render(tasks, { ...baseRunOptions, isWatchMode: true });
+
+    expect(clearSpy).toHaveBeenCalledTimes(1);
+    expect(renderTableMock).toHaveBeenCalledWith(tasks, [
+      "⏳ Overall",
+      "",
+      "1 issue (1 warning)",
+      "1.5 s",
+    ]);
+    expect(logSpy).toHaveBeenCalledWith("TABLE");
+    expect(logSpy).toHaveBeenCalledWith(
+      chalk.cyan("\nWatching for file changes... (press Ctrl+C to exit)")
+    );
+    expect(logSpy).not.toHaveBeenCalledWith("Details:");
+  });
+
+  it("renders finished failure summary and prints failure details", () => {
+    const logSpy = vi.spyOn(console, "log").mockImplementation(noOp);
+    Object.defineProperty(process.stdout, "isTTY", {
+      configurable: true,
+      value: false,
+    });
+
+    const failure: FailureDetails = {
+      label: "Lint",
+      tool: "ESLint",
+      command: "npm run lint",
+      output: "parsed",
+      rawOutput: "raw",
+      errors: 2,
+      warnings: 1,
+    };
+
+    const tasks = [
+      createTaskDouble({
+        label: "Lint",
+        tool: "ESLint",
+        state: "failure",
+        message: "Failed",
+        failures: [failure],
+        errors: 2,
+        warnings: 1,
+        startTime: 1_000,
+        endTime: 2_000,
+      }),
+    ];
+
+    render(tasks, baseRunOptions);
+
+    expect(renderTableMock).toHaveBeenCalledWith(tasks, [
+      "❌ Overall",
+      "",
+      "3 issues (2 errors, 1 warning)",
+      "1.0 s",
+    ]);
+    expect(logSpy).toHaveBeenCalledWith("Details:");
+    expect(logSpy).toHaveBeenCalledWith("raw");
+    expect(logSpy).toHaveBeenCalledWith("TABLE");
+  });
+
+  it("renders fix mode banner and successful summary without details", () => {
+    const logSpy = vi.spyOn(console, "log").mockImplementation(noOp);
+    Object.defineProperty(process.stdout, "isTTY", {
+      configurable: true,
+      value: false,
+    });
+
+    const tasks = [
+      createTaskDouble({
+        label: "Tests",
+        tool: "Vitest",
+        state: "success",
+        message: "Passed",
+        errors: 0,
+        warnings: 0,
+        startTime: 5_000,
+        endTime: 6_000,
+      }),
+    ];
+
+    render(tasks, { ...baseRunOptions, isFixMode: true });
+
+    expect(logSpy).toHaveBeenCalledWith(
+      "(* indicates fix mode; some tasks will automatically apply fixes to your code)\n"
+    );
+    expect(renderTableMock).toHaveBeenCalledWith(tasks, [
+      "✅ Overall",
+      "",
+      "0 issues",
+      "1.0 s",
+    ]);
+    expect(logSpy).not.toHaveBeenCalledWith("Details:");
   });
 });
