@@ -58,6 +58,30 @@ Before every commit, run `npm run check` to validate all quality gates:
 
 **All checks must pass** before your pull request will be accepted.
 
+### Mutation Testing Requirement
+
+Mutation testing is mandatory for behavior changes.
+
+Expected mutation outcome:
+
+- `100%` mutation score
+- `0` surviving mutants
+- `0` timed out mutants
+
+Recommended process:
+
+1. Run mutation tests while iterating:
+   - `npm run mutate`
+2. Add targeted tests to kill every surviving mutant.
+3. Re-run mutation tests until clean.
+4. Run full mutation suite before opening a PR:
+   - `npm run mutate`
+
+If a mutant is truly equivalent:
+
+- Prefer rewriting code/tests to make behavior observable.
+- If unavoidable, add a narrow Stryker disable comment with a short reason.
+
 ### Individual Quality Checks
 
 You can run individual checks as needed:
@@ -66,6 +90,7 @@ You can run individual checks as needed:
 - `npm run lint` or `npm run lint:fix`
 - `npm run type-check`
 - `npm run test`
+- `npm run mutate`
 - `npm run knip`
 - `npm run markdownlint` or `npm run markdownlint:fix`
 
