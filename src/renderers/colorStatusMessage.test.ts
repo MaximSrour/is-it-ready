@@ -12,6 +12,10 @@ describe("colorStatusMessage", () => {
     expect(colorStatusMessage("", "pending")).toBe("");
   });
 
+  it("returns empty string for failure state when message missing", () => {
+    expect(colorStatusMessage("", "failure")).toBe("");
+  });
+
   it("colors message red for failure state", () => {
     expect(colorStatusMessage("Failed", "failure")).toBe(
       "\u001b[31mFailed\u001b[39m"

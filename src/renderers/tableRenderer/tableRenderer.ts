@@ -40,7 +40,7 @@ export const renderTable = (tasks: Task[], footerRow?: string[]) => {
     return Math.max(
       getDisplayWidth(header),
       ...rows.map((row) => {
-        return getDisplayWidth(row[idx] ?? "");
+        return getDisplayWidth(row[idx]);
       }),
       footerRow ? getDisplayWidth(footerRow[idx] ?? "") : 0
     );
@@ -115,12 +115,8 @@ export const renderRow = (row: string[], columnWidths: number[]) => {
  */
 export const padCell = (value: string, columnWidth: number) => {
   const currentWidth = getDisplayWidth(value);
-
-  if (currentWidth >= columnWidth) {
-    return value;
-  }
-
-  return `${value}${" ".repeat(columnWidth - currentWidth)}`;
+  const padding = Math.max(0, columnWidth - currentWidth);
+  return `${value}${" ".repeat(padding)}`;
 };
 
 /**
@@ -150,7 +146,8 @@ export const getDisplayWidth = (value: string) => {
     : Array.from(cleanValue);
 
   return graphemes.reduce((total, grapheme) => {
-    const codePoint = grapheme.codePointAt(0);
+    const codePointAtStart = grapheme.codePointAt(0);
+    const codePoint = Number(codePointAtStart);
 
     if (isFullWidthCodePoint(codePoint) || emojiRegex.test(grapheme)) {
       return total + 2;
@@ -167,11 +164,7 @@ export const getDisplayWidth = (value: string) => {
  * @param {number | null} codePoint - The Unicode code point to check.
  * @returns {boolean} - True if the code point is full-width, false otherwise.
  */
-export const isFullWidthCodePoint = (codePoint?: number | null) => {
-  if (!codePoint) {
-    return false;
-  }
-
+export const isFullWidthCodePoint = (codePoint: number) => {
   return (
     codePoint >= 0x1100 &&
     (codePoint <= 0x115f ||
