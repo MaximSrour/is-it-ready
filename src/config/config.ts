@@ -10,11 +10,10 @@ import { type TaskConfig } from "../task/types";
 
 import { type Config, type UserFileConfig, type UserTaskConfig } from "./types";
 
-const DEFAULT_TASKS = new Map(
-  defaultTools.map((config) => {
-    return [config.tool, config];
-  })
-);
+const DEFAULT_TASKS = new Map<string, (typeof defaultTools)[number]>();
+for (const config of defaultTools) {
+  DEFAULT_TASKS.set(config.tool, config);
+}
 
 const SEARCH_PLACES = [
   ".is-it-ready.config.js",
@@ -47,21 +46,8 @@ const getConfig = async (rootDirectory: string, configPath?: string) => {
 
       return config;
     } catch (error) {
-      const maybeNodeError = error as NodeJS.ErrnoException;
-
-      if (maybeNodeError.code === "ENOENT") {
-        const isNodeErrorWithCode = (err: unknown): err is { code: string } => {
-          return (
-            typeof err === "object" &&
-            err !== null &&
-            "code" in err &&
-            typeof (err as { code: unknown }).code === "string"
-          );
-        };
-
-        if (isNodeErrorWithCode(error) && error.code === "ENOENT") {
-          throw new Error(`Config file not found at ${resolvedPath}`);
-        }
+      if ((error as NodeJS.ErrnoException).code === "ENOENT") {
+        throw new Error(`Config file not found at ${resolvedPath}`);
       }
 
       throw error;
