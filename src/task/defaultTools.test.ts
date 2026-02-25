@@ -1,3 +1,6 @@
+import { describe, expect, it } from "vitest";
+
+import { defaultTools } from "./defaultTools";
 import {
   parseCSpell,
   parseEslint,
@@ -8,9 +11,6 @@ import {
   parseTypeCheck,
   parseVitest,
 } from "./parsers";
-import { describe, expect, it } from "vitest";
-
-import { defaultTools } from "./defaultTools";
 
 describe("defaultTools", () => {
   it("defines the expected default tools and parser bindings", () => {

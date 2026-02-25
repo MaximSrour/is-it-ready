@@ -207,9 +207,11 @@ describe("Task", () => {
         warnings: 1,
       };
     });
+    // eslint-disable-next-line no-useless-concat -- necessary to preserve the escape codes in the string without them being interpreted as a cspell error
+    const redLineOne = "\u001b[31m" + "line one\u001b[39m";
     vi.spyOn(helpers, "runCommand").mockResolvedValue({
       status: 1,
-      stdout: "\u001b[31mline one\u001b[39m",
+      stdout: redLineOne,
       stderr: "line two",
     });
 
@@ -232,7 +234,7 @@ describe("Task", () => {
         warnings: 1,
         summary: "Failed - 2 errors and 1 warning",
         output: "line one\nline two",
-        rawOutput: "\u001b[31mline one\u001b[39m\nline two",
+        rawOutput: `${redLineOne}\nline two`,
       },
     ]);
   });
@@ -281,7 +283,9 @@ describe("Task", () => {
   });
 
   it("handles thrown Error values from runCommand", async () => {
-    vi.spyOn(helpers, "runCommand").mockRejectedValue(new Error("spawn failed"));
+    vi.spyOn(helpers, "runCommand").mockRejectedValue(
+      new Error("spawn failed")
+    );
 
     const task = createMockTask();
     await task.execute();

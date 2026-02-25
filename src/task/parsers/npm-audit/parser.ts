@@ -3,7 +3,9 @@ import { type ParsedFailure } from "../../types";
 export const parseNpmAudit = (output: string): ParsedFailure | undefined => {
   const normalized = output.replace(/\s+/g, " ");
   const severitySummary =
-    /(\d+) ([a-z]+) severity vulnerabilit(?:y|ies)/i.exec(normalized);
+    /(\d+) ([a-z]+) severity (?:vulnerability|vulnerabilities)/i.exec(
+      normalized
+    );
   if (severitySummary) {
     const total = Number(severitySummary[1]);
     if (!Number.isFinite(total) || !total) {

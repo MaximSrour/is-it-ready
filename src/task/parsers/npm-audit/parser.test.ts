@@ -83,7 +83,9 @@ describe("parseNpmAudit", () => {
   });
 
   it("returns undefined for zero severity vulnerability summaries", () => {
-    expect(parseNpmAudit("0 moderate severity vulnerabilities")).toBeUndefined();
+    expect(
+      parseNpmAudit("0 moderate severity vulnerabilities")
+    ).toBeUndefined();
   });
 
   it("parses multi-digit severity summaries", () => {
@@ -101,9 +103,11 @@ describe("parseNpmAudit", () => {
   });
 
   it("normalizes repeated whitespace in severity summaries", () => {
-    expect(parseNpmAudit("2   moderate \n   severity vulnerabilities")).toEqual({
-      message: "Failed - 2 vulnerabilities (2 moderate)",
-      errors: 2,
-    });
+    expect(parseNpmAudit("2   moderate \n   severity vulnerabilities")).toEqual(
+      {
+        message: "Failed - 2 vulnerabilities (2 moderate)",
+        errors: 2,
+      }
+    );
   });
 });
