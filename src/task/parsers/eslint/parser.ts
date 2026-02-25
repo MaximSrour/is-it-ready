@@ -1,23 +1,29 @@
 import { type ParsedFailure } from "../../types";
 
 export const parseEslint = (output: string): ParsedFailure | undefined => {
-  const summary = output.match(
-    /(\d+)\s+problems?\s+\((\d+)\s+errors?(?:,\s+(\d+)\s+warnings?)?/i
+  const normalized = output.replace(/\s+/g, " ");
+  const summary = normalized.match(
+    /(\d+) problems? \((\d+) errors?(?:, (\d+) warnings?)?/i
   );
 
   if (!summary) {
     return undefined;
   }
 
-  const [, , errors, warnings = "0"] = summary;
+  const [, total, errors, warnings] = summary;
   const errorCount = Number(errors);
-  const warningCount = Number(warnings);
+  const warningCount = warnings ? Number(warnings) : 0;
+  const totalProblems = Number(total);
+
+  if (totalProblems !== errorCount + warningCount) {
+    return undefined;
+  }
 
   if (errorCount === 0 && warningCount === 0) {
     return undefined;
   }
 
-  if (errorCount === 0 && warningCount > 0) {
+  if (errorCount === 0) {
     return {
       message: `Failed - ${warningCount} warning${
         warningCount === 1 ? "" : "s"

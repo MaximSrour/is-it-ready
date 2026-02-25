@@ -1,20 +1,21 @@
 import { type ParsedFailure } from "../../types";
 
 export const parsePrettier = (output: string): ParsedFailure | undefined => {
+  const normalized = output.replace(/\s+/g, " ");
   const summaryPatterns = [
-    /(\d+)\s+files?\s+(?:are|is)\s+not\s+formatted/i,
-    /(\d+)\s+files?\s+with\s+code\s+style\s+issues?/i,
-    /Code style issues found in\s+(\d+)\s+files?/i,
+    /(\d+) files? (?:are|is) not formatted/i,
+    /(\d+) files? with code style issues?/i,
+    /Code style issues found in (\d+) files?/i,
   ];
 
   for (const pattern of summaryPatterns) {
-    const match = output.match(pattern);
+    const match = normalized.match(pattern);
     if (match) {
       return formatPrettierCount(match[1]);
     }
   }
 
-  if (/Code style issues found in the above file/i.test(output)) {
+  if (/Code style issues found in the above file/i.test(normalized)) {
     return formatPrettierCount(1);
   }
 

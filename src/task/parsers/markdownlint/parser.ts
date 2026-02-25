@@ -3,7 +3,8 @@ import { type ParsedFailure } from "../../types";
 export const parseMarkdownLint = (
   output: string
 ): ParsedFailure | undefined => {
-  const summaryMatch = /Summary:\s*(\d+)\s*error\(s\)/i.exec(output);
+  const normalized = output.replace(/\s+/g, " ");
+  const summaryMatch = /Summary: (\d+) error\(s\)/i.exec(normalized);
 
   if (summaryMatch) {
     const errorCount = Number(summaryMatch[1]);

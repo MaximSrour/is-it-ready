@@ -1,15 +1,16 @@
 import { type ParsedFailure } from "../../types";
 
 export const parseNpmAudit = (output: string): ParsedFailure | undefined => {
+  const normalized = output.replace(/\s+/g, " ");
   const severitySummary =
-    /(\d+)\s+([a-z]+)\s+severity\s+vulnerabilities?/i.exec(output);
+    /(\d+) ([a-z]+) severity vulnerabilit(?:y|ies)/i.exec(normalized);
   if (severitySummary) {
     const total = Number(severitySummary[1]);
-    if (!Number.isFinite(total) || total === 0) {
+    if (!Number.isFinite(total) || !total) {
       return undefined;
     }
 
-    const severity = severitySummary[2].trim();
+    const severity = severitySummary[2];
     return {
       message: `Failed - ${total} ${
         total === 1 ? "vulnerability" : "vulnerabilities"
@@ -19,17 +20,18 @@ export const parseNpmAudit = (output: string): ParsedFailure | undefined => {
   }
 
   const summaryRegex =
-    /(?:found\s+)?(\d+)\s+(?:vulnerability|vulnerabilities)(?:\s+\(([^)]+)\))?/gi;
-  const summary = summaryRegex.exec(output);
+    /(?:found )?(\d+) (?:vulnerability|vulnerabilities)(?: \(([^)]+)\))?/i;
+  const summary = summaryRegex.exec(normalized);
 
   if (summary) {
     const total = Number(summary[1]);
-    if (!Number.isFinite(total) || total === 0) {
+    if (!Number.isFinite(total) || !total) {
       return undefined;
     }
 
-    const breakdown = summary[2]
-      .split(/,\s*/)
+    const rawBreakdown = summary.at(2) ?? "";
+    const breakdown = rawBreakdown
+      .split(",")
       .map((part) => {
         return part.trim();
       })
@@ -44,13 +46,9 @@ export const parseNpmAudit = (output: string): ParsedFailure | undefined => {
     };
   }
 
-  if (/0\s+vulnerabilities?/i.test(output)) {
-    return undefined;
-  }
-
   if (
-    /npm err!/i.test(output) ||
-    /(?:vulnerability|vulnerabilities)/i.test(output)
+    /npm err!/i.test(normalized) ||
+    /(?:vulnerability|vulnerabilities)/i.test(normalized)
   ) {
     return { message: "Failed - vulnerabilities detected", errors: 1 };
   }
