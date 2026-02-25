@@ -56,6 +56,7 @@ TypeScript and follows strict code quality standards.
    - For equivalent mutants:
      - First prefer code or test changes that remove ambiguity
      - Only then use narrow Stryker disable comments with rationale
+   - Do not use unique directories for targeted tests
 
 ### Available Commands
 
