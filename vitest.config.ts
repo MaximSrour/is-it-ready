@@ -12,9 +12,7 @@ export default defineConfig({
       "**/node_modules/**",
       "**/dist/**",
       "**/coverage/**",
-      "**/.stryker-*/**",
       "**/.stryker-tmp/**",
-      "**/.stryker-render-tmp/**",
     ],
   },
   resolve: {
