@@ -16,6 +16,9 @@ export const parseEslint = (output: string): ParsedFailure | undefined => {
   const totalProblems = Number(total);
 
   if (totalProblems !== errorCount + warningCount) {
+    console.warn(
+      `Unexpected ESLint summary totals: problems=${totalProblems}, errors=${errorCount}, warnings=${warningCount}`
+    );
     return undefined;
   }
 

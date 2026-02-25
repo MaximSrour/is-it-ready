@@ -1,8 +1,12 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { parseEslint } from "./parser";
 
 describe("parseEslint", () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   it("reports errors and warnings", () => {
     const output = "5 problems (3 errors, 2 warnings)";
 
@@ -71,6 +75,13 @@ describe("parseEslint", () => {
   });
 
   it("returns undefined when totals do not match parsed counts", () => {
+    const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {
+      return undefined;
+    });
+
     expect(parseEslint("5 problems (3 errors, 1 warning)")).toBeUndefined();
+    expect(warnSpy).toHaveBeenCalledWith(
+      "Unexpected ESLint summary totals: problems=5, errors=3, warnings=1"
+    );
   });
 });

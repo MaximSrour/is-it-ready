@@ -10,9 +10,10 @@ export const parseCSpell = (output: string): ParsedFailure | undefined => {
     const files = summaryMatch[2] ? Number(summaryMatch[2]) : undefined;
 
     if (Number.isFinite(issues) && issues > 0) {
-      const filesText = files
-        ? ` in ${files} file${files === 1 ? "" : "s"}`
-        : "";
+      const filesText =
+        files !== undefined && files > 0
+          ? ` in ${files} file${files === 1 ? "" : "s"}`
+          : "";
 
       return {
         message: `Failed - ${issues} issue${issues === 1 ? "" : "s"}${filesText}`,
