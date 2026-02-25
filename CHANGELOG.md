@@ -1,3 +1,21 @@
+## [1.6.2](https://github.com/MaximSrour/is-it-ready/compare/v1.6.1...v1.6.2) (2026-02-25)
+
+
+### Bug Fixes
+
+* add mutation test framework ([30dbf52](https://github.com/MaximSrour/is-it-ready/commit/30dbf525a50a549d263bb673b0c1a32552c1b118))
+* PR feedback ([ecd748f](https://github.com/MaximSrour/is-it-ready/commit/ecd748f6743f2b67cac8aba566323913c9dc5c86))
+* remove redundant temporary directory from markdownlint scripts ([7b9ad0a](https://github.com/MaximSrour/is-it-ready/commit/7b9ad0a18a99ebe2a837b64fb6c25fecd2752760))
+* remove unnecessary Stryker temporary directories from vitest configuration ([9695468](https://github.com/MaximSrour/is-it-ready/commit/9695468732d4620e57cfbe5029212674076f3ab0))
+* resolve formatting issues in various test files ([3e8c224](https://github.com/MaximSrour/is-it-ready/commit/3e8c2242e5ea4bd2ca30174fd02a364ef62f0505))
+* resolve most mutation tests related to renderers ([ad14c9a](https://github.com/MaximSrour/is-it-ready/commit/ad14c9a4b68cbb599bda93557bad9955e5ba853a))
+* resolve most mutation tests related to tasks ([648bd39](https://github.com/MaximSrour/is-it-ready/commit/648bd390f751e62b698fe032f8ebc4a15515adac))
+* resolve mutation tests in config ([5cee003](https://github.com/MaximSrour/is-it-ready/commit/5cee0034f4a6106ad94d601962de22288277e7f0))
+* resolve mutation tests in helpers ([273cc76](https://github.com/MaximSrour/is-it-ready/commit/273cc76b800b8a8190186f78077a0f0a207f14a6))
+* resolve mutation tests in parsers ([c65f0e7](https://github.com/MaximSrour/is-it-ready/commit/c65f0e736755a3e9dbea7052254a5507baf7993b))
+* resolve mutation tests in renderers ([b70558f](https://github.com/MaximSrour/is-it-ready/commit/b70558f6fd9568416b491a2b04ffe7afe3f85a2b))
+* resolve mutation tests in runOptions ([b3e23e4](https://github.com/MaximSrour/is-it-ready/commit/b3e23e4394cd679f39ca79cf3f8d087f686463cf))
+
 ## [1.6.1](https://github.com/MaximSrour/is-it-ready/compare/v1.6.0...v1.6.1) (2026-01-25)
 
 
