@@ -77,6 +77,25 @@ describe("loadUserConfig", () => {
     cleanupDir(directory);
   });
 
+  it("throws when config exports a function with task-like properties", async () => {
+    const directory = withTempDir(`
+      const config = () => undefined;
+      config.tasks = [
+        {
+          tool: "Prettier",
+          command: "npm run prettier"
+        }
+      ];
+      module.exports = config;
+    `);
+
+    await expect(loadUserConfig(makeRunOptions())).rejects.toThrowError(
+      /invalid is-it-ready config/i
+    );
+
+    cleanupDir(directory);
+  });
+
   it("throws when the tool referenced does not exist", async () => {
     const directory = withTempDir(`
       module.exports = {
@@ -109,6 +128,30 @@ describe("loadUserConfig", () => {
         };
       `,
       ".is-it-ready.config.mjs"
+    );
+
+    const config = await loadUserConfig(makeRunOptions());
+
+    expect(config).not.toBeNull();
+    expect(config?.tasks).toHaveLength(1);
+    expect(config?.tasks[0]?.tool).toBe("Prettier");
+
+    cleanupDir(directory);
+  });
+
+  it("loads configuration from a .cjs file", async () => {
+    const directory = withTempDir(
+      `
+        module.exports = {
+          tasks: [
+            {
+              tool: "Prettier",
+              command: "npm run prettier"
+            }
+          ]
+        };
+      `,
+      ".is-it-ready.config.cjs"
     );
 
     const config = await loadUserConfig(makeRunOptions());
@@ -273,5 +316,285 @@ describe("loadUserConfig", () => {
     expect(config?.watchIgnore).toEqual(["dist/**", "build/**"]);
 
     cleanupDir(directory);
+  });
+
+  it("throws when watchIgnore includes empty patterns", async () => {
+    const directory = withTempDir(`
+      module.exports = {
+        watchIgnore: ["dist/**", ""],
+        tasks: [
+          {
+            tool: "Prettier",
+            command: "npm run prettier"
+          }
+        ]
+      };
+    `);
+
+    await expect(loadUserConfig(makeRunOptions())).rejects.toThrowError(
+      /invalid is-it-ready config/i
+    );
+
+    cleanupDir(directory);
+  });
+
+  it("throws when a task tool is blank after trimming", async () => {
+    const directory = withTempDir(`
+      module.exports = {
+        tasks: [
+          {
+            tool: "   ",
+            command: "npm run prettier"
+          }
+        ]
+      };
+    `);
+
+    await expect(loadUserConfig(makeRunOptions())).rejects.toThrowError(
+      /invalid is-it-ready config/i
+    );
+
+    cleanupDir(directory);
+  });
+
+  it("throws when a task command is blank after trimming", async () => {
+    const directory = withTempDir(`
+      module.exports = {
+        tasks: [
+          {
+            tool: "Prettier",
+            command: "   "
+          }
+        ]
+      };
+    `);
+
+    await expect(loadUserConfig(makeRunOptions())).rejects.toThrowError(
+      /invalid is-it-ready config/i
+    );
+
+    cleanupDir(directory);
+  });
+
+  it("throws when a task tool is not a string", async () => {
+    const directory = withTempDir(`
+      module.exports = {
+        tasks: [
+          {
+            tool: 123,
+            command: "npm run prettier"
+          }
+        ]
+      };
+    `);
+
+    await expect(loadUserConfig(makeRunOptions())).rejects.toThrowError(
+      /invalid is-it-ready config/i
+    );
+
+    cleanupDir(directory);
+  });
+
+  it("throws when tasks include non-object entries", async () => {
+    const directory = withTempDir(`
+      module.exports = {
+        tasks: [null]
+      };
+    `);
+
+    await expect(loadUserConfig(makeRunOptions())).rejects.toThrowError(
+      /invalid is-it-ready config/i
+    );
+
+    cleanupDir(directory);
+  });
+
+  it("throws when at least one task entry is invalid", async () => {
+    const directory = withTempDir(`
+      module.exports = {
+        tasks: [
+          {
+            tool: "Prettier",
+            command: "npm run prettier"
+          },
+          {
+            tool: "Prettier",
+            command: "   "
+          }
+        ]
+      };
+    `);
+
+    await expect(loadUserConfig(makeRunOptions())).rejects.toThrowError(
+      /invalid is-it-ready config/i
+    );
+
+    cleanupDir(directory);
+  });
+
+  it("throws when a task fixCommand is blank after trimming", async () => {
+    const directory = withTempDir(`
+      module.exports = {
+        tasks: [
+          {
+            tool: "Prettier",
+            command: "npm run prettier",
+            fixCommand: "   "
+          }
+        ]
+      };
+    `);
+
+    await expect(loadUserConfig(makeRunOptions())).rejects.toThrowError(
+      /invalid is-it-ready config/i
+    );
+
+    cleanupDir(directory);
+  });
+
+  it("loads config from package.json is-it-ready field", async () => {
+    const directory = withTempDir(
+      JSON.stringify(
+        {
+          name: "fixture",
+          version: "1.0.0",
+          "is-it-ready": {
+            tasks: [{ tool: "Prettier", command: "npm run prettier" }],
+          },
+        },
+        null,
+        2
+      ),
+      "package.json"
+    );
+
+    const config = await loadUserConfig(makeRunOptions());
+
+    expect(config).not.toBeNull();
+    expect(config?.tasks).toHaveLength(1);
+    expect(config?.tasks[0]?.tool).toBe("Prettier");
+
+    cleanupDir(directory);
+  });
+});
+
+describe("loadUserConfig (mocked loader errors)", () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+    vi.resetModules();
+  });
+
+  it("rethrows non-ENOENT loader errors", async () => {
+    const loadMock = vi.fn(() => {
+      throw new Error("boom");
+    });
+
+    vi.doMock("cosmiconfig", () => {
+      return {
+        cosmiconfig: () => {
+          return {
+            load: loadMock,
+            search: vi.fn(),
+          };
+        },
+      };
+    });
+    vi.doMock("is-installed-globally", () => {
+      return { __esModule: true, default: false };
+    });
+
+    const { loadUserConfig: loadUserConfigWithMocks } =
+      await import("./config");
+
+    await expect(
+      loadUserConfigWithMocks(
+        makeRunOptions({ configPath: "custom.config.js" })
+      )
+    ).rejects.toThrowError(/boom/i);
+  });
+
+  it("maps ENOENT loader errors to a helpful missing-file message", async () => {
+    const loadMock = vi.fn(() => {
+      const error = new Error("missing file") as NodeJS.ErrnoException;
+      error.code = "ENOENT";
+      throw error;
+    });
+
+    vi.doMock("cosmiconfig", () => {
+      return {
+        cosmiconfig: () => {
+          return {
+            load: loadMock,
+            search: vi.fn(),
+          };
+        },
+      };
+    });
+    vi.doMock("is-installed-globally", () => {
+      return { __esModule: true, default: false };
+    });
+
+    const { loadUserConfig: loadUserConfigWithMocks } =
+      await import("./config");
+
+    await expect(
+      loadUserConfigWithMocks(
+        makeRunOptions({ configPath: "missing.config.js" })
+      )
+    ).rejects.toThrowError(/config file not found/i);
+  });
+
+  it("returns null when explicit loader resolves to null", async () => {
+    const loadMock = vi.fn().mockResolvedValue(null);
+
+    vi.doMock("cosmiconfig", () => {
+      return {
+        cosmiconfig: () => {
+          return {
+            load: loadMock,
+            search: vi.fn(),
+          };
+        },
+      };
+    });
+    vi.doMock("is-installed-globally", () => {
+      return { __esModule: true, default: false };
+    });
+
+    const { loadUserConfig: loadUserConfigWithMocks } =
+      await import("./config");
+
+    await expect(
+      loadUserConfigWithMocks(
+        makeRunOptions({ configPath: "custom.config.js" })
+      )
+    ).resolves.toBeNull();
+  });
+
+  it("passes stopDir when running as a global install", async () => {
+    const cosmiconfigMock = vi.fn(() => {
+      return {
+        load: vi.fn().mockResolvedValue(null),
+        search: vi.fn().mockResolvedValue(null),
+      };
+    });
+
+    vi.doMock("cosmiconfig", () => {
+      return {
+        cosmiconfig: cosmiconfigMock,
+      };
+    });
+    vi.doMock("is-installed-globally", () => {
+      return { __esModule: true, default: true };
+    });
+
+    const { loadUserConfig: loadUserConfigWithMocks } =
+      await import("./config");
+
+    await expect(loadUserConfigWithMocks(makeRunOptions())).resolves.toBeNull();
+    expect(cosmiconfigMock).toHaveBeenCalledWith(
+      "is-it-ready",
+      expect.objectContaining({ stopDir: os.homedir() })
+    );
   });
 });

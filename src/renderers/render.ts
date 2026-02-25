@@ -106,7 +106,7 @@ export const render = (tasks: Task[], runOptions: RunOptions) => {
     failures.push(...task.getFailures());
   });
 
-  if (failures.length > 0 && suiteFinished) {
+  if (suiteFinished) {
     printFailureDetails(failures, runOptions);
   }
 
@@ -121,28 +121,28 @@ export const render = (tasks: Task[], runOptions: RunOptions) => {
   );
 
   const { suiteStartTime, suiteDurationMs } = (() => {
-    const result = tasks.reduce(
-      (acc, task) => {
-        const start = task.getStartTime();
-        const end = task.getEndTime();
+    let hasCompleteTask = false;
+    let startTime = Number.POSITIVE_INFINITY;
+    let endTime = Number.NEGATIVE_INFINITY;
 
-        if (start !== null && end !== null) {
-          acc.suiteStartTime =
-            acc.suiteStartTime === 0
-              ? start
-              : Math.min(acc.suiteStartTime, start);
-          acc.suiteEndTime = Math.max(acc.suiteEndTime, end);
-        }
+    for (const task of tasks) {
+      const start = task.getStartTime();
+      const end = task.getEndTime();
 
-        return acc;
-      },
-      { suiteStartTime: 0, suiteEndTime: 0 }
-    );
+      if (start !== null && end !== null) {
+        hasCompleteTask = true;
+        startTime = Math.min(startTime, start);
+        endTime = Math.max(endTime, end);
+      }
+    }
+
+    if (!hasCompleteTask) {
+      return { suiteStartTime: null, suiteDurationMs: 0 };
+    }
 
     return {
-      suiteStartTime:
-        result.suiteStartTime === Infinity ? null : result.suiteStartTime,
-      suiteDurationMs: result.suiteEndTime - result.suiteStartTime,
+      suiteStartTime: startTime,
+      suiteDurationMs: endTime - startTime,
     };
   })();
 

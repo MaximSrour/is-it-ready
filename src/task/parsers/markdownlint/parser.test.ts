@@ -26,4 +26,16 @@ describe("parseMarkdownLint", () => {
   it("returns undefined for empty output", () => {
     expect(parseMarkdownLint("")).toBeUndefined();
   });
+
+  it("parses multi-digit summaries with extra whitespace", () => {
+    const output = "Summary:   12   error(s)";
+    expect(parseMarkdownLint(output)).toEqual({
+      message: "Failed - 12 errors",
+      errors: 12,
+    });
+  });
+
+  it("returns undefined for malformed summaries", () => {
+    expect(parseMarkdownLint("Summary: nope error(s)")).toBeUndefined();
+  });
 });

@@ -95,3 +95,28 @@ It also provides support for some npm commands
 
 Contributions are welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for
 detailed guidelines on code standards, testing, and the pull request process.
+
+### Mutation Testing Workflow
+
+Mutation testing is a required quality gate for this project.
+
+Acceptance criteria:
+
+- Mutation score must be `100%`
+- `0` surviving mutants
+- `0` timed out mutants
+
+Recommended workflow:
+
+1. Run mutation tests while developing:
+   - `npm run mutate`
+2. Add or improve tests until all mutants are killed.
+3. Re-run mutation tests to verify.
+4. Run the full mutation suite before opening a PR:
+   - `npm run mutate`
+
+If a mutant is equivalent and cannot be killed by a meaningful test:
+
+- Prefer rewriting code to make intent explicit and testable.
+- If still equivalent, add a targeted Stryker disable comment with a clear
+  reason and keep the suppression as narrow as possible.

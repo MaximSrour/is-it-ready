@@ -90,6 +90,17 @@ describe("selectCommand", () => {
 describe("runCommand", () => {
   const spawnMock = vi.mocked(spawn);
 
+  type MockStream = EventEmitter & {
+    setEncoding: ReturnType<typeof vi.fn>;
+  };
+
+  type MockChild = ChildProcess & {
+    stdout: MockStream;
+    stderr: MockStream;
+    stdoutSetEncodingMock: ReturnType<typeof vi.fn>;
+    stderrSetEncodingMock: ReturnType<typeof vi.fn>;
+  };
+
   const restoreEnv = (originalEnv: NodeJS.ProcessEnv) => {
     for (const key of Object.keys(process.env)) {
       if (!(key in originalEnv)) {
@@ -99,20 +110,20 @@ describe("runCommand", () => {
     Object.assign(process.env, originalEnv);
   };
 
-  const createMockChild = (): ChildProcess => {
-    const stdout = new EventEmitter() as EventEmitter & {
-      setEncoding: (encoding: string) => void;
-    };
-    const stderr = new EventEmitter() as EventEmitter & {
-      setEncoding: (encoding: string) => void;
-    };
-    stdout.setEncoding = vi.fn();
-    stderr.setEncoding = vi.fn();
+  const createMockChild = (): MockChild => {
+    const stdoutSetEncodingMock = vi.fn();
+    const stderrSetEncodingMock = vi.fn();
+    const stdout = new EventEmitter() as MockStream;
+    const stderr = new EventEmitter() as MockStream;
+    stdout.setEncoding = stdoutSetEncodingMock;
+    stderr.setEncoding = stderrSetEncodingMock;
 
     return Object.assign(new EventEmitter(), {
       stdout,
       stderr,
-    }) as ChildProcess;
+      stdoutSetEncodingMock,
+      stderrSetEncodingMock,
+    }) as MockChild;
   };
 
   beforeEach(() => {
@@ -182,6 +193,59 @@ describe("runCommand", () => {
 
     restoreEnv(originalEnv);
   });
+
+  it("collects stdout and stderr chunks and resolves close status", async () => {
+    const child = createMockChild();
+    spawnMock.mockReturnValue(child);
+
+    const promise = runCommand("echo test");
+
+    expect(spawnMock).toHaveBeenCalledWith(
+      "echo test",
+      expect.objectContaining({ shell: true })
+    );
+    expect(child.stdoutSetEncodingMock).toHaveBeenCalledWith("utf-8");
+    expect(child.stderrSetEncodingMock).toHaveBeenCalledWith("utf-8");
+
+    child.stdout.emit("data", "out-1");
+    child.stdout.emit("data", "out-2");
+    child.stderr.emit("data", "err-1");
+    child.emit("close", 2);
+
+    await expect(promise).resolves.toEqual({
+      status: 2,
+      stdout: "out-1out-2",
+      stderr: "err-1",
+    });
+  });
+
+  it("rejects when the spawned process emits an error", async () => {
+    const child = createMockChild();
+    spawnMock.mockReturnValue(child);
+
+    const promise = runCommand("echo test");
+    child.emit("error", new Error("spawn failed"));
+
+    await expect(promise).rejects.toThrow(/spawn failed/i);
+  });
+
+  it("copies process environment when run options are omitted", async () => {
+    const originalEnv = { ...process.env };
+    process.env.HELPERS_MUTATION_TEST = "present";
+
+    const child = createMockChild();
+    spawnMock.mockReturnValue(child);
+
+    const promise = runCommand("npm run lint");
+    const options = spawnMock.mock.calls[0][1] as SpawnOptions;
+    const env = options.env ?? ({} as NodeJS.ProcessEnv);
+    child.emit("close", 0);
+    await promise;
+
+    expect(env.HELPERS_MUTATION_TEST).toBe("present");
+
+    restoreEnv(originalEnv);
+  });
 });
 
 describe("addSilentFlag", () => {
@@ -203,6 +267,22 @@ describe("addSilentFlag", () => {
     expect(addSilentFlag("npm run lint -- --fix")).toBe(
       "npm run --silent lint -- --fix"
     );
+  });
+
+  it("adds --silent for npm run commands with leading whitespace", () => {
+    expect(addSilentFlag("  npm run lint")).toBe("  npm run --silent lint");
+  });
+
+  it("leaves npm commands untouched when they are not npm run", () => {
+    expect(addSilentFlag("npm test")).toBe("npm test");
+  });
+
+  it("does not rewrite commands that mention npm run later in the string", () => {
+    expect(addSilentFlag("echo npm run lint")).toBe("echo npm run lint");
+  });
+
+  it("handles npm run with multiple spaces between tokens", () => {
+    expect(addSilentFlag("npm    run lint")).toBe("npm run --silent lint");
   });
 });
 
@@ -227,6 +307,10 @@ describe("formatDuration", () => {
 
   it("formats milliseconds as seconds with one decimal", () => {
     expect(formatDuration(1500)).toBe("1.5 s");
+  });
+
+  it("formats exactly one second as seconds", () => {
+    expect(formatDuration(1000)).toBe("1.0 s");
   });
 
   it("formats milliseconds over a minute as seconds", () => {

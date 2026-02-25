@@ -36,4 +36,42 @@ describe("parseVitest", () => {
       errors: 2,
     });
   });
+
+  it("handles multi-digit suite failures", () => {
+    expect(parseVitest(" Failed Suites 12 ")).toEqual({
+      message: "Failed - 12 suites failed",
+      errors: 12,
+    });
+  });
+
+  it("handles only file failures", () => {
+    expect(parseVitest("Test Files 2 failed")).toEqual({
+      message: "Failed - ",
+      errors: 2,
+    });
+  });
+
+  it("supports additional spacing in failure summary", () => {
+    const output = "Test Files   10   failed | Tests   11   failed";
+
+    expect(parseVitest(output)).toEqual({
+      message: "Failed - 11 tests failed in 10 files",
+      errors: 21,
+    });
+  });
+
+  it("returns undefined when there is no vitest summary at all", () => {
+    expect(parseVitest("plain output with no counters")).toBeUndefined();
+  });
+
+  it("uses singular test label when exactly one test fails", () => {
+    expect(parseVitest("Tests 1 failed")).toEqual({
+      message: "Failed - 1 test failed",
+      errors: 1,
+    });
+  });
+
+  it("returns undefined for zero failed suites", () => {
+    expect(parseVitest(" Failed Suites 0 ")).toBeUndefined();
+  });
 });

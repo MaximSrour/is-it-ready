@@ -10,10 +10,6 @@ import { type TaskState } from "../task/types";
  * @returns {string} - The colored status message.
  */
 export const colorStatusMessage = (message: string, state: TaskState) => {
-  if (!message) {
-    return "";
-  }
-
   if (state === "failure") {
     return chalk.red(message);
   }

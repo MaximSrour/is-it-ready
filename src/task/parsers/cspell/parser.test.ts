@@ -43,4 +43,44 @@ describe("parseCSpell", () => {
 
     expect(result).toBeUndefined();
   });
+
+  it("supports singular Issue wording and multi-digit counts", () => {
+    const output = "Issue found: 12 in 10 files";
+
+    expect(parseCSpell(output)).toEqual({
+      message: "Failed - 12 issues in 10 files",
+      errors: 12,
+    });
+  });
+
+  it("supports extra whitespace in summary lines", () => {
+    const output = "Issues    found:   10    in   2    files";
+
+    expect(parseCSpell(output)).toEqual({
+      message: "Failed - 10 issues in 2 files",
+      errors: 10,
+    });
+  });
+
+  it("omits file segment when file count is zero", () => {
+    const output = "Issues found: 5 in 0 files";
+
+    expect(parseCSpell(output)).toEqual({
+      message: "Failed - 5 issues",
+      errors: 5,
+    });
+  });
+
+  it("parses issue count when file count section is missing", () => {
+    const output = "Issues found: 3";
+
+    expect(parseCSpell(output)).toEqual({
+      message: "Failed - 3 issues",
+      errors: 3,
+    });
+  });
+
+  it("returns undefined when output has no cspell summary", () => {
+    expect(parseCSpell("checked files with no summary")).toBeUndefined();
+  });
 });

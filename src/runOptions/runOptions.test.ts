@@ -108,6 +108,14 @@ describe("getRunOptions", () => {
     }).toThrowError(/missing value for --config/i);
   });
 
+  it("throws when --config is followed by another option", () => {
+    process.argv = ["node", "script.js", "--config", "--watch"];
+
+    expect(() => {
+      getRunOptions();
+    }).toThrowError(/missing value for --config/i);
+  });
+
   it("throws when --config= is provided without a value", () => {
     process.argv = ["node", "script.js", "--config="];
 
@@ -221,6 +229,25 @@ describe("printHelp", () => {
     logSpy.mockRestore();
     errorSpy.mockRestore();
   });
+
+  it("prints an error when the help file cannot be read", () => {
+    const readSpy = vi.spyOn(fs, "readFileSync").mockImplementation(() => {
+      throw new Error("disk failure");
+    });
+    const logSpy = vi.spyOn(console, "log").mockImplementation(noOp);
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(noOp);
+
+    printHelp();
+
+    expect(logSpy).not.toHaveBeenCalled();
+    expect(errorSpy).toHaveBeenCalledWith(
+      "Error reading help file: disk failure"
+    );
+
+    readSpy.mockRestore();
+    logSpy.mockRestore();
+    errorSpy.mockRestore();
+  });
 });
 
 describe("printVersion", () => {
@@ -238,6 +265,13 @@ describe("printVersion", () => {
       `Copyright (C) ${new Date().getFullYear()} ${pkg.author}`
     );
     expect(logSpy).toHaveBeenCalledWith(`License: ${pkg.license}`);
+    expect(logSpy).toHaveBeenCalledWith();
+    expect(logSpy).toHaveBeenCalledWith(
+      "This is free software: you are free to change and redistribute it."
+    );
+    expect(logSpy).toHaveBeenCalledWith(
+      "There is NO WARRANTY, to the extent permitted by law."
+    );
 
     logSpy.mockRestore();
   });

@@ -1,23 +1,18 @@
 import { type ParsedFailure } from "../../types";
 
 export const parseKnip = (output: string): ParsedFailure | undefined => {
+  const normalized = output.replace(/\s+/g, " ");
   const sectionPattern = /\((\d+)\)/g;
   let total = 0;
 
-  for (const match of output.matchAll(sectionPattern)) {
-    const value = Number(match[1]);
-    if (Number.isFinite(value) && value > 0) {
-      total += value;
-    }
+  for (const match of normalized.matchAll(sectionPattern)) {
+    total += Number(match[1]);
   }
 
   if (total === 0) {
-    const match = output.match(/(\d+)\s+issues?/i);
+    const match = normalized.match(/(\d+) issues?/i);
     if (match) {
-      const fallback = Number(match[1]);
-      if (Number.isFinite(fallback) && fallback > 0) {
-        total = fallback;
-      }
+      total = Number(match[1]);
     }
   }
 

@@ -35,3 +35,7 @@ yarn-error.log*
 
 # build output
 /dist
+
+# stryker temp files
+/reports/mutation
+.stryker-tmp

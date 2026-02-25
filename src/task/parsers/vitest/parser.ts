@@ -1,11 +1,12 @@
 import { type ParsedFailure } from "../../types";
 
 export const parseVitest = (output: string): ParsedFailure | undefined => {
-  const suiteFailures = output.match(/ Failed Suites\s+(\d+) /i);
+  const normalized = output.replace(/\s+/g, " ");
+  const suiteFailures = normalized.match(/Failed Suites (\d+)/i);
 
   if (suiteFailures) {
     const suiteCount = Number(suiteFailures[1]);
-    if (Number.isFinite(suiteCount) && suiteCount > 0) {
+    if (Number.isFinite(suiteCount) && suiteCount !== 0) {
       return {
         message: `Failed - ${suiteCount} suite${suiteCount === 1 ? "" : "s"} failed`,
         errors: suiteCount,
@@ -13,23 +14,12 @@ export const parseVitest = (output: string): ParsedFailure | undefined => {
     }
   }
 
-  const fileFailures = output.match(/Test Files\s+(\d+)\s+failed/i);
-  const testFailures = output.match(/Tests\s+(\d+)\s+failed/i);
+  const fileFailures = normalized.match(/Test Files (\d+) failed/i);
+  const testFailures = normalized.match(/Tests (\d+) failed/i);
 
-  if (!fileFailures && !testFailures) {
-    return undefined;
-  }
-
-  let totalFailures = 0;
   const fileCount = Number(fileFailures?.[1] ?? 0);
   const testCount = Number(testFailures?.[1] ?? 0);
-
-  if (Number.isFinite(fileCount)) {
-    totalFailures += fileCount;
-  }
-  if (Number.isFinite(testCount)) {
-    totalFailures += testCount;
-  }
+  const totalFailures = fileCount + testCount;
 
   if (!Number.isFinite(totalFailures) || totalFailures === 0) {
     return undefined;

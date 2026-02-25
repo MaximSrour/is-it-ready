@@ -4,3 +4,4 @@ words:
 userWords: []
 ignoreWords:
   - trivago
+  - unstub

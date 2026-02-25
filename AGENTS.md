@@ -46,6 +46,18 @@ TypeScript and follows strict code quality standards.
    - Keep functions small and focused
    - Follow existing code patterns and conventions
 
+4. **Mutation Testing Standards**:
+   - Mutation testing is required for changed behavior
+   - Expected result is `100%` mutation score
+   - There must be `0` surviving mutants
+   - There must be `0` timed out mutants
+   - Run mutation tests with:
+     - `npm run mutate`
+   - For equivalent mutants:
+     - First prefer code or test changes that remove ambiguity
+     - Only then use narrow Stryker disable comments with rationale
+   - Do not use unique directories for targeted tests
+
 ### Available Commands
 
 - `npm run test` - Run tests with Vitest
@@ -57,14 +69,19 @@ TypeScript and follows strict code quality standards.
 - `npm run knip` - Check for unused dependencies and exports
 - `npm run markdownlint` - Lint markdown files
 - `npm run markdownlint:fix` - Auto-fix markdown issues
+- `npm run mutate` - Run full mutation testing suite
 - `npm run check` - Run all quality checks (recommended)
 
 ### Before Committing
 
 1. Run `npm run check` - all checks must pass
 2. Ensure all tests pass
-3. Review your changes carefully
-4. Follow commit message conventions (see commits.instructions.md)
+3. Run mutation tests and confirm:
+   - `100%` mutation score
+   - `0` surviving mutants
+   - `0` timed out mutants
+4. Review your changes carefully
+5. Follow commit message conventions (see commits.instructions.md)
 
 ## File Organization
 
@@ -115,6 +132,7 @@ TypeScript and follows strict code quality standards.
 - Don't commit code with TypeScript errors
 - Don't disable linting rules without good reason
 - Don't commit without tests for new functionality
+- Don't leave surviving or timed out mutants unresolved
 
 ## Getting Help
 
