@@ -1,3 +1,10 @@
+# [1.7.0](https://github.com/MaximSrour/is-it-ready/compare/v1.6.2...v1.7.0) (2026-03-02)
+
+
+### Features
+
+* enhance npm audit command and improve vitest parser for singular summaries ([241c0bd](https://github.com/MaximSrour/is-it-ready/commit/241c0bd8b38dd43290eb66edcbd46ed4f2ab4495))
+
 ## [1.6.2](https://github.com/MaximSrour/is-it-ready/compare/v1.6.1...v1.6.2) (2026-02-25)
 
 
