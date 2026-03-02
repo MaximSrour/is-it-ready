@@ -8,7 +8,7 @@ describe("parseVitest", () => {
 
     expect(parseVitest(output)).toEqual({
       message: "Failed - 2 tests failed in 1 file",
-      errors: 3,
+      errors: 2,
     });
   });
 
@@ -56,7 +56,7 @@ describe("parseVitest", () => {
 
     expect(parseVitest(output)).toEqual({
       message: "Failed - 11 tests failed in 10 files",
-      errors: 21,
+      errors: 11,
     });
   });
 
@@ -67,6 +67,20 @@ describe("parseVitest", () => {
   it("uses singular test label when exactly one test fails", () => {
     expect(parseVitest("Tests 1 failed")).toEqual({
       message: "Failed - 1 test failed",
+      errors: 1,
+    });
+  });
+
+  it("parses singular vitest summary format", () => {
+    expect(parseVitest("1 test failed in 1 file")).toEqual({
+      message: "Failed - 1 test failed in 1 file",
+      errors: 1,
+    });
+  });
+
+  it("counts one error for legacy summary with one failed test in one file", () => {
+    expect(parseVitest("Test Files 1 failed | Tests 1 failed")).toEqual({
+      message: "Failed - 1 test failed in 1 file",
       errors: 1,
     });
   });

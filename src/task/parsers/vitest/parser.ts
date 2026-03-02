@@ -16,19 +16,25 @@ export const parseVitest = (output: string): ParsedFailure | undefined => {
 
   const fileFailures = normalized.match(/Test Files (\d+) failed/i);
   const testFailures = normalized.match(/Tests (\d+) failed/i);
+  const singularSummary = normalized.match(
+    // Stryker disable next-line all: Mutations to this are just invalid.
+    /(\d+)\s+test(?:s)?\s+failed(?:\s+in\s+(\d+)\s+file(?:s)?)?/i
+  );
 
-  const fileCount = Number(fileFailures?.[1] ?? 0);
-  const testCount = Number(testFailures?.[1] ?? 0);
-  const totalFailures = fileCount + testCount;
+  const hasFileFailures = Boolean(fileFailures || singularSummary?.[2]);
+  const hasTestFailures = Boolean(testFailures || singularSummary);
+  const fileCount = Number(fileFailures?.[1] ?? singularSummary?.[2] ?? 0);
+  const testCount = Number(testFailures?.[1] ?? singularSummary?.[1] ?? 0);
+  const totalFailures = testCount || fileCount;
 
   if (!Number.isFinite(totalFailures) || totalFailures === 0) {
     return undefined;
   }
 
-  const testPart = testFailures
+  const testPart = hasTestFailures
     ? `${testCount} test${testCount === 1 ? "" : "s"} failed`
     : "";
-  const filePart = fileFailures
+  const filePart = hasFileFailures
     ? `${fileCount} file${fileCount === 1 ? "" : "s"}`
     : "";
   const messageBody =

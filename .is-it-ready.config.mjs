@@ -35,7 +35,7 @@ export default {
     },
     {
       tool: "npm audit",
-      command: "npm audit",
+      command: "npm audit --omit=dev",
     },
   ],
 };

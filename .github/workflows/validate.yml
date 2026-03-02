@@ -40,3 +40,6 @@ jobs:
 
       - name: Knip inventory
         run: npm run knip
+
+      - name: NPM audit (prod deps)
+        run: npm audit --omit=dev
