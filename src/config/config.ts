@@ -32,6 +32,7 @@ const explorer = cosmiconfig("is-it-ready", {
  *
  * @returns {undefined} Always undefined so exit code drives task success/failure.
  */
+// Stryker disable next-line BlockStatement: An empty body is equivalent here because unsupported tools intentionally rely on exit codes only.
 function parseUnsupportedFailure() {
   return undefined;
 }

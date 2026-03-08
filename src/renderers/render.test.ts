@@ -7,7 +7,12 @@ import { type Task } from "../task/task";
 import { type FailureDetails } from "../task/types";
 
 import * as renderModule from "./render";
-import { formatFailureHeadline, printFailureDetails, render } from "./render";
+import {
+  formatFailureHeadline,
+  formatUnsupportedTools,
+  printFailureDetails,
+  render,
+} from "./render";
 import { renderTable } from "./tableRenderer";
 
 vi.mock("./tableRenderer", () => {
@@ -193,6 +198,26 @@ describe("printFailureDetails", () => {
     expect(logSpy).toHaveBeenNthCalledWith(2, `\n${expectedHeadline}`);
     expect(logSpy).toHaveBeenNthCalledWith(4, `\n${expectedHeadline}`);
     expect(logSpy).toHaveBeenLastCalledWith();
+  });
+});
+
+describe("formatUnsupportedTools", () => {
+  it("returns an empty string when there are no unsupported tools", () => {
+    expect(formatUnsupportedTools([])).toBe("");
+  });
+
+  it("formats a single unsupported tool without conjunctions", () => {
+    expect(formatUnsupportedTools(["Foo"])).toBe("`Foo`");
+  });
+
+  it("formats two unsupported tools with 'and'", () => {
+    expect(formatUnsupportedTools(["Foo", "Bar"])).toBe("`Foo` and `Bar`");
+  });
+
+  it("formats three unsupported tools with an Oxford comma", () => {
+    expect(formatUnsupportedTools(["test", "hello", "world"])).toBe(
+      "`test`, `hello`, and `world`"
+    );
   });
 });
 

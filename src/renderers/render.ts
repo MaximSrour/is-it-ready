@@ -75,13 +75,17 @@ export const printFailureDetails = (
   }
 };
 
-const formatUnsupportedTools = (unsupportedTools: string[]) => {
+export const formatUnsupportedTools = (unsupportedTools: string[]) => {
   const quotedTools = unsupportedTools.map((tool) => {
     return `\`${tool}\``;
   });
 
-  if (quotedTools.length <= 1) {
-    return quotedTools[0] ?? "";
+  if (quotedTools.length === 0) {
+    return "";
+  }
+
+  if (quotedTools.length === 1) {
+    return quotedTools[0];
   }
 
   if (quotedTools.length === 2) {
