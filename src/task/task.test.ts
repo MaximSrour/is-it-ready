@@ -620,4 +620,35 @@ describe("Task", () => {
 
     expect(task.getDuration()).toBeNull();
   });
+
+  it("marks the task as failed when the parser finds issues despite a zero exit code", async () => {
+    vi.spyOn(helpers, "runCommand").mockResolvedValue({
+      status: 0,
+      stdout: "mutation summary",
+      stderr: "",
+    });
+
+    const task = createMockTask({
+      tool: "Stryker",
+      parseFailure: () => {
+        return { message: "Failed - 2 issues", errors: 2 };
+      },
+    });
+
+    await task.execute();
+
+    expect(task.getStatus()).toEqual({
+      state: "failure",
+      message: "Failed - 2 issues",
+    });
+    expect(task.getTotalErrors()).toBe(2);
+    expect(task.getTotalWarnings()).toBe(0);
+    expect(task.getFailures()).toEqual([
+      expect.objectContaining({
+        tool: "Stryker",
+        summary: "Failed - 2 issues",
+        errors: 2,
+      }),
+    ]);
+  });
 });

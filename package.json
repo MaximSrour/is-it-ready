@@ -48,6 +48,7 @@
     "prettier:watch": "chokidar \"src/**/*.{js,ts,mjs,cjs,json}\" \"*.{js,ts,mjs,cjs,json}\" -c \"npm run --silent prettier:fix\"",
     "spelling": "cspell --no-progress 'src/**/*.{js,ts,mjs,cjs,json}' '*.{js,ts,mjs,cjs,json}'",
     "test": "vitest run",
+    "test:no-coverage": "vitest run --coverage.enabled=false",
     "test:coverage": "vitest run --coverage",
     "type-check": "tsc --noEmit",
     "check": "ts-node -r tsconfig-paths/register --transpile-only src/index.ts",

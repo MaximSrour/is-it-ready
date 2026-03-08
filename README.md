@@ -75,8 +75,33 @@ export default {
       tool: "ESLint",
       command: "npm run lint",
     },
+    {
+      tool: "Vitest",
+      command: "npm run test:no-coverage",
+    },
+    {
+      tool: "Stryker",
+      command: "npm run mutate",
+    },
   ],
 };
+```
+
+If you run multiple tasks that write coverage artifacts in the same
+`is-it-ready` session, disable coverage output for all but one of them.
+Otherwise, parallel tasks can race on shared coverage directories such as
+`coverage/` or `coverage/.tmp`.
+
+For example:
+
+```json
+{
+  "scripts": {
+    "test": "vitest run",
+    "test:no-coverage": "vitest run --coverage.enabled=false",
+    "mutate": "stryker run"
+  }
+}
 ```
 
 ### Tool support
@@ -87,6 +112,7 @@ Currently, this tool provides direct parser support for the following tools:
 - Knip
 - MarkdownLint (`markdownlint-cli2`)
 - Prettier
+- Stryker
 - TypeScript
 - Vitest
 
@@ -121,6 +147,10 @@ Recommended workflow:
 3. Re-run mutation tests to verify.
 4. Run the full mutation suite before opening a PR:
    - `npm run mutate`
+
+When configuring `is-it-ready`, make sure concurrent tasks are not both writing
+coverage output to the same location. Disabling coverage on one of those tasks
+is usually the simplest fix.
 
 If a mutant is equivalent and cannot be killed by a meaningful test:
 
