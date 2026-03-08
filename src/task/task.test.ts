@@ -434,6 +434,63 @@ describe("Task", () => {
     expect(task.getTotalWarnings()).toBe(0);
   });
 
+  it("passes unsupported tools when the command exits successfully", async () => {
+    vi.spyOn(helpers, "runCommand").mockResolvedValue({
+      status: 0,
+      stdout: "ok",
+      stderr: "",
+    });
+
+    const task = createMockTask({
+      usesExitCodeOnly: true,
+      parseFailure: () => {
+        return undefined;
+      },
+    });
+
+    await task.execute();
+
+    expect(task.getStatus()).toEqual({ state: "success", message: "Passed" });
+    expect(task.getTotalErrors()).toBe(0);
+    expect(task.getTotalWarnings()).toBe(0);
+  });
+
+  it("fails unsupported tools by exit code without synthetic issue counts", async () => {
+    vi.spyOn(helpers, "runCommand").mockResolvedValue({
+      status: 1,
+      stdout: "failure output",
+      stderr: "",
+    });
+
+    const task = createMockTask({
+      usesExitCodeOnly: true,
+      parseFailure: () => {
+        return undefined;
+      },
+    });
+
+    await task.execute();
+
+    expect(task.getStatus()).toEqual({
+      state: "failure",
+      message: "Failed - see output below for details",
+    });
+    expect(task.getFailures()).toEqual([
+      {
+        label: "Echo Task",
+        tool: "Echo",
+        command: "echo 'Echo command'",
+        errors: undefined,
+        warnings: undefined,
+        summary: undefined,
+        output: "failure output",
+        rawOutput: "failure output",
+      },
+    ]);
+    expect(task.getTotalErrors()).toBe(0);
+    expect(task.getTotalWarnings()).toBe(0);
+  });
+
   it("tracks running status while command is in progress", async () => {
     let resolveRun: (() => void) | undefined;
     vi.spyOn(helpers, "runCommand").mockImplementation(() => {

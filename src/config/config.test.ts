@@ -96,7 +96,7 @@ describe("loadUserConfig", () => {
     cleanupDir(directory);
   });
 
-  it("throws when the tool referenced does not exist", async () => {
+  it("accepts unknown tools and configures them for exit-code-only mode", async () => {
     const directory = withTempDir(`
       module.exports = {
         tasks: [
@@ -108,9 +108,48 @@ describe("loadUserConfig", () => {
       };
     `);
 
-    await expect(loadUserConfig(makeRunOptions())).rejects.toThrowError(
-      /unknown tool/i
-    );
+    const config = await loadUserConfig(makeRunOptions());
+
+    expect(config).not.toBeNull();
+    expect(config?.unsupportedTools).toEqual(["Unknown"]);
+    expect(config?.tasks).toHaveLength(1);
+    expect(config?.tasks[0]?.label).toBe("Unknown");
+    expect(config?.tasks[0]?.tool).toBe("Unknown");
+    expect(config?.tasks[0]?.command).toBe("npm run foo");
+    expect(config?.tasks[0]?.usesExitCodeOnly).toBe(true);
+    expect(config?.tasks[0]?.parseFailure("some output")).toBeUndefined();
+
+    cleanupDir(directory);
+  });
+
+  it("deduplicates unsupported tool warnings across multiple tasks", async () => {
+    const directory = withTempDir(`
+      module.exports = {
+        tasks: [
+          {
+            tool: "Unknown",
+            command: "npm run foo"
+          },
+          {
+            tool: "Prettier",
+            command: "npm run prettier"
+          },
+          {
+            tool: "Unknown",
+            command: "npm run foo:again"
+          },
+          {
+            tool: "Another",
+            command: "npm run bar"
+          }
+        ]
+      };
+    `);
+
+    const config = await loadUserConfig(makeRunOptions());
+
+    expect(config).not.toBeNull();
+    expect(config?.unsupportedTools).toEqual(["Unknown", "Another"]);
 
     cleanupDir(directory);
   });

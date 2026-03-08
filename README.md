@@ -57,6 +57,9 @@ for global support.
   to point the CLI at a specific file.
 - Each file must export an object with a `tasks` array. Every task entry must
   specify the `tool` name and its `command`, and may provide `fixCommand` overrides.
+- Built-in tools get parser-based issue counts. Other tool names are allowed,
+  but they run in exit-code-only mode and show a warning that they are not
+  directly supported.
 
 Example `.is-it-ready.config.mjs`:
 
@@ -78,7 +81,7 @@ export default {
 
 ### Tool support
 
-Currently, this tool only provides support for the following packages/tools:
+Currently, this tool provides direct parser support for the following tools:
 
 - ESLint
 - Knip
@@ -87,9 +90,13 @@ Currently, this tool only provides support for the following packages/tools:
 - TypeScript
 - Vitest
 
-It also provides support for some npm commands
+It also provides direct parser support for some npm commands:
 
 - npm audit
+
+Other tools may still be configured. When a tool has no built-in parser,
+`is-it-ready` warns once and uses only the command exit code to decide whether
+that task passed or failed.
 
 ## Contributing
 

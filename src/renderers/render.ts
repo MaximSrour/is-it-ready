@@ -1,9 +1,9 @@
 import chalk from "chalk";
 
 import pkg from "../../package.json";
+import { type Config } from "../config/types";
 import { formatDuration, taskStateIcons } from "../helpers";
 import { type RunOptions } from "../runOptions/types";
-import { type Task } from "../task/task";
 import { type FailureDetails } from "../task/types";
 
 import { renderTable } from "./tableRenderer";
@@ -75,13 +75,34 @@ export const printFailureDetails = (
   }
 };
 
+const formatUnsupportedTools = (unsupportedTools: string[]) => {
+  const quotedTools = unsupportedTools.map((tool) => {
+    return `\`${tool}\``;
+  });
+
+  if (quotedTools.length <= 1) {
+    return quotedTools[0] ?? "";
+  }
+
+  if (quotedTools.length === 2) {
+    return `${quotedTools[0]} and ${quotedTools[1]}`;
+  }
+
+  const leadingTools = quotedTools.slice(0, -1).join(", ");
+  const lastTool = quotedTools.at(-1);
+
+  return `${leadingTools}, and ${lastTool}`;
+};
+
 /**
  * Renders the current status of all tasks to the console.
  *
- * @param {Task[]} tasks - Array of tasks to render.
+ * @param {Config} config - Config and task metadata to render.
  * @param {RunOptions} runOptions - Options that influenced the run.
  */
-export const render = (tasks: Task[], runOptions: RunOptions) => {
+export const render = (config: Config, runOptions: RunOptions) => {
+  const { tasks, unsupportedTools } = config;
+
   if (process.stdout.isTTY) {
     console.clear();
   }
@@ -99,6 +120,9 @@ export const render = (tasks: Task[], runOptions: RunOptions) => {
   const suiteFinished = tasks.every((task) => {
     const state = task.getStatus().state;
     return state === "success" || state === "failure";
+  });
+  const hasFailures = tasks.some((task) => {
+    return task.getStatus().state === "failure";
   });
 
   const failures: FailureDetails[] = [];
@@ -147,7 +171,7 @@ export const render = (tasks: Task[], runOptions: RunOptions) => {
   })();
 
   const overallIcon = suiteFinished
-    ? totalIssues === 0
+    ? !hasFailures
       ? taskStateIcons.success
       : taskStateIcons.failure
     : taskStateIcons.running;
@@ -179,6 +203,16 @@ export const render = (tasks: Task[], runOptions: RunOptions) => {
   ];
 
   console.log(renderTable(tasks, overallRow));
+
+  if (unsupportedTools.length > 0) {
+    const verb = unsupportedTools.length === 1 ? "isn't" : "aren't";
+    const noun = unsupportedTools.length === 1 ? "tool" : "tools";
+    console.log(
+      chalk.yellow(
+        `Warning: ${formatUnsupportedTools(unsupportedTools)} ${noun} ${verb} directly supported; using exit codes only.`
+      )
+    );
+  }
 
   if (runOptions.isWatchMode) {
     console.log(

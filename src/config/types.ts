@@ -14,4 +14,5 @@ export type UserFileConfig = {
 export type Config = {
   watchIgnore?: string[];
   tasks: Task[];
+  unsupportedTools: string[];
 };

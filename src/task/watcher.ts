@@ -3,7 +3,7 @@ import chokidar from "chokidar";
 import { type Config } from "../config/types";
 import { type RunOptions } from "../runOptions/types";
 
-import { calculateTotalIssues, runTasks } from "./execute";
+import { hasTaskFailures, runTasks } from "./execute";
 
 let isRunning = false;
 
@@ -47,7 +47,7 @@ export const startWatcher = (config: Config, runOptions: RunOptions) => {
 
   const handleExit = () => {
     void watcher.close();
-    process.exit(calculateTotalIssues(config.tasks) > 0 ? 1 : 0);
+    process.exit(hasTaskFailures(config.tasks) ? 1 : 0);
   };
 
   process.on("SIGINT", handleExit);

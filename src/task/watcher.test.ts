@@ -1,15 +1,14 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { type Config } from "../config/types";
 import { type RunOptions } from "../runOptions/types";
 
 import { startWatcher } from "./watcher";
 
-const { watchMock, runTasksMock, calculateTotalIssuesMock } = vi.hoisted(() => {
+const { watchMock, runTasksMock, hasTaskFailuresMock } = vi.hoisted(() => {
   return {
     watchMock: vi.fn(),
     runTasksMock: vi.fn(),
-    calculateTotalIssuesMock: vi.fn(),
+    hasTaskFailuresMock: vi.fn(),
   };
 });
 
@@ -24,7 +23,7 @@ vi.mock("chokidar", () => {
 vi.mock("./execute", () => {
   return {
     runTasks: runTasksMock,
-    calculateTotalIssues: calculateTotalIssuesMock,
+    hasTaskFailures: hasTaskFailuresMock,
   };
 });
 
@@ -48,7 +47,7 @@ describe("startWatcher", () => {
   beforeEach(() => {
     watchMock.mockReset();
     runTasksMock.mockReset();
-    calculateTotalIssuesMock.mockReset();
+    hasTaskFailuresMock.mockReset();
 
     fileChangeHandler = undefined;
     watcher = {
@@ -74,8 +73,9 @@ describe("startWatcher", () => {
 
   it("uses default ignore patterns and reruns tasks on change events", () => {
     const config = {
+      unsupportedTools: [],
       tasks: [],
-    } as Config;
+    };
 
     startWatcher(config, baseRunOptions);
 
@@ -93,8 +93,9 @@ describe("startWatcher", () => {
 
   it("prevents overlapping reruns while tasks are executing", async () => {
     const config = {
+      unsupportedTools: [],
       tasks: [],
-    } as Config;
+    };
     let resolveRun: (() => void) | undefined;
 
     runTasksMock.mockImplementation(() => {
@@ -120,9 +121,10 @@ describe("startWatcher", () => {
 
   it("closes the watcher and exits with correct status when interrupted", () => {
     const config = {
+      unsupportedTools: [],
       tasks: [],
-    } as Config;
-    calculateTotalIssuesMock.mockReturnValueOnce(2).mockReturnValueOnce(0);
+    };
+    hasTaskFailuresMock.mockReturnValueOnce(true).mockReturnValueOnce(false);
 
     const exitSpy = vi.spyOn(process, "exit").mockImplementation((() => {
       return undefined;
@@ -141,7 +143,7 @@ describe("startWatcher", () => {
 
     signalHandlers.SIGINT();
     expect(watcher.close).toHaveBeenCalledTimes(1);
-    expect(calculateTotalIssuesMock).toHaveBeenCalledWith(config.tasks);
+    expect(hasTaskFailuresMock).toHaveBeenCalledWith(config.tasks);
     expect(exitSpy).toHaveBeenCalledWith(1);
 
     exitSpy.mockClear();

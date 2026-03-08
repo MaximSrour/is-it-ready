@@ -205,10 +205,17 @@ describe("render", () => {
     isNoColor: false,
     configPath: undefined,
   };
+  const createConfig = (tasks: Task[], unsupportedTools: string[] = []) => {
+    return {
+      tasks,
+      unsupportedTools,
+    };
+  };
 
   type TaskDoubleInput = {
     label: string;
     tool: string;
+    usesExitCodeOnly?: boolean;
     state: "pending" | "running" | "success" | "failure";
     message: string;
     failures?: FailureDetails[];
@@ -222,6 +229,7 @@ describe("render", () => {
     return {
       label: input.label,
       tool: input.tool,
+      usesExitCodeOnly: input.usesExitCodeOnly ?? false,
       getStatus: () => {
         return { state: input.state, message: input.message };
       },
@@ -286,7 +294,7 @@ describe("render", () => {
       }),
     ];
 
-    render(tasks, { ...baseRunOptions, isWatchMode: true });
+    render(createConfig(tasks), { ...baseRunOptions, isWatchMode: true });
 
     expect(clearSpy).toHaveBeenCalledTimes(1);
     expect(renderTableMock).toHaveBeenCalledWith(tasks, [
@@ -334,7 +342,7 @@ describe("render", () => {
       }),
     ];
 
-    render(tasks, baseRunOptions);
+    render(createConfig(tasks), baseRunOptions);
 
     expect(logSpy).not.toHaveBeenCalledWith("Details:");
   });
@@ -370,7 +378,7 @@ describe("render", () => {
       }),
     ];
 
-    render(tasks, baseRunOptions);
+    render(createConfig(tasks), baseRunOptions);
 
     expect(renderTableMock).toHaveBeenCalledWith(tasks, [
       "❌ Overall",
@@ -406,7 +414,7 @@ describe("render", () => {
       }),
     ];
 
-    render(tasks, { ...baseRunOptions, isFixMode: true });
+    render(createConfig(tasks), { ...baseRunOptions, isFixMode: true });
 
     expect(logSpy).toHaveBeenCalledWith(
       "(* indicates fix mode; some tasks will automatically apply fixes to your code)\n"
@@ -444,7 +452,7 @@ describe("render", () => {
       }),
     ];
 
-    render(tasks, baseRunOptions);
+    render(createConfig(tasks), baseRunOptions);
 
     expect(renderTableMock).toHaveBeenCalledWith(tasks, [
       "❌ Overall",
@@ -473,7 +481,7 @@ describe("render", () => {
       }),
     ];
 
-    render(tasks, baseRunOptions);
+    render(createConfig(tasks), baseRunOptions);
 
     const firstCall = logSpy.mock.calls[0] as [string] | undefined;
     const firstArg = firstCall?.[0];
@@ -489,14 +497,14 @@ describe("render", () => {
     });
 
     render(
-      [
+      createConfig([
         createTaskDouble({
           label: "Tests",
           tool: "Vitest",
           state: "success",
           message: "Passed",
         }),
-      ],
+      ]),
       baseRunOptions
     );
 
@@ -529,7 +537,7 @@ describe("render", () => {
       }),
     ];
 
-    render(tasks, baseRunOptions);
+    render(createConfig(tasks), baseRunOptions);
 
     expect(renderTableMock).toHaveBeenCalledWith(tasks, [
       "✅ Overall",
@@ -557,7 +565,7 @@ describe("render", () => {
       }),
     ];
 
-    render(tasks, baseRunOptions);
+    render(createConfig(tasks), baseRunOptions);
 
     expect(renderTableMock).toHaveBeenCalledWith(tasks, [
       "✅ Overall",
@@ -585,7 +593,7 @@ describe("render", () => {
       }),
     ];
 
-    render(tasks, baseRunOptions);
+    render(createConfig(tasks), baseRunOptions);
 
     expect(renderTableMock).toHaveBeenCalledWith(tasks, [
       "❌ Overall",
@@ -628,7 +636,7 @@ describe("render", () => {
       }),
     ];
 
-    render(tasks, baseRunOptions);
+    render(createConfig(tasks), baseRunOptions);
 
     expect(renderTableMock).toHaveBeenCalledWith(tasks, [
       "✅ Overall",
@@ -663,13 +671,182 @@ describe("render", () => {
       }),
     ];
 
-    render(tasks, baseRunOptions);
+    render(createConfig(tasks), baseRunOptions);
 
     expect(renderTableMock).toHaveBeenCalledWith(tasks, [
       "✅ Overall",
       "",
       "0 issues",
       "1.0 s",
+    ]);
+  });
+
+  it("shows an amber warning for unsupported tools", () => {
+    const logSpy = vi.spyOn(console, "log").mockImplementation(noOp);
+    Object.defineProperty(process.stdout, "isTTY", {
+      configurable: true,
+      value: false,
+    });
+
+    const tasks = [
+      createTaskDouble({
+        label: "Custom Tool",
+        tool: "Custom Tool",
+        state: "success",
+        message: "Passed",
+        startTime: 1_000,
+        endTime: 2_000,
+      }),
+    ];
+
+    render(createConfig(tasks, ["Foo", "Bar"]), baseRunOptions);
+
+    expect(logSpy).toHaveBeenCalledWith(
+      chalk.yellow(
+        "Warning: `Foo` and `Bar` tools aren't directly supported; using exit codes only."
+      )
+    );
+  });
+
+  it("uses singular wording for a single unsupported tool warning", () => {
+    const logSpy = vi.spyOn(console, "log").mockImplementation(noOp);
+    Object.defineProperty(process.stdout, "isTTY", {
+      configurable: true,
+      value: false,
+    });
+
+    const tasks = [
+      createTaskDouble({
+        label: "Foo",
+        tool: "Foo",
+        state: "success",
+        message: "Passed",
+        startTime: 1_000,
+        endTime: 2_000,
+      }),
+    ];
+
+    render(createConfig(tasks, ["Foo"]), baseRunOptions);
+
+    expect(logSpy).toHaveBeenCalledWith(
+      chalk.yellow(
+        "Warning: `Foo` tool isn't directly supported; using exit codes only."
+      )
+    );
+  });
+
+  it("uses an Oxford comma when warning about three unsupported tools", () => {
+    const logSpy = vi.spyOn(console, "log").mockImplementation(noOp);
+    Object.defineProperty(process.stdout, "isTTY", {
+      configurable: true,
+      value: false,
+    });
+
+    const tasks = [
+      createTaskDouble({
+        label: "Foo",
+        tool: "Foo",
+        state: "success",
+        message: "Passed",
+        startTime: 1_000,
+        endTime: 2_000,
+      }),
+    ];
+
+    render(createConfig(tasks, ["test", "hello", "world"]), baseRunOptions);
+
+    expect(logSpy).toHaveBeenCalledWith(
+      chalk.yellow(
+        "Warning: `test`, `hello`, and `world` tools aren't directly supported; using exit codes only."
+      )
+    );
+  });
+
+  it("does not print an unsupported-tools warning when all tools are supported", () => {
+    const logSpy = vi.spyOn(console, "log").mockImplementation(noOp);
+    Object.defineProperty(process.stdout, "isTTY", {
+      configurable: true,
+      value: false,
+    });
+
+    const tasks = [
+      createTaskDouble({
+        label: "ESLint",
+        tool: "ESLint",
+        state: "success",
+        message: "Passed",
+        startTime: 1_000,
+        endTime: 2_000,
+      }),
+    ];
+
+    render(createConfig(tasks), baseRunOptions);
+
+    expect(logSpy).not.toHaveBeenCalledWith(
+      expect.stringContaining("directly supported")
+    );
+  });
+
+  it("uses a failure icon when a task failed without counted issues", () => {
+    Object.defineProperty(process.stdout, "isTTY", {
+      configurable: true,
+      value: false,
+    });
+
+    const tasks = [
+      createTaskDouble({
+        label: "Custom Tool",
+        tool: "Custom Tool",
+        state: "failure",
+        message: "Failed - see output below for details",
+        startTime: 1_000,
+        endTime: 2_000,
+      }),
+    ];
+
+    render(createConfig(tasks, ["Custom Tool"]), baseRunOptions);
+
+    expect(renderTableMock).toHaveBeenCalledWith(tasks, [
+      "❌ Overall",
+      "",
+      "0 issues",
+      "1.0 s",
+    ]);
+  });
+
+  it("uses a failure icon when a finished suite mixes success and failure states", () => {
+    Object.defineProperty(process.stdout, "isTTY", {
+      configurable: true,
+      value: false,
+    });
+
+    const tasks = [
+      createTaskDouble({
+        label: "Passed Task",
+        tool: "ToolA",
+        state: "success",
+        message: "Passed",
+        startTime: 1_000,
+        endTime: 2_000,
+      }),
+      createTaskDouble({
+        label: "Failed Task",
+        tool: "ToolB",
+        state: "failure",
+        message: "Failed",
+        errors: 1,
+        startTime: 1_200,
+        endTime: 2_200,
+      }),
+    ];
+
+    render(createConfig(tasks), baseRunOptions);
+
+    expect(renderTableMock).toHaveBeenCalledWith(tasks, [
+      "❌ Overall",
+      "",
+      "1 issue (1 error)",
+      "1.2 s",
     ]);
   });
 });
