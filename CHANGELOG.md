@@ -1,3 +1,15 @@
+# [1.9.0](https://github.com/MaximSrour/is-it-ready/compare/v1.8.0...v1.9.0) (2026-03-08)
+
+
+### Bug Fixes
+
+* enhance parseStryker to ignore non-summary lines and improve handling of 'All files' rows ([f78e9a2](https://github.com/MaximSrour/is-it-ready/commit/f78e9a2d7e2df915ef6c944f9fc83c908a95c9ca))
+
+
+### Features
+
+* add parser support for stryker ([e8e40c7](https://github.com/MaximSrour/is-it-ready/commit/e8e40c71ba2c0c57cc32bad58c534079e6371f52))
+
 # [1.8.0](https://github.com/MaximSrour/is-it-ready/compare/v1.7.0...v1.8.0) (2026-03-08)
 
 
