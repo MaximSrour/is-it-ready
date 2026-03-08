@@ -127,4 +127,33 @@ describe("parseStryker", () => {
 
     expect(parseStryker(output)).toBeUndefined();
   });
+
+  it("ignores non-summary lines that start with 'All files' before the real table row", () => {
+    const output = [
+      "All files total mutation score follows below",
+      "------------------------|------------------|----------|-----------|------------|----------|----------|",
+      "                        | % Mutation score |          |           |            |          |          |",
+      "File                    |  total | covered | # killed | # timeout | # survived | # no cov | # errors |",
+      "------------------------|--------|---------|----------|-----------|------------|----------|----------|",
+      "All files               |  99.92 |  100.00 |      624 |         0 |          1 |        0 |        0 |",
+    ].join("\n");
+
+    expect(parseStryker(output)).toEqual({
+      message: "Failed - 1 issue",
+      errors: 1,
+    });
+  });
+
+  it("ignores file rows whose names are similar to 'All files'", () => {
+    const output = [
+      "------------------------|------------------|----------|-----------|------------|----------|----------|",
+      "                        | % Mutation score |          |           |            |          |          |",
+      "File                    |  total | covered | # killed | # timeout | # survived | # no cov | # errors |",
+      "------------------------|--------|---------|----------|-----------|------------|----------|----------|",
+      "All files               | 100.00 |  100.00 |      100 |         0 |          0 |        0 |        0 |",
+      "All files config        |  80.00 |   80.00 |        8 |         0 |          1 |        1 |        0 |",
+    ].join("\n");
+
+    expect(parseStryker(output)).toBeUndefined();
+  });
 });

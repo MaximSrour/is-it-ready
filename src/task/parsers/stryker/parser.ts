@@ -6,18 +6,20 @@ const lastIssueColumnIndex = 7;
 
 export const parseStryker = (output: string): ParsedFailure | undefined => {
   const summaryLine = output.split("\n").find((line) => {
-    return line.trimStart().startsWith("All files");
+    const columns = line.split("|").map((value) => {
+      return value.trim();
+    });
+
+    return columns[0] === "All files";
   });
 
   if (!summaryLine) {
     return undefined;
   }
 
-  const columns = summaryLine.split("|").map((value) => {
-    return value.trim();
-  });
+  const columns = summaryLine.split("|");
 
-  if (columns.length !== expectedColumnCount || columns[0] !== "All files") {
+  if (columns.length !== expectedColumnCount) {
     return undefined;
   }
 
