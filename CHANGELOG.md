@@ -1,3 +1,10 @@
+# [1.8.0](https://github.com/MaximSrour/is-it-ready/compare/v1.7.0...v1.8.0) (2026-03-08)
+
+
+### Features
+
+* allow tools to be used even without a parser provided ([1afce09](https://github.com/MaximSrour/is-it-ready/commit/1afce09a1b8bc3fb862bea49ef9befc98554f97a))
+
 # [1.7.0](https://github.com/MaximSrour/is-it-ready/compare/v1.6.2...v1.7.0) (2026-03-02)
 
 
