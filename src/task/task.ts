@@ -12,6 +12,7 @@ export class Task {
   readonly label: string;
   readonly command: string;
   readonly tool: string;
+  readonly usesExitCodeOnly: boolean;
 
   readonly parseFailure: (output: string) => ParsedFailure | undefined;
 
@@ -29,6 +30,7 @@ export class Task {
     this.label = executableCommand.label;
     this.command = executableCommand.command;
     this.tool = config.tool;
+    this.usesExitCodeOnly = config.usesExitCodeOnly ?? false;
 
     this.parseFailure = config.parseFailure;
 
@@ -111,6 +113,10 @@ export class Task {
 
   private recordIssueCounts(parsedFailure?: ParsedFailure | null) {
     if (!parsedFailure) {
+      if (this.usesExitCodeOnly) {
+        return;
+      }
+
       this.totalErrors += 1;
       return;
     }

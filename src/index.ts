@@ -4,7 +4,7 @@ import chalk from "chalk";
 
 import { loadUserConfig } from "./config";
 import { getRunOptions } from "./runOptions/runOptions";
-import { calculateTotalIssues, runTasks, startWatcher } from "./task";
+import { hasTaskFailures, runTasks, startWatcher } from "./task";
 
 void main().catch((error) => {
   console.error(chalk.red("Unexpected error while running tasks."));
@@ -35,9 +35,8 @@ async function main() {
 
   if (!runOptions.isWatchMode) {
     await runTasks(config, runOptions);
-    const totalIssues = calculateTotalIssues(config.tasks);
 
-    process.exit(totalIssues > 0 ? 1 : 0);
+    process.exit(hasTaskFailures(config.tasks) ? 1 : 0);
   }
 
   await runTasks(config, runOptions);

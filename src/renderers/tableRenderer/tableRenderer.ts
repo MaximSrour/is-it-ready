@@ -14,6 +14,10 @@ const BORDER_CHARS: Record<BorderLevel, BorderChars> = {
 
 const TABLE_HEADERS = ["Label", "Tool", "Results", "Time"];
 
+const formatToolCell = (task: Task) => {
+  return task.usesExitCodeOnly ? `${task.tool} 🔸` : task.tool;
+};
+
 /**
  * Renders a table with borders, headers, rows, and an optional footer.
  *
@@ -30,7 +34,7 @@ export const renderTable = (tasks: Task[], footerRow?: string[]) => {
         : colorStatusMessage(status.message, status.state);
     return [
       `${taskStateIcons[status.state]} ${task.label}`,
-      task.tool,
+      formatToolCell(task),
       message,
       formatDuration(task.getDuration()),
     ];

@@ -151,16 +151,19 @@ describe("renderTable", () => {
     state,
     message,
     duration,
+    usesExitCodeOnly = false,
   }: {
     label: string;
     tool: string;
     state: "pending" | "running" | "success" | "failure";
     message: string;
     duration: number | null;
+    usesExitCodeOnly?: boolean;
   }) => {
     return {
       label,
       tool,
+      usesExitCodeOnly,
       getStatus: () => {
         return { state, message };
       },
@@ -322,5 +325,20 @@ describe("renderTable", () => {
         "└──────────┴────────┴─────────┴──────┘",
       ].join("\n")
     );
+  });
+
+  it("appends the warning emoji to unsupported tools", () => {
+    const table = renderTable([
+      createTask({
+        label: "test",
+        tool: "test",
+        state: "success",
+        message: "Passed",
+        duration: 27,
+        usesExitCodeOnly: true,
+      }),
+    ]);
+
+    expect(table).toContain("test 🔸");
   });
 });

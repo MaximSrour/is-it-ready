@@ -12,6 +12,7 @@ export type ToolConfig = {
   label: string;
   tool: string;
   parseFailure: (output: string) => ParsedFailure | undefined;
+  usesExitCodeOnly?: boolean;
 };
 
 export type TaskConfig = ToolConfig & {

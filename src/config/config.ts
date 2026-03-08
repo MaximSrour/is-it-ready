@@ -28,6 +28,15 @@ const explorer = cosmiconfig("is-it-ready", {
 });
 
 /**
+ * Returns no parsed failure details for unsupported tools.
+ *
+ * @returns {undefined} Always undefined so exit code drives task success/failure.
+ */
+function parseUnsupportedFailure() {
+  return undefined;
+}
+
+/**
  * Get the user configuration for the project.
  *
  * @param {string} rootDirectory - The root directory of the project.
@@ -152,9 +161,14 @@ const mergeTaskConfig = (userTask: UserTaskConfig): TaskConfig => {
   const baseConfig = DEFAULT_TASKS.get(userTask.tool);
 
   if (!baseConfig) {
-    throw new Error(
-      `Unknown tool "${userTask.tool}" found in .is-it-ready.config`
-    );
+    return {
+      label: userTask.tool,
+      tool: userTask.tool,
+      command: userTask.command,
+      fixCommand: userTask.fixCommand,
+      parseFailure: parseUnsupportedFailure,
+      usesExitCodeOnly: true,
+    };
   }
 
   return {
@@ -188,11 +202,20 @@ export const loadUserConfig = async (
   }
 
   const watchIgnore = exportedConfig.watchIgnore;
+  const unsupportedTools = Array.from(
+    new Set(
+      exportedConfig.tasks.flatMap((taskDefinition) => {
+        return DEFAULT_TASKS.has(taskDefinition.tool)
+          ? []
+          : [taskDefinition.tool];
+      })
+    )
+  );
 
   const tasks = exportedConfig.tasks.map((taskDefinition) => {
     const mergedConfig = mergeTaskConfig(taskDefinition);
     return new Task(mergedConfig, runOptions);
   });
 
-  return { watchIgnore, tasks };
+  return { watchIgnore, tasks, unsupportedTools };
 };

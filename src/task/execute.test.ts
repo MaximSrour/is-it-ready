@@ -4,7 +4,7 @@ import { type Config } from "../config/types";
 import { render } from "../renderers";
 import { type RunOptions } from "../runOptions/types";
 
-import { calculateTotalIssues, runTasks } from "./execute";
+import { calculateTotalIssues, hasTaskFailures, runTasks } from "./execute";
 import { Task } from "./task";
 
 vi.mock("../renderers", () => {
@@ -65,15 +65,16 @@ describe("runTasks", () => {
   it("renders before running tasks and whenever callbacks fire", async () => {
     const firstTask = createTaskDouble("first-tool");
     const secondTask = createTaskDouble("second-tool");
-    const config = {
+    const config: Config = {
+      unsupportedTools: [],
       tasks: [firstTask.task, secondTask.task],
-    } as Config;
+    };
 
     await runTasks(config, baseRunOptions);
 
     expect(renderMock).toHaveBeenCalledTimes(1 + config.tasks.length * 2);
-    renderMock.mock.calls.forEach(([tasksArg, optionsArg]) => {
-      expect(tasksArg).toBe(config.tasks);
+    renderMock.mock.calls.forEach(([configArg, optionsArg]) => {
+      expect(configArg).toBe(config);
       expect(optionsArg).toBe(baseRunOptions);
     });
 
@@ -102,5 +103,41 @@ describe("calculateTotalIssues", () => {
     ];
 
     expect(calculateTotalIssues(tasks)).toBe(7);
+  });
+});
+
+describe("hasTaskFailures", () => {
+  it("returns true when any task status is failure even without counted issues", () => {
+    const tasks = [
+      {
+        getStatus: () => {
+          return { state: "success", message: "Passed" };
+        },
+      },
+      {
+        getStatus: () => {
+          return { state: "failure", message: "Failed" };
+        },
+      },
+    ] as unknown as Task[];
+
+    expect(hasTaskFailures(tasks)).toBe(true);
+  });
+
+  it("returns false when no task has failed", () => {
+    const tasks = [
+      {
+        getStatus: () => {
+          return { state: "success", message: "Passed" };
+        },
+      },
+      {
+        getStatus: () => {
+          return { state: "running", message: "Running..." };
+        },
+      },
+    ] as unknown as Task[];
+
+    expect(hasTaskFailures(tasks)).toBe(false);
   });
 });
