@@ -26,7 +26,11 @@ export default {
     },
     {
       tool: "Vitest",
-      command: "npm run test",
+      command: "npm run test:no-coverage",
+    },
+    {
+      tool: "Stryker",
+      command: "npm run mutate",
     },
     {
       tool: "Knip",

@@ -5,6 +5,7 @@ import {
   parseMarkdownLint,
   parseNpmAudit,
   parsePrettier,
+  parseStryker,
   parseTypeCheck,
   parseVitest,
 } from "./parsers";
@@ -40,6 +41,11 @@ export const defaultTools: ToolConfig[] = [
     label: "Tests",
     tool: "Vitest",
     parseFailure: parseVitest,
+  },
+  {
+    label: "Mutation Testing",
+    tool: "Stryker",
+    parseFailure: parseStryker,
   },
   {
     label: "Inventory",

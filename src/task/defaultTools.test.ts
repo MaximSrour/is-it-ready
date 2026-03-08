@@ -8,6 +8,7 @@ import {
   parseMarkdownLint,
   parseNpmAudit,
   parsePrettier,
+  parseStryker,
   parseTypeCheck,
   parseVitest,
 } from "./parsers";
@@ -44,6 +45,11 @@ describe("defaultTools", () => {
         label: "Tests",
         tool: "Vitest",
         parseFailure: parseVitest,
+      },
+      {
+        label: "Mutation Testing",
+        tool: "Stryker",
+        parseFailure: parseStryker,
       },
       {
         label: "Inventory",

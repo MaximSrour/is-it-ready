@@ -75,6 +75,7 @@ Currently, this tool provides direct parser support for the following tools:
 - Knip
 - MarkdownLint (`markdownlint-cli2`)
 - Prettier
+- Stryker
 - TypeScript
 - Vitest
 
