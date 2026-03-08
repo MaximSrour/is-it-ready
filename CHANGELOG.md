@@ -1,3 +1,10 @@
+## [1.9.1](https://github.com/MaximSrour/is-it-ready/compare/v1.9.0...v1.9.1) (2026-03-08)
+
+
+### Bug Fixes
+
+* resolve surviving mutations ([c06f2ea](https://github.com/MaximSrour/is-it-ready/commit/c06f2ea72645787c24cdfa6ffac97ec5a3e68f85))
+
 # [1.9.0](https://github.com/MaximSrour/is-it-ready/compare/v1.8.0...v1.9.0) (2026-03-08)
 
 
