@@ -1,4 +1,4 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["github>MaximSrour/renovate-config:renovate-config:npm-lib"]
+  "extends": ["github>MaximSrour/renovate-config:npm-lib"]
 }
