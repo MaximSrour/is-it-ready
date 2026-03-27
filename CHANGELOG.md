@@ -1,3 +1,11 @@
+## [1.10.1](https://github.com/MaximSrour/is-it-ready/compare/v1.10.0...v1.10.1) (2026-03-27)
+
+
+### Bug Fixes
+
+* reduces the complexity of the styker parser ([19f4211](https://github.com/MaximSrour/is-it-ready/commit/19f421187149410b23d9e0d7c74e6dc0e5769c98))
+* resolve mutation error and clean up code slightly ([c67753d](https://github.com/MaximSrour/is-it-ready/commit/c67753dbe51c8634a7431e225b84ee82caa88cf5))
+
 # [1.10.0](https://github.com/MaximSrour/is-it-ready/compare/v1.9.1...v1.10.0) (2026-03-27)
 
 
