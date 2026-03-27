@@ -1,3 +1,10 @@
+# [1.10.0](https://github.com/MaximSrour/is-it-ready/compare/v1.9.1...v1.10.0) (2026-03-27)
+
+
+### Features
+
+* create configurable executionMode to enable sequential running of tasks ([eb01d9a](https://github.com/MaximSrour/is-it-ready/commit/eb01d9a521a7ada5338641ff418e197da6e35748))
+
 ## [1.9.1](https://github.com/MaximSrour/is-it-ready/compare/v1.9.0...v1.9.1) (2026-03-08)
 
 
