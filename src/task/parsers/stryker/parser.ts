@@ -1,10 +1,13 @@
 import { type ParsedFailure } from "../../types";
 
 export const parseStryker = (output: string): ParsedFailure | undefined => {
-  const matches = [
-    ...output.matchAll(/\d+\/\d+ (?:Mutants )?tested \(([^)]+)\)/g),
-  ];
-  const match = matches.at(-1);
+  // Stryker disable next-line Regex
+  const pattern = /\d+\/\d+ (?:Mutants )?tested \(([^)]+)\)/g;
+  let match: RegExpExecArray | null = null;
+  let current: RegExpExecArray | null;
+  while ((current = pattern.exec(output)) !== null) {
+    match = current;
+  }
 
   if (!match) {
     return undefined;

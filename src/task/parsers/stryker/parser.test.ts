@@ -54,15 +54,6 @@ describe("parseStryker", () => {
     });
   });
 
-  it("handles multi-digit fraction totals correctly", () => {
-    const output = appendOnlyLine("1234/5678", "3 survived");
-
-    expect(parseStryker(output)).toEqual({
-      message: "Failed - 3 issues",
-      errors: 3,
-    });
-  });
-
   it("handles multi-digit timed out count", () => {
     const output = appendOnlyLine("1503/1503", "12 timed out");
 

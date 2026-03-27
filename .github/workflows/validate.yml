@@ -43,3 +43,6 @@ jobs:
 
       - name: NPM audit (prod deps)
         run: npm audit --omit=dev
+
+      - name: Mutation testing
+        run: npm run mutate
