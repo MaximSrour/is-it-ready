@@ -1,47 +1,22 @@
 import { type ParsedFailure } from "../../types";
 
-const expectedColumnCount = 9;
-const firstIssueColumnIndex = 4;
-const lastIssueColumnIndex = 7;
-
 export const parseStryker = (output: string): ParsedFailure | undefined => {
-  const summaryLine = output.split("\n").find((line) => {
-    const columns = line.split("|").map((value) => {
-      return value.trim();
-    });
+  const matches = [
+    ...output.matchAll(/\d+\/\d+ (?:Mutants )?tested \(([^)]+)\)/g),
+  ];
+  const match = matches.at(-1);
 
-    return columns[0] === "All files";
-  });
-
-  if (!summaryLine) {
+  if (!match) {
     return undefined;
   }
 
-  const columns = summaryLine.split("|");
+  const details = match[1];
+  const survivedMatch = details.match(/(\d+) survived/);
+  const timedOutMatch = details.match(/(\d+) timed out/);
 
-  if (columns.length !== expectedColumnCount) {
-    return undefined;
-  }
-
-  const issueColumns = columns.slice(
-    firstIssueColumnIndex,
-    lastIssueColumnIndex + 1
-  );
-  const issueCounts = issueColumns.map((value) => {
-    return Number.parseInt(value, 10);
-  });
-
-  if (
-    issueCounts.some((value) => {
-      return Number.isNaN(value);
-    })
-  ) {
-    return undefined;
-  }
-
-  const totalIssues = issueCounts.reduce((total, value) => {
-    return total + value;
-  }, 0);
+  const survived = survivedMatch ? Number.parseInt(survivedMatch[1], 10) : 0;
+  const timedOut = timedOutMatch ? Number.parseInt(timedOutMatch[1], 10) : 0;
+  const totalIssues = survived + timedOut;
 
   if (totalIssues === 0) {
     return undefined;
