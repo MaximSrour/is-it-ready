@@ -1,5 +1,6 @@
 export default {
   watchIgnore: [".git", "node_modules", "coverage"],
+  executionMode: "parallel",
   tasks: [
     {
       tool: "Prettier",

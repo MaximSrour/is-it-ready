@@ -1,4 +1,5 @@
 import chalk from "chalk";
+import { type Config } from "src/config/types";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { noOp } from "../helpers";
@@ -230,10 +231,14 @@ describe("render", () => {
     isNoColor: false,
     configPath: undefined,
   };
-  const createConfig = (tasks: Task[], unsupportedTools: string[] = []) => {
+  const createConfig = (
+    tasks: Task[],
+    unsupportedTools: string[] = []
+  ): Config => {
     return {
       tasks,
       unsupportedTools,
+      executionMode: "parallel",
     };
   };
 

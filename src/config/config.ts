@@ -8,7 +8,15 @@ import { type RunOptions } from "../runOptions/types";
 import { Task, defaultTools } from "../task";
 import { type TaskConfig } from "../task/types";
 
-import { type Config, type UserFileConfig, type UserTaskConfig } from "./types";
+import {
+  type Config,
+  type ExecutionMode,
+  type UserFileConfig,
+  type UserTaskConfig,
+} from "./types";
+
+const EXECUTION_MODES: ExecutionMode[] = ["parallel", "sequential"];
+const DEFAULT_EXECUTION_MODE: ExecutionMode = "parallel";
 
 const DEFAULT_TASKS = new Map<string, (typeof defaultTools)[number]>();
 for (const config of defaultTools) {
@@ -144,6 +152,8 @@ const isUserFileConfig = (value: unknown): value is UserFileConfig => {
   return (
     isRecord(value) &&
     isOptionalArray(value.watchIgnore) &&
+    (value.executionMode === undefined ||
+      (EXECUTION_MODES as unknown[]).includes(value.executionMode)) &&
     Array.isArray(value.tasks) &&
     value.tasks.every((task) => {
       return isUserTaskConfig(task);
@@ -203,6 +213,7 @@ export const loadUserConfig = async (
   }
 
   const watchIgnore = exportedConfig.watchIgnore;
+  const executionMode = exportedConfig.executionMode ?? DEFAULT_EXECUTION_MODE;
   const unsupportedTools = Array.from(
     new Set(
       exportedConfig.tasks.flatMap((taskDefinition) => {
@@ -218,5 +229,5 @@ export const loadUserConfig = async (
     return new Task(mergedConfig, runOptions);
   });
 
-  return { watchIgnore, tasks, unsupportedTools };
+  return { watchIgnore, tasks, unsupportedTools, executionMode };
 };

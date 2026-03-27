@@ -1,4 +1,12 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { type Config } from "src/config/types";
+import {
+  type MockInstance,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi,
+} from "vitest";
 
 import { type RunOptions } from "../runOptions/types";
 
@@ -72,9 +80,10 @@ describe("startWatcher", () => {
   });
 
   it("uses default ignore patterns and reruns tasks on change events", () => {
-    const config = {
+    const config: Config = {
       unsupportedTools: [],
       tasks: [],
+      executionMode: "parallel",
     };
 
     startWatcher(config, baseRunOptions);
@@ -92,9 +101,10 @@ describe("startWatcher", () => {
   });
 
   it("prevents overlapping reruns while tasks are executing", async () => {
-    const config = {
+    const config: Config = {
       unsupportedTools: [],
       tasks: [],
+      executionMode: "parallel",
     };
     let resolveRun: (() => void) | undefined;
 
@@ -120,15 +130,18 @@ describe("startWatcher", () => {
   });
 
   it("closes the watcher and exits with correct status when interrupted", () => {
-    const config = {
+    const config: Config = {
       unsupportedTools: [],
       tasks: [],
+      executionMode: "parallel",
     };
     hasTaskFailuresMock.mockReturnValueOnce(true).mockReturnValueOnce(false);
 
-    const exitSpy = vi.spyOn(process, "exit").mockImplementation((() => {
-      return undefined;
-    }) as never);
+    const exitSpy: MockInstance<typeof process.exit> = vi
+      .spyOn(process, "exit")
+      .mockImplementation((() => {
+        return undefined;
+      }) as never);
     const signalHandlers: Record<string, () => void> = {};
     const onSpy = vi.spyOn(process, "on").mockImplementation(((
       event: string,

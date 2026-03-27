@@ -68,6 +68,7 @@ describe("runTasks", () => {
     const config: Config = {
       unsupportedTools: [],
       tasks: [firstTask.task, secondTask.task],
+      executionMode: "parallel",
     };
 
     await runTasks(config, baseRunOptions);
@@ -80,6 +81,132 @@ describe("runTasks", () => {
 
     expect(firstTask.executeMock).toHaveBeenCalledTimes(1);
     expect(secondTask.executeMock).toHaveBeenCalledTimes(1);
+  });
+
+  it("runs tasks sequentially when configured", async () => {
+    let resolveFirst: (() => void) | undefined;
+    const events: string[] = [];
+    const firstExecuteMock = vi.fn(
+      ({
+        onStart,
+        onFinish,
+      }: { onStart?: () => void; onFinish?: () => void } = {}) => {
+        events.push("first:start");
+        onStart?.();
+
+        return new Promise<void>((resolve) => {
+          resolveFirst = () => {
+            events.push("first:finish");
+            onFinish?.();
+            resolve();
+          };
+        });
+      }
+    );
+    const secondExecuteMock = vi.fn(
+      ({
+        onStart,
+        onFinish,
+      }: { onStart?: () => void; onFinish?: () => void } = {}) => {
+        events.push("second:start");
+        onStart?.();
+        events.push("second:finish");
+        onFinish?.();
+        return Promise.resolve();
+      }
+    );
+    const config: Config = {
+      executionMode: "sequential",
+      unsupportedTools: [],
+      tasks: [
+        {
+          execute: firstExecuteMock,
+        } as unknown as Task,
+        {
+          execute: secondExecuteMock,
+        } as unknown as Task,
+      ],
+    };
+
+    const runPromise = runTasks(config, baseRunOptions);
+    await Promise.resolve();
+
+    expect(firstExecuteMock).toHaveBeenCalledTimes(1);
+    expect(secondExecuteMock).not.toHaveBeenCalled();
+
+    resolveFirst?.();
+    await runPromise;
+
+    expect(secondExecuteMock).toHaveBeenCalledTimes(1);
+    expect(events).toEqual([
+      "first:start",
+      "first:finish",
+      "second:start",
+      "second:finish",
+    ]);
+  });
+
+  it("runs tasks in parallel by default", async () => {
+    let resolveFirst: (() => void) | undefined;
+    let resolveSecond: (() => void) | undefined;
+    const events: string[] = [];
+    const firstExecuteMock = vi.fn(
+      ({
+        onStart,
+        onFinish,
+      }: { onStart?: () => void; onFinish?: () => void } = {}) => {
+        events.push("first:start");
+        onStart?.();
+
+        return new Promise<void>((resolve) => {
+          resolveFirst = () => {
+            events.push("first:finish");
+            onFinish?.();
+            resolve();
+          };
+        });
+      }
+    );
+    const secondExecuteMock = vi.fn(
+      ({
+        onStart,
+        onFinish,
+      }: { onStart?: () => void; onFinish?: () => void } = {}) => {
+        events.push("second:start");
+        onStart?.();
+
+        return new Promise<void>((resolve) => {
+          resolveSecond = () => {
+            events.push("second:finish");
+            onFinish?.();
+            resolve();
+          };
+        });
+      }
+    );
+    const config: Config = {
+      executionMode: "parallel",
+      unsupportedTools: [],
+      tasks: [
+        {
+          execute: firstExecuteMock,
+        } as unknown as Task,
+        {
+          execute: secondExecuteMock,
+        } as unknown as Task,
+      ],
+    };
+
+    const runPromise = runTasks(config, baseRunOptions);
+    await Promise.resolve();
+
+    expect(firstExecuteMock).toHaveBeenCalledTimes(1);
+    expect(secondExecuteMock).toHaveBeenCalledTimes(1);
+    expect(events).toEqual(["first:start", "second:start"]);
+
+    resolveFirst?.();
+    resolveSecond?.();
+    await runPromise;
   });
 });
 

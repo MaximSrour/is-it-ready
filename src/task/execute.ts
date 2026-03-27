@@ -13,18 +13,26 @@ import { type Task } from "./task";
 export const runTasks = async (config: Config, runOptions: RunOptions) => {
   render(config, runOptions);
 
-  await Promise.all(
-    config.tasks.map((task) => {
-      return task.execute({
-        onStart: () => {
-          render(config, runOptions);
-        },
-        onFinish: () => {
-          render(config, runOptions);
-        },
-      });
-    })
-  );
+  const executeTask = (task: Task) => {
+    return task.execute({
+      onStart: () => {
+        render(config, runOptions);
+      },
+      onFinish: () => {
+        render(config, runOptions);
+      },
+    });
+  };
+
+  if (config.executionMode === "sequential") {
+    for (const task of config.tasks) {
+      await executeTask(task);
+    }
+
+    return;
+  }
+
+  await Promise.all(config.tasks.map(executeTask));
 };
 
 /**

@@ -63,6 +63,25 @@ describe("loadUserConfig", () => {
     cleanupDir(directory);
   });
 
+  it("uses parallel executionMode by default", async () => {
+    const directory = withTempDir(`
+      module.exports = {
+        tasks: [
+          {
+            tool: "Prettier",
+            command: "npm run prettier"
+          }
+        ]
+      };
+    `);
+
+    const config = await loadUserConfig(makeRunOptions());
+
+    expect(config?.executionMode).toBe("parallel");
+
+    cleanupDir(directory);
+  });
+
   it("throws when the config shape is invalid", async () => {
     const directory = withTempDir(`
       module.exports = {
@@ -150,6 +169,66 @@ describe("loadUserConfig", () => {
 
     expect(config).not.toBeNull();
     expect(config?.unsupportedTools).toEqual(["Unknown", "Another"]);
+
+    cleanupDir(directory);
+  });
+
+  it("loads the sequential executionMode when configured", async () => {
+    const directory = withTempDir(`
+      module.exports = {
+        executionMode: "sequential",
+        tasks: [
+          {
+            tool: "Prettier",
+            command: "npm run prettier"
+          }
+        ]
+      };
+    `);
+
+    const config = await loadUserConfig(makeRunOptions());
+
+    expect(config?.executionMode).toBe("sequential");
+
+    cleanupDir(directory);
+  });
+
+  it("loads the parallel executionMode when configured explicitly", async () => {
+    const directory = withTempDir(`
+      module.exports = {
+        executionMode: "parallel",
+        tasks: [
+          {
+            tool: "Prettier",
+            command: "npm run prettier"
+          }
+        ]
+      };
+    `);
+
+    const config = await loadUserConfig(makeRunOptions());
+
+    expect(config?.executionMode).toBe("parallel");
+
+    cleanupDir(directory);
+  });
+
+  it("throws when executionMode is not a supported value", async () => {
+    const directory = withTempDir(`
+      module.exports = {
+        executionMode: "serial",
+        tasks: [
+          {
+            tool: "Prettier",
+            command: "npm run prettier"
+          }
+        ]
+      };
+    `);
+
+    await expect(loadUserConfig(makeRunOptions())).rejects.toThrowError(
+      /invalid is-it-ready config/i
+    );
 
     cleanupDir(directory);
   });

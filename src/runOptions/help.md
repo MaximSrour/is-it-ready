@@ -45,6 +45,8 @@ for global support.
   to point the CLI at a specific file.
 - Each file must export an object with a `tasks` array. Every task entry must
   specify the `tool` name and its `command`, and may provide `fixCommand` overrides.
+- Optional `executionMode` controls whether tasks run in `parallel` or
+  `sequential` order. The default is `parallel`.
 - Built-in tools get parser-based issue counts. Other tool names are allowed,
   but they run in exit-code-only mode and show a warning that they are not
   directly supported.
@@ -53,6 +55,7 @@ Example `.is-it-ready.config.mjs`:
 
 ```js
 export default {
+  executionMode: "parallel",
   tasks: [
     {
       tool: "Prettier",
