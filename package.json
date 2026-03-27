@@ -79,7 +79,7 @@
     "eslint-plugin-import": "2.32.0",
     "eslint-plugin-jsdoc": "61.7.1",
     "eslint-plugin-unused-imports": "4.4.1",
-    "knip": "5.86.0",
+    "knip": "5.88.1",
     "markdownlint-cli2": "0.21.0",
     "prettier": "3.8.1",
     "semantic-release": "25.0.3",
