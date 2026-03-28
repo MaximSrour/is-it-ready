@@ -1,3 +1,10 @@
+## [1.10.2](https://github.com/MaximSrour/is-it-ready/compare/v1.10.1...v1.10.2) (2026-03-28)
+
+
+### Bug Fixes
+
+* update task state icons to use consistent symbols ([35b968c](https://github.com/MaximSrour/is-it-ready/commit/35b968c6f829c171c81913ea65450d4b8af554ca))
+
 ## [1.10.1](https://github.com/MaximSrour/is-it-ready/compare/v1.10.0...v1.10.1) (2026-03-27)
 
 
