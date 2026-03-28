@@ -22,6 +22,12 @@ describe("colorStatusMessage", () => {
     );
   });
 
+  it("colors message dim for cancelled state", () => {
+    expect(colorStatusMessage("Cancelled", "cancelled")).toBe(
+      "\u001b[2mCancelled\u001b[22m"
+    );
+  });
+
   it("leaves other states uncolored", () => {
     expect(colorStatusMessage("Working", "running")).toBe("Working");
   });

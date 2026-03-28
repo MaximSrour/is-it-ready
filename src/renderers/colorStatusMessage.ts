@@ -14,5 +14,9 @@ export const colorStatusMessage = (message: string, state: TaskState) => {
     return chalk.red(message);
   }
 
+  if (state === "cancelled") {
+    return chalk.dim(message);
+  }
+
   return message;
 };

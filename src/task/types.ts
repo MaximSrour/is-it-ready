@@ -4,7 +4,12 @@ export type ParsedFailure = {
   warnings?: number;
 };
 
-export type TaskState = "pending" | "running" | "success" | "failure";
+export type TaskState =
+  | "pending"
+  | "running"
+  | "success"
+  | "failure"
+  | "cancelled";
 
 export type TaskStatus = { state: TaskState; message: string };
 
@@ -18,6 +23,7 @@ export type ToolConfig = {
 export type TaskConfig = ToolConfig & {
   command: string;
   fixCommand?: string;
+  dependsOn?: readonly string[];
 };
 
 export type FailureDetails = {

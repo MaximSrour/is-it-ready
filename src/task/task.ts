@@ -13,6 +13,7 @@ export class Task {
   readonly command: string;
   readonly tool: string;
   readonly usesExitCodeOnly: boolean;
+  readonly dependsOn: readonly string[];
 
   readonly parseFailure: (output: string) => ParsedFailure | undefined;
 
@@ -31,6 +32,7 @@ export class Task {
     this.command = executableCommand.command;
     this.tool = config.tool;
     this.usesExitCodeOnly = config.usesExitCodeOnly ?? false;
+    this.dependsOn = config.dependsOn ?? [];
 
     this.parseFailure = config.parseFailure;
 
@@ -42,12 +44,9 @@ export class Task {
     onStart,
     onFinish,
   }: { onStart?: () => void; onFinish?: () => void } = {}) {
+    this.reset();
     this.setStatus({ state: "running", message: "Running..." });
     this.startTimer();
-
-    this.totalErrors = 0;
-    this.totalWarnings = 0;
-    this.failures = [];
 
     onStart?.();
 
@@ -130,6 +129,19 @@ export class Task {
 
     this.totalErrors += errors;
     this.totalWarnings += warnings;
+  }
+
+  cancel() {
+    this.setStatus({ state: "cancelled", message: "Cancelled" });
+  }
+
+  reset() {
+    this.status = { state: "pending", message: "" };
+    this.startTime = null;
+    this.endTime = null;
+    this.failures = [];
+    this.totalErrors = 0;
+    this.totalWarnings = 0;
   }
 
   getStatus() {

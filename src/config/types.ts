@@ -4,6 +4,7 @@ export type UserTaskConfig = {
   tool: string;
   command: string;
   fixCommand?: string;
+  dependsOn?: readonly string[];
 };
 
 export type ExecutionMode = "parallel" | "sequential";

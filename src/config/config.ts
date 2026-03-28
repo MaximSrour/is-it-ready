@@ -4,6 +4,7 @@ import path from "node:path";
 import { cosmiconfig } from "cosmiconfig";
 import isInstalledGlobally from "is-installed-globally";
 
+import { validateDirectedAcyclicGraph } from "../directedAcyclicGraph";
 import { type RunOptions } from "../runOptions/types";
 import { Task, defaultTools } from "../task";
 import { type TaskConfig } from "../task/types";
@@ -138,7 +139,8 @@ const isUserTaskConfig = (value: unknown): value is UserTaskConfig => {
   return (
     isNonEmptyString(value.tool) &&
     isNonEmptyString(value.command) &&
-    isOptionalString(value.fixCommand)
+    isOptionalString(value.fixCommand) &&
+    isOptionalArray(value.dependsOn)
   );
 };
 
@@ -177,6 +179,7 @@ const mergeTaskConfig = (userTask: UserTaskConfig): TaskConfig => {
       tool: userTask.tool,
       command: userTask.command,
       fixCommand: userTask.fixCommand,
+      dependsOn: userTask.dependsOn,
       parseFailure: parseUnsupportedFailure,
       usesExitCodeOnly: true,
     };
@@ -187,6 +190,7 @@ const mergeTaskConfig = (userTask: UserTaskConfig): TaskConfig => {
     tool: baseConfig.tool,
     command: userTask.command,
     fixCommand: userTask.fixCommand,
+    dependsOn: userTask.dependsOn,
     parseFailure: baseConfig.parseFailure,
   };
 };
@@ -211,6 +215,12 @@ export const loadUserConfig = async (
       "Invalid is-it-ready config: expected { tasks: [{ tool, command }] }"
     );
   }
+
+  validateDirectedAcyclicGraph(
+    exportedConfig.tasks.map((task) => {
+      return { name: task.tool, dependsOn: task.dependsOn };
+    })
+  );
 
   const watchIgnore = exportedConfig.watchIgnore;
   const executionMode = exportedConfig.executionMode ?? DEFAULT_EXECUTION_MODE;

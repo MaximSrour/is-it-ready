@@ -123,10 +123,11 @@ export const render = (config: Config, runOptions: RunOptions) => {
 
   const suiteFinished = tasks.every((task) => {
     const state = task.getStatus().state;
-    return state === "success" || state === "failure";
+    return ["success", "failure", "cancelled"].includes(state);
   });
   const hasFailures = tasks.some((task) => {
-    return task.getStatus().state === "failure";
+    const state = task.getStatus().state;
+    return ["failure", "cancelled"].includes(state);
   });
 
   const failures: FailureDetails[] = [];

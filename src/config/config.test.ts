@@ -141,7 +141,7 @@ describe("loadUserConfig", () => {
     cleanupDir(directory);
   });
 
-  it("deduplicates unsupported tool warnings across multiple tasks", async () => {
+  it("collects unsupported tool names across multiple tasks", async () => {
     const directory = withTempDir(`
       module.exports = {
         tasks: [
@@ -152,10 +152,6 @@ describe("loadUserConfig", () => {
           {
             tool: "Prettier",
             command: "npm run prettier"
-          },
-          {
-            tool: "Unknown",
-            command: "npm run foo:again"
           },
           {
             tool: "Another",
@@ -594,6 +590,83 @@ describe("loadUserConfig", () => {
 
     cleanupDir(directory);
   });
+
+  it("passes dependsOn through to tasks", async () => {
+    const directory = withTempDir(`
+      module.exports = {
+        tasks: [
+          {
+            tool: "Prettier",
+            command: "npm run prettier"
+          },
+          {
+            tool: "ESLint",
+            command: "npm run lint",
+            dependsOn: ["Prettier"]
+          }
+        ]
+      };
+    `);
+
+    const config = await loadUserConfig(makeRunOptions());
+
+    expect(config?.tasks[0]?.dependsOn).toEqual([]);
+    expect(config?.tasks[1]?.dependsOn).toEqual(["Prettier"]);
+
+    cleanupDir(directory);
+  });
+
+  it("loads tasks with dependsOn relationships", async () => {
+    const directory = withTempDir(`
+      module.exports = {
+        tasks: [
+          {
+            tool: "ESLint",
+            command: "npm run lint"
+          },
+          {
+            tool: "TypeScript",
+            command: "npm run type-check"
+          },
+          {
+            tool: "Prettier",
+            command: "npm run prettier",
+            dependsOn: ["ESLint", "TypeScript"]
+          }
+        ]
+      };
+    `);
+
+    const config = await loadUserConfig(makeRunOptions());
+
+    expect(config?.tasks[2]?.dependsOn).toEqual(["ESLint", "TypeScript"]);
+
+    cleanupDir(directory);
+  });
+
+  it("throws when dependsOn contains a blank entry", async () => {
+    const directory = withTempDir(`
+      module.exports = {
+        tasks: [
+          {
+            tool: "Prettier",
+            command: "npm run prettier"
+          },
+          {
+            tool: "ESLint",
+            command: "npm run lint",
+            dependsOn: [""]
+          }
+        ]
+      };
+    `);
+
+    await expect(loadUserConfig(makeRunOptions())).rejects.toThrowError(
+      /invalid is-it-ready config/i
+    );
+
+    cleanupDir(directory);
+  });
 });
 
 describe("loadUserConfig (mocked loader errors)", () => {
@@ -633,7 +706,7 @@ describe("loadUserConfig (mocked loader errors)", () => {
 
   it("maps ENOENT loader errors to a helpful missing-file message", async () => {
     const loadMock = vi.fn(() => {
-      const error = new Error("missing file") as NodeJS.ErrnoException;
+      const error: NodeJS.ErrnoException = new Error("missing file");
       error.code = "ENOENT";
       throw error;
     });
