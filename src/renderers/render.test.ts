@@ -411,7 +411,7 @@ describe("render", () => {
     render(createConfig(tasks), baseRunOptions);
 
     expect(renderTableMock).toHaveBeenCalledWith(tasks, [
-      "❌ Overall",
+      "🔴 Overall",
       "",
       "3 issues (2 errors, 1 warning)",
       "1.0 s",
@@ -450,7 +450,7 @@ describe("render", () => {
       "(* indicates fix mode; some tasks will automatically apply fixes to your code)\n"
     );
     expect(renderTableMock).toHaveBeenCalledWith(tasks, [
-      "✅ Overall",
+      "🟢 Overall",
       "",
       "0 issues",
       "1.0 s",
@@ -485,7 +485,7 @@ describe("render", () => {
     render(createConfig(tasks), baseRunOptions);
 
     expect(renderTableMock).toHaveBeenCalledWith(tasks, [
-      "❌ Overall",
+      "🔴 Overall",
       "",
       "2 issues (1 error, 1 warning)",
       "10 ms",
@@ -570,7 +570,7 @@ describe("render", () => {
     render(createConfig(tasks), baseRunOptions);
 
     expect(renderTableMock).toHaveBeenCalledWith(tasks, [
-      "✅ Overall",
+      "🟢 Overall",
       "",
       "0 issues",
       "3.0 s",
@@ -598,7 +598,7 @@ describe("render", () => {
     render(createConfig(tasks), baseRunOptions);
 
     expect(renderTableMock).toHaveBeenCalledWith(tasks, [
-      "✅ Overall",
+      "🟢 Overall",
       "",
       "0 issues",
       "0 ms",
@@ -626,7 +626,7 @@ describe("render", () => {
     render(createConfig(tasks), baseRunOptions);
 
     expect(renderTableMock).toHaveBeenCalledWith(tasks, [
-      "❌ Overall",
+      "🔴 Overall",
       "",
       "2 issues (2 warnings)",
       "100 ms",
@@ -669,7 +669,7 @@ describe("render", () => {
     render(createConfig(tasks), baseRunOptions);
 
     expect(renderTableMock).toHaveBeenCalledWith(tasks, [
-      "✅ Overall",
+      "🟢 Overall",
       "",
       "0 issues",
       "1.0 s",
@@ -704,7 +704,7 @@ describe("render", () => {
     render(createConfig(tasks), baseRunOptions);
 
     expect(renderTableMock).toHaveBeenCalledWith(tasks, [
-      "✅ Overall",
+      "🟢 Overall",
       "",
       "0 issues",
       "1.0 s",
@@ -837,7 +837,7 @@ describe("render", () => {
     render(createConfig(tasks, ["Custom Tool"]), baseRunOptions);
 
     expect(renderTableMock).toHaveBeenCalledWith(tasks, [
-      "❌ Overall",
+      "🔴 Overall",
       "",
       "0 issues",
       "1.0 s",
@@ -873,7 +873,7 @@ describe("render", () => {
     render(createConfig(tasks), baseRunOptions);
 
     expect(renderTableMock).toHaveBeenCalledWith(tasks, [
-      "❌ Overall",
+      "🔴 Overall",
       "",
       "1 issue (1 error)",
       "1.2 s",
