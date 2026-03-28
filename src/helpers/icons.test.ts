@@ -7,8 +7,8 @@ describe("taskStateIcons", () => {
     expect(taskStateIcons).toEqual({
       pending: "  ",
       running: "⏳",
-      success: "✅",
-      failure: "❌",
+      success: "🟢",
+      failure: "🔴",
     });
   });
 });

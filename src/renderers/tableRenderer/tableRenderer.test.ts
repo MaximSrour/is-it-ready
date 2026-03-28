@@ -184,17 +184,17 @@ describe("renderTable", () => {
           duration: 120,
         }),
       ],
-      ["✅ Overall", "", "0 issues", "120 ms"]
+      ["🟢 Overall", "", "0 issues", "120 ms"]
     );
 
     expect(table).toContain("Label");
     expect(table).toContain("Tool");
     expect(table).toContain("Results");
     expect(table).toContain("Time");
-    expect(table).toContain("✅ Lint");
+    expect(table).toContain("🟢 Lint");
     expect(table).toContain("OK");
     expect(table).toContain("120 ms");
-    expect(table).toContain("✅ Overall");
+    expect(table).toContain("🟢 Overall");
   });
 
   it("uses footer values when they define the widest column", () => {
