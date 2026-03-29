@@ -2,14 +2,21 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 
 import * as helpers from "../helpers";
 import { noOp } from "../helpers";
+import { type RunOptions } from "../runOptions/types";
 
 import { Task } from "./task";
 
+type CreateMockTaskInternals = {
+  startTime?: number | null;
+  endTime?: number | null;
+};
+
 export const createMockTask = (
   taskOverrides: Partial<Task> = {},
-  optionsOverrides = {}
+  optionsOverrides: Partial<RunOptions> = {},
+  taskInternals: CreateMockTaskInternals = {}
 ): Task => {
-  return new Task(
+  const task = new Task(
     {
       label: "Echo Task",
       tool: "Echo",
@@ -29,6 +36,13 @@ export const createMockTask = (
       ...optionsOverrides,
     }
   );
+
+  // @ts-expect-error Test-only access to private timer internals.
+  task.startTime = taskInternals.startTime ?? null;
+  // @ts-expect-error Test-only access to private timer internals.
+  task.endTime = taskInternals.endTime ?? null;
+
+  return task;
 };
 
 describe("Task", () => {
@@ -642,27 +656,23 @@ describe("Task", () => {
   });
 
   it("does not set end time when stopTimer runs without a start time", () => {
-    const task = createMockTask();
-    task["startTime"] = null;
-    task["endTime"] = null;
+    const task = createMockTask({}, {}, { startTime: null, endTime: null });
 
-    task["stopTimer"]();
+    // @ts-expect-error Test-only access to private timer internals.
+    task.stopTimer();
 
-    expect(task["endTime"]).toBeNull();
+    // @ts-expect-error Test-only access to private timer internals.
+    expect(task.endTime).toBeNull();
   });
 
   it("returns null duration when end time exists but start time is missing", () => {
-    const task = createMockTask();
-    task["startTime"] = null;
-    task["endTime"] = 1000;
+    const task = createMockTask({}, {}, { startTime: null, endTime: 1000 });
 
     expect(task.getDuration()).toBeNull();
   });
 
   it("returns null duration when start time exists but end time is missing", () => {
-    const task = createMockTask();
-    task["startTime"] = 1000;
-    task["endTime"] = null;
+    const task = createMockTask({}, {}, { startTime: 1000, endTime: null });
 
     expect(task.getDuration()).toBeNull();
   });
