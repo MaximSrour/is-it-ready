@@ -564,22 +564,26 @@ describe("Task", () => {
     });
 
     const task = createMockTask();
-    const runPromise = task.execute({
-      onStart: () => {
-        expect(task.getStatus()).toEqual({
-          state: "running",
-          message: "Running...",
-        });
-        expect(task.getStartTime()).not.toBeNull();
-        expect(task.getEndTime()).toBeNull();
-        expect(task.getDuration()).toBeNull();
-      },
+    const dateSpy = vi
+      .spyOn(Date, "now")
+      .mockReturnValueOnce(1_000)
+      .mockReturnValueOnce(1_500)
+      .mockReturnValueOnce(2_000);
+    const runPromise = task.execute();
+
+    expect(task.getStatus()).toEqual({
+      state: "running",
+      message: "Running...",
     });
+    expect(task.getStartTime()).not.toBeNull();
+    expect(task.getEndTime()).toBeNull();
+    expect(task.getDuration()).toBe(500);
 
     resolveRun?.();
     await runPromise;
 
     expect(task.getStatus()).toEqual({ state: "success", message: "Passed" });
+    dateSpy.mockRestore();
   });
 
   it("counts warnings without forcing a synthetic error", async () => {
@@ -671,10 +675,12 @@ describe("Task", () => {
     expect(task.getDuration()).toBeNull();
   });
 
-  it("returns null duration when start time exists but end time is missing", () => {
+  it("returns live duration when start time exists but end time is missing", () => {
     const task = createMockTask({}, {}, { startTime: 1000, endTime: null });
+    const dateSpy = vi.spyOn(Date, "now").mockReturnValue(1_250);
 
-    expect(task.getDuration()).toBeNull();
+    expect(task.getDuration()).toBe(250);
+    dateSpy.mockRestore();
   });
 
   it("marks the task as failed when the parser finds issues despite a zero exit code", async () => {

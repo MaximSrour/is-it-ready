@@ -343,6 +343,36 @@ describe("render", () => {
     expect(logSpy).not.toHaveBeenCalledWith("Details:");
   });
 
+  it("uses current time for unfinished overall duration when only running tasks have started", () => {
+    vi.useFakeTimers();
+    const now = new Date("2026-02-24T00:00:02.500Z");
+    vi.setSystemTime(now);
+    Object.defineProperty(process.stdout, "isTTY", {
+      configurable: true,
+      value: false,
+    });
+
+    const tasks = [
+      createTaskDouble({
+        label: "Type Check",
+        tool: "TypeScript",
+        state: "running",
+        message: "Running...",
+        startTime: now.getTime() - 900,
+        endTime: null,
+      }),
+    ];
+
+    render(createConfig(tasks), baseRunOptions);
+
+    expect(renderTableMock).toHaveBeenCalledWith(tasks, [
+      "⏳ Overall",
+      "",
+      "0 issues",
+      "900 ms",
+    ]);
+  });
+
   it("does not print failure details until suite is finished", () => {
     const logSpy = vi.spyOn(console, "log").mockImplementation(noOp);
     Object.defineProperty(process.stdout, "isTTY", {
@@ -633,7 +663,7 @@ describe("render", () => {
     ]);
   });
 
-  it("ignores tasks with partial timing information when computing suite duration", () => {
+  it("uses started tasks when computing suite duration even if end time is missing", () => {
     Object.defineProperty(process.stdout, "isTTY", {
       configurable: true,
       value: false,
@@ -672,7 +702,7 @@ describe("render", () => {
       "🟢 Overall",
       "",
       "0 issues",
-      "1.0 s",
+      "2.0 s",
     ]);
   });
 

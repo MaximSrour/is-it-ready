@@ -1,20 +1,11 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { type Config } from "../config/types";
-import { render } from "../renderers";
 import { type RunOptions } from "../runOptions/types";
 
 import { calculateTotalIssues, hasTaskFailures, runTasks } from "./execute";
 import { Task } from "./task";
 import { type TaskStatus } from "./types";
-
-vi.mock("../renderers", () => {
-  return {
-    render: vi.fn(),
-  };
-});
-
-const renderMock = vi.mocked(render);
 
 const baseRunOptions: RunOptions = {
   isFixMode: false,
@@ -25,7 +16,6 @@ const baseRunOptions: RunOptions = {
 };
 
 type MockExecute = ReturnType<typeof vi.fn>;
-type ExecuteHooks = { onStart?: () => void; onFinish?: () => void };
 type TaskDoubleOptions = {
   tool: string;
   dependsOn?: readonly string[];
@@ -49,11 +39,9 @@ const createMockedTask = ({
 }: TaskDoubleOptions) => {
   const executeMock: MockExecute =
     execute ??
-    vi.fn(({ onStart, onFinish }: ExecuteHooks = {}) => {
-      onStart?.();
-      onFinish?.();
+    vi.fn(() => {
+      return Promise.resolve();
     });
-
   const cancelMock = vi.fn(() => {
     cancel?.();
   });
@@ -88,48 +76,12 @@ const createMockedTask = ({
   return { task, executeMock, cancelMock, resetMock };
 };
 
-const createTaskDouble = (tool: string) => {
-  const executeMock: MockExecute = vi.fn(
-    ({ onStart, onFinish }: ExecuteHooks = {}) => {
-      onStart?.();
-      onFinish?.();
-    }
-  );
-  const { task } = createMockedTask({
-    tool,
-    execute: executeMock,
-  });
-
-  return { task, executeMock };
-};
-
 describe("runTasks", () => {
   afterEach(() => {
     vi.clearAllMocks();
   });
 
-  it("renders before running tasks and whenever callbacks fire", async () => {
-    const firstTask = createTaskDouble("first-tool");
-    const secondTask = createTaskDouble("second-tool");
-    const config: Config = {
-      unsupportedTools: [],
-      tasks: [firstTask.task, secondTask.task],
-      executionMode: "parallel",
-    };
-
-    await runTasks(config, baseRunOptions);
-
-    expect(renderMock).toHaveBeenCalledTimes(1 + config.tasks.length * 2);
-    renderMock.mock.calls.forEach(([configArg, optionsArg]) => {
-      expect(configArg).toBe(config);
-      expect(optionsArg).toBe(baseRunOptions);
-    });
-
-    expect(firstTask.executeMock).toHaveBeenCalledTimes(1);
-    expect(secondTask.executeMock).toHaveBeenCalledTimes(1);
-  });
-
-  it("resets tasks before the first render of each run", async () => {
+  it("resets tasks before execution begins", async () => {
     const resetEvents: string[] = [];
     const firstTask = createMockedTask({
       tool: "first",
@@ -149,40 +101,31 @@ describe("runTasks", () => {
       executionMode: "parallel",
     };
 
-    await runTasks(config, baseRunOptions);
+    await runTasks(config);
 
     expect(firstTask.resetMock).toHaveBeenCalledTimes(1);
     expect(secondTask.resetMock).toHaveBeenCalledTimes(1);
     expect(resetEvents).toEqual(["first:reset", "second:reset"]);
-    expect(renderMock).toHaveBeenNthCalledWith(1, config, baseRunOptions);
   });
 
   it("runs tasks sequentially when configured", async () => {
     let resolveFirst: (() => void) | undefined;
     const events: string[] = [];
-    const firstExecuteMock = vi.fn(
-      ({ onStart, onFinish }: ExecuteHooks = {}) => {
-        events.push("first:start");
-        onStart?.();
+    const firstExecuteMock = vi.fn(() => {
+      events.push("first:start");
 
-        return new Promise<void>((resolve) => {
-          resolveFirst = () => {
-            events.push("first:finish");
-            onFinish?.();
-            resolve();
-          };
-        });
-      }
-    );
-    const secondExecuteMock = vi.fn(
-      ({ onStart, onFinish }: ExecuteHooks = {}) => {
-        events.push("second:start");
-        onStart?.();
-        events.push("second:finish");
-        onFinish?.();
-        return Promise.resolve();
-      }
-    );
+      return new Promise<void>((resolve) => {
+        resolveFirst = () => {
+          events.push("first:finish");
+          resolve();
+        };
+      });
+    });
+    const secondExecuteMock = vi.fn(() => {
+      events.push("second:start");
+      events.push("second:finish");
+      return Promise.resolve();
+    });
     const config: Config = {
       executionMode: "sequential",
       unsupportedTools: [],
@@ -192,7 +135,7 @@ describe("runTasks", () => {
       ],
     };
 
-    const runPromise = runTasks(config, baseRunOptions);
+    const runPromise = runTasks(config);
     await Promise.resolve();
 
     expect(firstExecuteMock).toHaveBeenCalledTimes(1);
@@ -214,34 +157,26 @@ describe("runTasks", () => {
     let resolveFirst: (() => void) | undefined;
     let resolveSecond: (() => void) | undefined;
     const events: string[] = [];
-    const firstExecuteMock = vi.fn(
-      ({ onStart, onFinish }: ExecuteHooks = {}) => {
-        events.push("first:start");
-        onStart?.();
+    const firstExecuteMock = vi.fn(() => {
+      events.push("first:start");
 
-        return new Promise<void>((resolve) => {
-          resolveFirst = () => {
-            events.push("first:finish");
-            onFinish?.();
-            resolve();
-          };
-        });
-      }
-    );
-    const secondExecuteMock = vi.fn(
-      ({ onStart, onFinish }: ExecuteHooks = {}) => {
-        events.push("second:start");
-        onStart?.();
+      return new Promise<void>((resolve) => {
+        resolveFirst = () => {
+          events.push("first:finish");
+          resolve();
+        };
+      });
+    });
+    const secondExecuteMock = vi.fn(() => {
+      events.push("second:start");
 
-        return new Promise<void>((resolve) => {
-          resolveSecond = () => {
-            events.push("second:finish");
-            onFinish?.();
-            resolve();
-          };
-        });
-      }
-    );
+      return new Promise<void>((resolve) => {
+        resolveSecond = () => {
+          events.push("second:finish");
+          resolve();
+        };
+      });
+    });
     const config: Config = {
       executionMode: "parallel",
       unsupportedTools: [],
@@ -251,7 +186,7 @@ describe("runTasks", () => {
       ],
     };
 
-    const runPromise = runTasks(config, baseRunOptions);
+    const runPromise = runTasks(config);
     await Promise.resolve();
 
     expect(firstExecuteMock).toHaveBeenCalledTimes(1);
@@ -267,29 +202,21 @@ describe("runTasks", () => {
     let resolveFirst: (() => void) | undefined;
     const events: string[] = [];
 
-    const firstExecuteMock = vi.fn(
-      ({ onStart, onFinish }: ExecuteHooks = {}) => {
-        events.push("first:start");
-        onStart?.();
+    const firstExecuteMock = vi.fn(() => {
+      events.push("first:start");
 
-        return new Promise<void>((resolve) => {
-          resolveFirst = () => {
-            events.push("first:finish");
-            onFinish?.();
-            resolve();
-          };
-        });
-      }
-    );
-    const secondExecuteMock = vi.fn(
-      ({ onStart, onFinish }: ExecuteHooks = {}) => {
-        events.push("second:start");
-        onStart?.();
-        events.push("second:finish");
-        onFinish?.();
-        return Promise.resolve();
-      }
-    );
+      return new Promise<void>((resolve) => {
+        resolveFirst = () => {
+          events.push("first:finish");
+          resolve();
+        };
+      });
+    });
+    const secondExecuteMock = vi.fn(() => {
+      events.push("second:start");
+      events.push("second:finish");
+      return Promise.resolve();
+    });
 
     const firstTask = createMockedTask({
       tool: "first",
@@ -307,7 +234,7 @@ describe("runTasks", () => {
       tasks: [firstTask, secondTask],
     };
 
-    const runPromise = runTasks(config, baseRunOptions);
+    const runPromise = runTasks(config);
     await Promise.resolve();
 
     expect(firstExecuteMock).toHaveBeenCalledTimes(1);
@@ -329,11 +256,9 @@ describe("runTasks", () => {
     const events: string[] = [];
 
     const makeExecuteMock = (name: string) => {
-      return vi.fn(({ onStart, onFinish }: ExecuteHooks = {}) => {
+      return vi.fn(() => {
         events.push(`${name}:start`);
-        onStart?.();
         events.push(`${name}:finish`);
-        onFinish?.();
         return Promise.resolve();
       });
     };
@@ -366,7 +291,7 @@ describe("runTasks", () => {
       ],
     };
 
-    await runTasks(config, baseRunOptions);
+    await runTasks(config);
 
     expect(events.indexOf("prettier:finish")).toBeLessThan(
       events.indexOf("eslint:start")
@@ -391,11 +316,9 @@ describe("runTasks", () => {
     const events: string[] = [];
 
     const makeExecuteMock = (name: string) => {
-      return vi.fn(({ onStart, onFinish }: ExecuteHooks = {}) => {
+      return vi.fn(() => {
         events.push(`${name}:start`);
-        onStart?.();
         events.push(`${name}:finish`);
-        onFinish?.();
         return Promise.resolve();
       });
     };
@@ -418,7 +341,7 @@ describe("runTasks", () => {
       ],
     };
 
-    await runTasks(config, baseRunOptions);
+    await runTasks(config);
 
     expect(events).toEqual([
       "B:start",
@@ -439,13 +362,11 @@ describe("runTasks", () => {
       name: string,
       resolver: (fn: () => void) => void
     ) => {
-      return vi.fn(({ onStart, onFinish }: ExecuteHooks = {}) => {
+      return vi.fn(() => {
         events.push(`${name}:start`);
-        onStart?.();
         return new Promise<void>((resolve) => {
           resolver(() => {
             events.push(`${name}:finish`);
-            onFinish?.();
             resolve();
           });
         });
@@ -458,11 +379,9 @@ describe("runTasks", () => {
     const secondMock = makeAsyncMock("second", (fn) => {
       resolveSecond = fn;
     });
-    const thirdMock = vi.fn(({ onStart, onFinish }: ExecuteHooks = {}) => {
+    const thirdMock = vi.fn(() => {
       events.push("third:start");
-      onStart?.();
       events.push("third:finish");
-      onFinish?.();
       return Promise.resolve();
     });
 
@@ -480,7 +399,7 @@ describe("runTasks", () => {
       ],
     };
 
-    const runPromise = runTasks(config, baseRunOptions);
+    const runPromise = runTasks(config);
     await Promise.resolve();
 
     expect(firstMock).toHaveBeenCalledTimes(1);
@@ -517,8 +436,6 @@ describe("runTasks", () => {
       }).task;
     };
 
-    // A fails; B and C both depend on A; D depends on both B and C.
-    // D should only be cancelled once even though it is reachable via both B and C.
     const taskA = createMockedTask({
       tool: "A",
       execute: vi.fn(() => {
@@ -542,7 +459,7 @@ describe("runTasks", () => {
       tasks: [taskA, taskB, taskC, taskD],
     };
 
-    await runTasks(config, baseRunOptions);
+    await runTasks(config);
 
     expect(cancelMockD).toHaveBeenCalledTimes(1);
   });
@@ -551,20 +468,16 @@ describe("runTasks", () => {
     let resolveFirst: (() => void) | undefined;
     let resolveSecond: (() => void) | undefined;
 
-    const firstMock = vi.fn(({ onStart, onFinish }: ExecuteHooks = {}) => {
-      onStart?.();
+    const firstMock = vi.fn(() => {
       return new Promise<void>((resolve) => {
         resolveFirst = () => {
-          onFinish?.();
           resolve();
         };
       });
     });
-    const secondMock = vi.fn(({ onStart, onFinish }: ExecuteHooks = {}) => {
-      onStart?.();
+    const secondMock = vi.fn(() => {
       return new Promise<void>((resolve) => {
         resolveSecond = () => {
-          onFinish?.();
           resolve();
         };
       });
@@ -579,7 +492,7 @@ describe("runTasks", () => {
       ],
     };
 
-    const runPromise = runTasks(config, baseRunOptions);
+    const runPromise = runTasks(config);
     await Promise.resolve();
 
     let finished = false;
@@ -638,7 +551,7 @@ describe("runTasks", () => {
       tasks: [failingTask, dependentTask],
     };
 
-    await runTasks(config, baseRunOptions);
+    await runTasks(config);
 
     expect(failingExecuteMock).toHaveBeenCalledTimes(1);
     expect(dependentExecuteMock).not.toHaveBeenCalled();
@@ -672,7 +585,7 @@ describe("runTasks", () => {
       tasks: [failingTask, dependentTask],
     };
 
-    await runTasks(config, baseRunOptions);
+    await runTasks(config);
 
     expect(failingExecuteMock).toHaveBeenCalledTimes(1);
     expect(dependentExecuteMock).not.toHaveBeenCalled();
@@ -697,7 +610,7 @@ describe("runTasks", () => {
       ],
     };
 
-    await expect(runTasks(config, baseRunOptions)).rejects.toThrowError(
+    await expect(runTasks(config)).rejects.toThrowError(
       /could not find a runnable task/i
     );
   });
@@ -761,8 +674,8 @@ describe("hasTaskFailures", () => {
         status: { state: "success", message: "Passed" },
       }).task,
       createMockedTask({
-        tool: "running",
-        status: { state: "running", message: "Running..." },
+        tool: "also-success",
+        status: { state: "success", message: "Passed" },
       }).task,
     ];
 

@@ -1,20 +1,18 @@
 import chokidar from "chokidar";
 
 import { type Config } from "../config/types";
-import { type RunOptions } from "../runOptions/types";
 
-import { hasTaskFailures, runTasks } from "./execute";
+import { hasTaskFailures } from "./execute";
 
 let isRunning = false;
 
 /**
- * Reruns the specified tasks with the given run options.
+ * Executes change handling work when the watcher observes a change.
  *
- * @param {Config} config - The configuration containing the tasks to rerun.
- * @param {RunOptions} runOptions - The options to use when rerunning the tasks.
+ * @param {() => Promise<void>} onChange - Function that handles a detected change.
  * @returns {Promise<void>}
  */
-const rerunTasks = async (config: Config, runOptions: RunOptions) => {
+const handleChange = async (onChange: () => Promise<void>) => {
   if (isRunning) {
     return;
   }
@@ -22,19 +20,19 @@ const rerunTasks = async (config: Config, runOptions: RunOptions) => {
   isRunning = true;
 
   try {
-    await runTasks(config, runOptions);
+    await onChange();
   } finally {
     isRunning = false;
   }
 };
 
 /**
- * Starts the file watcher for the specified tasks.
+ * Starts watching files and invokes the provided change handler.
  *
- * @param {Config} config - The configuration containing the tasks to watch.
- * @param {RunOptions} runOptions - The options to use when running the tasks.
+ * @param {Config} config - The configuration containing watcher settings.
+ * @param {() => Promise<void>} onChange - Function that handles a detected change.
  */
-export const startWatcher = (config: Config, runOptions: RunOptions) => {
+export const startWatcher = (config: Config, onChange: () => Promise<void>) => {
   const watcher = chokidar.watch(".", {
     ignored: config.watchIgnore ?? ["**/node_modules/**", "**/.git/**"],
     persistent: true,
@@ -42,7 +40,7 @@ export const startWatcher = (config: Config, runOptions: RunOptions) => {
   });
 
   watcher.on("all", () => {
-    void rerunTasks(config, runOptions);
+    void handleChange(onChange);
   });
 
   const handleExit = () => {

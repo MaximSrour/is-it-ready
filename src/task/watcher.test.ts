@@ -8,14 +8,12 @@ import {
   vi,
 } from "vitest";
 
-import { type RunOptions } from "../runOptions/types";
-
 import { startWatcher } from "./watcher";
 
-const { watchMock, runTasksMock, hasTaskFailuresMock } = vi.hoisted(() => {
+const { watchMock, runMock, hasTaskFailuresMock } = vi.hoisted(() => {
   return {
     watchMock: vi.fn(),
-    runTasksMock: vi.fn(),
+    runMock: vi.fn(),
     hasTaskFailuresMock: vi.fn(),
   };
 });
@@ -30,18 +28,9 @@ vi.mock("chokidar", () => {
 
 vi.mock("./execute", () => {
   return {
-    runTasks: runTasksMock,
     hasTaskFailures: hasTaskFailuresMock,
   };
 });
-
-const baseRunOptions: RunOptions = {
-  isFixMode: false,
-  isSilentMode: false,
-  isWatchMode: true,
-  isNoColor: false,
-  configPath: undefined,
-};
 
 type FileChangeHandler = (() => void) | undefined;
 
@@ -54,7 +43,7 @@ describe("startWatcher", () => {
 
   beforeEach(() => {
     watchMock.mockReset();
-    runTasksMock.mockReset();
+    runMock.mockReset();
     hasTaskFailuresMock.mockReset();
 
     fileChangeHandler = undefined;
@@ -79,14 +68,14 @@ describe("startWatcher", () => {
     watchMock.mockReturnValue(watcher);
   });
 
-  it("uses default ignore patterns and reruns tasks on change events", () => {
+  it("uses default ignore patterns and handles change events", () => {
     const config: Config = {
       unsupportedTools: [],
       tasks: [],
       executionMode: "parallel",
     };
 
-    startWatcher(config, baseRunOptions);
+    startWatcher(config, runMock);
 
     expect(watchMock).toHaveBeenCalledWith(".", {
       ignored: ["**/node_modules/**", "**/.git/**"],
@@ -96,11 +85,11 @@ describe("startWatcher", () => {
 
     expect(fileChangeHandler).toBeDefined();
     fileChangeHandler?.();
-    expect(runTasksMock).toHaveBeenCalledTimes(1);
-    expect(runTasksMock).toHaveBeenCalledWith(config, baseRunOptions);
+    expect(runMock).toHaveBeenCalledTimes(1);
+    expect(runMock).toHaveBeenCalledWith();
   });
 
-  it("prevents overlapping reruns while tasks are executing", async () => {
+  it("prevents overlapping change handling while work is executing", async () => {
     const config: Config = {
       unsupportedTools: [],
       tasks: [],
@@ -108,25 +97,25 @@ describe("startWatcher", () => {
     };
     let resolveRun: (() => void) | undefined;
 
-    runTasksMock.mockImplementation(() => {
+    runMock.mockImplementation(() => {
       return new Promise<void>((resolve) => {
         resolveRun = resolve;
       });
     });
 
-    startWatcher(config, baseRunOptions);
+    startWatcher(config, runMock);
     expect(fileChangeHandler).toBeDefined();
 
     fileChangeHandler?.();
     fileChangeHandler?.();
 
-    expect(runTasksMock).toHaveBeenCalledTimes(1);
+    expect(runMock).toHaveBeenCalledTimes(1);
 
     resolveRun?.();
     await Promise.resolve();
 
     fileChangeHandler?.();
-    expect(runTasksMock).toHaveBeenCalledTimes(2);
+    expect(runMock).toHaveBeenCalledTimes(2);
   });
 
   it("closes the watcher and exits with correct status when interrupted", () => {
@@ -152,7 +141,7 @@ describe("startWatcher", () => {
       return process;
     }) as typeof process.on);
 
-    startWatcher(config, baseRunOptions);
+    startWatcher(config, runMock);
 
     signalHandlers.SIGINT();
     expect(watcher.close).toHaveBeenCalledTimes(1);
