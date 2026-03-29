@@ -5,4 +5,5 @@ export const taskStateIcons: Record<TaskState, string> = {
   running: "⏳",
   success: "🟢",
   failure: "🔴",
+  cancelled: "⭕️",
 };

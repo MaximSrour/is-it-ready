@@ -44,7 +44,7 @@
     "markdownlint:fix": "markdownlint-cli2 --fix \"**/*.md\" \"!CHANGELOG.md\" \"!dist\" \"!node_modules\" \"!.stryker-tmp\"",
     "mutate": "stryker run",
     "prettier": "prettier --check 'src/**/*.{js,ts,mjs,cjs,json}' '*.{js,ts,mjs,cjs,json}'",
-    "prettier:fix": "prettier --write 'src/**/*.{js,ts,mjs,cjs,json}' '*.{js,ts,mjs,cjs,json}'",
+    "prettier:fix": "prettier --write --check 'src/**/*.{js,ts,mjs,cjs,json}' '*.{js,ts,mjs,cjs,json}'",
     "prettier:watch": "chokidar \"src/**/*.{js,ts,mjs,cjs,json}\" \"*.{js,ts,mjs,cjs,json}\" -c \"npm run --silent prettier:fix\"",
     "spelling": "cspell --no-progress 'src/**/*.{js,ts,mjs,cjs,json}' '*.{js,ts,mjs,cjs,json}'",
     "test": "vitest run",

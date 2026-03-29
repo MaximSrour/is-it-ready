@@ -9,6 +9,7 @@ describe("taskStateIcons", () => {
       running: "⏳",
       success: "🟢",
       failure: "🔴",
+      cancelled: "⭕️",
     });
   });
 });

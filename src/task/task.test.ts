@@ -2,14 +2,21 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 
 import * as helpers from "../helpers";
 import { noOp } from "../helpers";
+import { type RunOptions } from "../runOptions/types";
 
 import { Task } from "./task";
 
+type CreateMockTaskInternals = {
+  startTime?: number | null;
+  endTime?: number | null;
+};
+
 export const createMockTask = (
   taskOverrides: Partial<Task> = {},
-  optionsOverrides = {}
+  optionsOverrides: Partial<RunOptions> = {},
+  taskInternals: CreateMockTaskInternals = {}
 ): Task => {
-  return new Task(
+  const task = new Task(
     {
       label: "Echo Task",
       tool: "Echo",
@@ -29,6 +36,13 @@ export const createMockTask = (
       ...optionsOverrides,
     }
   );
+
+  // @ts-expect-error Test-only access to private timer internals.
+  task.startTime = taskInternals.startTime ?? null;
+  // @ts-expect-error Test-only access to private timer internals.
+  task.endTime = taskInternals.endTime ?? null;
+
+  return task;
 };
 
 describe("Task", () => {
@@ -171,6 +185,54 @@ describe("Task", () => {
 
   it("initializes with pending status and zero issue counts", () => {
     const task = createMockTask();
+
+    expect(task.getStatus()).toEqual({ state: "pending", message: "" });
+    expect(task.getStartTime()).toBeNull();
+    expect(task.getEndTime()).toBeNull();
+    expect(task.getDuration()).toBeNull();
+    expect(task.getFailures()).toEqual([]);
+    expect(task.getTotalErrors()).toBe(0);
+    expect(task.getTotalWarnings()).toBe(0);
+  });
+
+  it("stores dependsOn from the task config", () => {
+    const task = createMockTask({
+      dependsOn: ["Lint", "Test"],
+    });
+
+    expect(task.dependsOn).toEqual(["Lint", "Test"]);
+  });
+
+  it("marks a task as cancelled", () => {
+    const task = createMockTask();
+
+    task.cancel();
+
+    expect(task.getStatus()).toEqual({
+      state: "cancelled",
+      message: "Cancelled",
+    });
+  });
+
+  it("resets prior run state", async () => {
+    vi.spyOn(helpers, "runCommand").mockResolvedValue({
+      status: 1,
+      stdout: "broken",
+      stderr: "",
+    });
+
+    const task = createMockTask({
+      parseFailure: () => {
+        return {
+          message: "Failed - 1 error",
+          errors: 1,
+        };
+      },
+    });
+
+    await task.execute();
+    task.cancel();
+    task.reset();
 
     expect(task.getStatus()).toEqual({ state: "pending", message: "" });
     expect(task.getStartTime()).toBeNull();
@@ -594,29 +656,23 @@ describe("Task", () => {
   });
 
   it("does not set end time when stopTimer runs without a start time", () => {
-    type TaskInternals = {
-      stopTimer: () => void;
-      startTime: number | null;
-      endTime: number | null;
-    };
-    const task = createMockTask() as unknown as TaskInternals;
-    task.startTime = null;
-    task.endTime = null;
+    const task = createMockTask({}, {}, { startTime: null, endTime: null });
 
+    // @ts-expect-error Test-only access to private timer internals.
     task.stopTimer();
 
+    // @ts-expect-error Test-only access to private timer internals.
     expect(task.endTime).toBeNull();
   });
 
   it("returns null duration when end time exists but start time is missing", () => {
-    type TaskDurationInternals = {
-      getDuration: () => number | null;
-      startTime: number | null;
-      endTime: number | null;
-    };
-    const task = createMockTask() as unknown as TaskDurationInternals;
-    task.startTime = null;
-    task.endTime = 1000;
+    const task = createMockTask({}, {}, { startTime: null, endTime: 1000 });
+
+    expect(task.getDuration()).toBeNull();
+  });
+
+  it("returns null duration when start time exists but end time is missing", () => {
+    const task = createMockTask({}, {}, { startTime: 1000, endTime: null });
 
     expect(task.getDuration()).toBeNull();
   });

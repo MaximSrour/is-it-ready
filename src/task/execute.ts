@@ -11,7 +11,60 @@ import { type Task } from "./task";
  * @param {RunOptions} runOptions - The options to use when running the tasks.
  */
 export const runTasks = async (config: Config, runOptions: RunOptions) => {
+  config.tasks.forEach((task) => {
+    task.reset();
+  });
+
   render(config, runOptions);
+
+  const remaining: Record<string, number> = Object.fromEntries(
+    config.tasks.map((task) => {
+      return [task.tool, task.dependsOn.length];
+    })
+  );
+  const dependents: Record<string, Task[]> = Object.fromEntries(
+    config.tasks.map((task): [string, Task[]] => {
+      return [task.tool, [] as Task[]];
+    })
+  );
+
+  const completed = new Set<string>();
+  config.tasks.forEach((task) => {
+    task.dependsOn.forEach((dep) => {
+      dependents[dep].push(task);
+    });
+  });
+
+  const readyQueue: Task[] = config.tasks.filter((task) => {
+    return task.dependsOn.length === 0;
+  });
+
+  const cancelDependents = (task: Task) => {
+    for (const dependent of dependents[task.tool]) {
+      if (!completed.has(dependent.tool)) {
+        dependent.cancel();
+        completed.add(dependent.tool);
+        render(config, runOptions);
+        cancelDependents(dependent);
+      }
+    }
+  };
+
+  const onTaskComplete = (task: Task) => {
+    completed.add(task.tool);
+    if (task.getStatus().state === "failure") {
+      cancelDependents(task);
+      return;
+    }
+
+    for (const dependent of dependents[task.tool]) {
+      const newCount = remaining[dependent.tool] - 1;
+      remaining[dependent.tool] = newCount;
+      if (newCount === 0) {
+        readyQueue.push(dependent);
+      }
+    }
+  };
 
   const executeTask = (task: Task) => {
     return task.execute({
@@ -25,14 +78,60 @@ export const runTasks = async (config: Config, runOptions: RunOptions) => {
   };
 
   if (config.executionMode === "sequential") {
-    for (const task of config.tasks) {
-      await executeTask(task);
-    }
+    const runNextSequentialTask = async (): Promise<void> => {
+      const nextTask = config.tasks.find((task) => {
+        return (
+          !completed.has(task.tool) &&
+          task.dependsOn.every((dependency) => {
+            return completed.has(dependency);
+          })
+        );
+      });
 
+      if (!nextTask) {
+        if (completed.size === config.tasks.length) {
+          return;
+        }
+
+        throw new Error(
+          "Sequential execution could not find a runnable task. Check task dependencies."
+        );
+      }
+
+      await executeTask(nextTask);
+      onTaskComplete(nextTask);
+      await runNextSequentialTask();
+    };
+
+    await runNextSequentialTask();
     return;
   }
 
-  await Promise.all(config.tasks.map(executeTask));
+  await new Promise<void>((resolve, reject) => {
+    let inFlight = 0;
+
+    const dispatch = () => {
+      if (readyQueue.length > 0) {
+        for (const task of readyQueue.splice(0)) {
+          inFlight++;
+          Promise.resolve(executeTask(task))
+            .then(() => {
+              inFlight--;
+              onTaskComplete(task);
+              dispatch();
+            })
+            .catch(reject);
+        }
+        return;
+      }
+
+      if (inFlight === 0) {
+        resolve();
+      }
+    };
+
+    dispatch();
+  });
 };
 
 /**
@@ -55,6 +154,7 @@ export const calculateTotalIssues = (tasks: Task[]) => {
  */
 export const hasTaskFailures = (tasks: Task[]) => {
   return tasks.some((task) => {
-    return task.getStatus().state === "failure";
+    const state = task.getStatus().state;
+    return state === "failure" || state === "cancelled";
   });
 };

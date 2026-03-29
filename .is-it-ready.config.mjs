@@ -1,11 +1,12 @@
 export default {
-  watchIgnore: [".git", "node_modules", "coverage"],
+  watchIgnore: [".git", "node_modules", "coverage", ".stryker-tmp"],
   executionMode: "parallel",
   tasks: [
     {
       tool: "Prettier",
       command: "npm run prettier",
       fixCommand: "npm run prettier:fix",
+      dependsOn: ["ESLint", "MarkdownLint"],
     },
     {
       tool: "ESLint",
@@ -32,6 +33,7 @@ export default {
     {
       tool: "Stryker",
       command: "npm run mutate",
+      dependsOn: ["Vitest"],
     },
     {
       tool: "Knip",

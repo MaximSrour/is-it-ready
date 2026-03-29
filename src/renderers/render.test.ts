@@ -246,7 +246,7 @@ describe("render", () => {
     label: string;
     tool: string;
     usesExitCodeOnly?: boolean;
-    state: "pending" | "running" | "success" | "failure";
+    state: "pending" | "running" | "success" | "failure" | "cancelled";
     message: string;
     failures?: FailureDetails[];
     errors?: number;
@@ -878,5 +878,29 @@ describe("render", () => {
       "1 issue (1 error)",
       "1.2 s",
     ]);
+  });
+
+  it("shows failure overall icon when only cancelled tasks exist with no counted issues", () => {
+    const logSpy = vi.spyOn(console, "log").mockImplementation(noOp);
+
+    const tasks = [
+      createTaskDouble({
+        label: "Type Check",
+        tool: "TypeScript",
+        state: "cancelled",
+        message: "Cancelled",
+        startTime: null,
+        endTime: null,
+      }),
+    ];
+
+    render(createConfig(tasks), baseRunOptions);
+
+    expect(renderTableMock).toHaveBeenCalledWith(
+      tasks,
+      expect.arrayContaining(["🔴 Overall"])
+    );
+
+    logSpy.mockRestore();
   });
 });

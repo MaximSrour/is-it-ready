@@ -155,7 +155,7 @@ describe("renderTable", () => {
   }: {
     label: string;
     tool: string;
-    state: "pending" | "running" | "success" | "failure";
+    state: "pending" | "running" | "success" | "failure" | "cancelled";
     message: string;
     duration: number | null;
     usesExitCodeOnly?: boolean;
@@ -340,5 +340,20 @@ describe("renderTable", () => {
     ]);
 
     expect(table).toContain("test 🔸");
+  });
+
+  it("shows a hyphen for the duration of cancelled tasks", () => {
+    const table = renderTable([
+      createTask({
+        label: "Type Check",
+        tool: "TypeScript",
+        state: "cancelled",
+        message: "Cancelled",
+        duration: null,
+      }),
+    ]);
+
+    expect(table).toContain("⭕️ Type Check");
+    expect(table).toContain("-");
   });
 });

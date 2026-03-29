@@ -36,7 +36,7 @@ export const renderTable = (tasks: Task[], footerRow?: string[]) => {
       `${taskStateIcons[status.state]} ${task.label}`,
       formatToolCell(task),
       message,
-      formatDuration(task.getDuration()),
+      status.state === "cancelled" ? "-" : formatDuration(task.getDuration()),
     ];
   });
 
