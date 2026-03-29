@@ -34,7 +34,7 @@ describe("startRenderer", () => {
     vi.useRealTimers();
   });
 
-  it("starts a 100 ms interval in TTY mode and renders on each tick", () => {
+  it("starts a render interval in TTY mode and renders on each tick", () => {
     vi.useFakeTimers();
     Object.defineProperty(process.stdout, "isTTY", {
       configurable: true,
