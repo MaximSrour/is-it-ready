@@ -12,8 +12,3 @@ permissions:
 jobs:
   validate:
     uses: ./.github/workflows/validate.yml
-
-  release:
-    needs: validate
-    uses: ./.github/workflows/release.yml
-    secrets: inherit

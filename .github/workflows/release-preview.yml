@@ -1,0 +1,98 @@
+name: Release Preview
+
+on:
+  pull_request:
+    branches:
+      - master
+  push:
+    branches:
+      - master
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Prepare target branch ref
+        if: github.event_name == 'pull_request'
+        run: git fetch origin "+refs/heads/${{ github.base_ref }}:refs/heads/${{ github.base_ref }}"
+
+      - name: Use Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 25.2.1
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Compute release preview
+        id: preview
+        env:
+          RELEASE_PREVIEW_TARGET_BRANCH: ${{ github.event_name == 'pull_request' && github.base_ref || github.ref_name }}
+        run: node scripts/release-preview.mjs "$RELEASE_PREVIEW_TARGET_BRANCH"
+
+      - name: Post PR release preview
+        if: github.event_name == 'pull_request'
+        continue-on-error: true
+        uses: actions/github-script@v8
+        env:
+          HAS_RELEASE: ${{ steps.preview.outputs.has_release }}
+          LAST_RELEASE: ${{ steps.preview.outputs.last_release }}
+          NEXT_RELEASE: ${{ steps.preview.outputs.next_release }}
+          RELEASE_TYPE: ${{ steps.preview.outputs.release_type }}
+          TARGET_BRANCH: ${{ steps.preview.outputs.target_branch }}
+        with:
+          script: |
+            const marker = "<!-- release-preview -->";
+            const hasRelease = process.env.HAS_RELEASE === "true";
+            const body = [
+              marker,
+              "## Release Preview",
+              "",
+              hasRelease
+                ? `If \`${process.env.TARGET_BRANCH}\` were published now, semantic-release would create \`${process.env.NEXT_RELEASE}\` as a \`${process.env.RELEASE_TYPE}\` release.`
+                : `If \`${process.env.TARGET_BRANCH}\` were published now, semantic-release would not create a new release.`,
+              "",
+              `- Last release: \`${process.env.LAST_RELEASE}\``,
+              `- Next release: \`${process.env.NEXT_RELEASE}\``,
+              `- Release type: \`${process.env.RELEASE_TYPE}\``,
+              "",
+              "_Updated by CI on each run._",
+            ].join("\n");
+
+            const { data: comments } = await github.rest.issues.listComments({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+            });
+
+            const existingComment = comments.find((comment) =>
+              comment.user.type === "Bot" && comment.body.includes(marker)
+            );
+
+            if (existingComment) {
+              await github.rest.issues.updateComment({
+                comment_id: existingComment.id,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body,
+              });
+              return;
+            }
+
+            await github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body,
+            });

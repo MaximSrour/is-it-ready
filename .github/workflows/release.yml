@@ -2,6 +2,18 @@ name: Release
 
 on:
   workflow_call:
+    inputs:
+      ref:
+        default: master
+        required: false
+        type: string
+  workflow_dispatch:
+    inputs:
+      ref:
+        default: master
+        description: Branch or ref to release from.
+        required: true
+        type: string
 
 jobs:
   release:
@@ -15,6 +27,7 @@ jobs:
         uses: actions/checkout@v6
         with:
           fetch-depth: 0
+          ref: ${{ inputs.ref }}
 
       - name: Use Node.js
         uses: actions/setup-node@v6
