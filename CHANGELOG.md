@@ -1,3 +1,10 @@
+## [1.10.3](https://github.com/MaximSrour/is-it-ready/compare/v1.10.2...v1.10.3) (2026-03-29)
+
+
+### Bug Fixes
+
+* apply MR feedback ([e2ff308](https://github.com/MaximSrour/is-it-ready/commit/e2ff308c0dd1e4a6508dbac862ed60e3ed390f9d))
+
 ## [1.10.2](https://github.com/MaximSrour/is-it-ready/compare/v1.10.1...v1.10.2) (2026-03-28)
 
 
