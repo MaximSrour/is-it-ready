@@ -387,6 +387,49 @@ describe("runTasks", () => {
     expect(vitestMock).toHaveBeenCalledTimes(1);
   });
 
+  it("prefers the earliest runnable task in file order in sequential mode", async () => {
+    const events: string[] = [];
+
+    const makeExecuteMock = (name: string) => {
+      return vi.fn(({ onStart, onFinish }: ExecuteHooks = {}) => {
+        events.push(`${name}:start`);
+        onStart?.();
+        events.push(`${name}:finish`);
+        onFinish?.();
+        return Promise.resolve();
+      });
+    };
+
+    const taskAMock = makeExecuteMock("A");
+    const taskBMock = makeExecuteMock("B");
+    const taskCMock = makeExecuteMock("C");
+
+    const config: Config = {
+      executionMode: "sequential",
+      unsupportedTools: [],
+      tasks: [
+        createMockedTask({
+          tool: "A",
+          dependsOn: ["B"],
+          execute: taskAMock,
+        }).task,
+        createMockedTask({ tool: "B", execute: taskBMock }).task,
+        createMockedTask({ tool: "C", execute: taskCMock }).task,
+      ],
+    };
+
+    await runTasks(config, baseRunOptions);
+
+    expect(events).toEqual([
+      "B:start",
+      "B:finish",
+      "A:start",
+      "A:finish",
+      "C:start",
+      "C:finish",
+    ]);
+  });
+
   it("does not run a task until all of its dependencies complete in parallel mode", async () => {
     let resolveFirst: (() => void) | undefined;
     let resolveSecond: (() => void) | undefined;
@@ -601,6 +644,63 @@ describe("runTasks", () => {
     expect(dependentExecuteMock).not.toHaveBeenCalled();
     expect(cancelMock).toHaveBeenCalledTimes(1);
   });
+
+  it("cancels dependents when a task fails in sequential mode", async () => {
+    const cancelMock = vi.fn();
+    const failingExecuteMock = vi.fn(() => {
+      return Promise.resolve();
+    });
+
+    const failingTask = createMockedTask({
+      tool: "Prettier",
+      execute: failingExecuteMock,
+      status: { state: "failure", message: "Failed" },
+    }).task;
+
+    const dependentExecuteMock = vi.fn();
+    const dependentTask = createMockedTask({
+      tool: "ESLint",
+      dependsOn: ["Prettier"],
+      execute: dependentExecuteMock,
+      status: { state: "pending", message: "" },
+      cancel: cancelMock,
+    }).task;
+
+    const config: Config = {
+      executionMode: "sequential",
+      unsupportedTools: [],
+      tasks: [failingTask, dependentTask],
+    };
+
+    await runTasks(config, baseRunOptions);
+
+    expect(failingExecuteMock).toHaveBeenCalledTimes(1);
+    expect(dependentExecuteMock).not.toHaveBeenCalled();
+    expect(cancelMock).toHaveBeenCalledTimes(1);
+  });
+
+  it("throws in sequential mode when no runnable task can be found", async () => {
+    const config: Config = {
+      executionMode: "sequential",
+      unsupportedTools: [],
+      tasks: [
+        createMockedTask({
+          tool: "A",
+          dependsOn: ["B"],
+          execute: vi.fn(),
+        }).task,
+        createMockedTask({
+          tool: "B",
+          dependsOn: ["A"],
+          execute: vi.fn(),
+        }).task,
+      ],
+    };
+
+    await expect(runTasks(config, baseRunOptions)).rejects.toThrowError(
+      /could not find a runnable task/i
+    );
+  });
 });
 
 describe("calculateTotalIssues", () => {
@@ -633,6 +733,21 @@ describe("hasTaskFailures", () => {
       createMockedTask({
         tool: "failure",
         status: { state: "failure", message: "Failed" },
+      }).task,
+    ];
+
+    expect(hasTaskFailures(tasks)).toBe(true);
+  });
+
+  it("returns true when any task status is cancelled", () => {
+    const tasks = [
+      createMockedTask({
+        tool: "success",
+        status: { state: "success", message: "Passed" },
+      }).task,
+      createMockedTask({
+        tool: "cancelled",
+        status: { state: "cancelled", message: "Cancelled" },
       }).task,
     ];
 

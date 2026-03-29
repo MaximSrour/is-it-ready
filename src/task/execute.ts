@@ -78,11 +78,32 @@ export const runTasks = async (config: Config, runOptions: RunOptions) => {
   };
 
   if (config.executionMode === "sequential") {
-    for (const task of readyQueue) {
-      await executeTask(task);
-      onTaskComplete(task);
-    }
+    const runNextSequentialTask = async (): Promise<void> => {
+      const nextTask = config.tasks.find((task) => {
+        return (
+          !completed.has(task.tool) &&
+          task.dependsOn.every((dependency) => {
+            return completed.has(dependency);
+          })
+        );
+      });
 
+      if (!nextTask) {
+        if (completed.size === config.tasks.length) {
+          return;
+        }
+
+        throw new Error(
+          "Sequential execution could not find a runnable task. Check task dependencies."
+        );
+      }
+
+      await executeTask(nextTask);
+      onTaskComplete(nextTask);
+      await runNextSequentialTask();
+    };
+
+    await runNextSequentialTask();
     return;
   }
 
@@ -133,6 +154,7 @@ export const calculateTotalIssues = (tasks: Task[]) => {
  */
 export const hasTaskFailures = (tasks: Task[]) => {
   return tasks.some((task) => {
-    return task.getStatus().state === "failure";
+    const state = task.getStatus().state;
+    return state === "failure" || state === "cancelled";
   });
 };
