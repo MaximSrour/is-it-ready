@@ -1,3 +1,23 @@
+## [2.0.0](https://github.com/MaximSrour/is-it-ready/compare/v1.10.2...v2.0.0) (2026-03-29)
+
+### ⚠ BREAKING CHANGES
+
+* add task dependency management and cancellation
+* add task dependency management and cancellation
+* add task dependency management and cancellation
+* add task dependency management and cancellation
+
+### Features
+
+* add task dependency management and cancellation ([b85f372](https://github.com/MaximSrour/is-it-ready/commit/b85f372acd5e02cd6f7e7ff9ec6bbd8642a5f68a))
+* add task dependency management and cancellation ([5bcd635](https://github.com/MaximSrour/is-it-ready/commit/5bcd635786fe76164aa1c65b938f79c85d43cf3e))
+* add task dependency management and cancellation ([e82ffc9](https://github.com/MaximSrour/is-it-ready/commit/e82ffc984863735e0427b125d3774249b2467346))
+* add task dependency management and cancellation ([3d2a60f](https://github.com/MaximSrour/is-it-ready/commit/3d2a60f7bc0715451a6cbb37eb4a9a1da77f2c57))
+
+### Bug Fixes
+
+* apply MR feedback ([e2ff308](https://github.com/MaximSrour/is-it-ready/commit/e2ff308c0dd1e4a6508dbac862ed60e3ed390f9d))
+
 ## [1.10.3](https://github.com/MaximSrour/is-it-ready/compare/v1.10.2...v1.10.3) (2026-03-29)
 
 
