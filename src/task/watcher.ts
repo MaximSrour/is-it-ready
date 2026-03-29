@@ -4,26 +4,14 @@ import { type Config } from "../config/types";
 
 import { hasTaskFailures } from "./execute";
 
-let isRunning = false;
-
 /**
- * Executes change handling work when the watcher observes a change.
+ * Logs watcher change handler failures without letting them escape as unhandled rejections.
  *
- * @param {() => Promise<void>} onChange - Function that handles a detected change.
- * @returns {Promise<void>}
+ * @param {unknown} error - The failure raised while handling a file change.
  */
-const handleChange = async (onChange: () => Promise<void>) => {
-  if (isRunning) {
-    return;
-  }
-
-  isRunning = true;
-
-  try {
-    await onChange();
-  } finally {
-    isRunning = false;
-  }
+const logWatcherError = (error: unknown) => {
+  console.error("Unexpected error while handling a watched file change.");
+  console.error(error);
 };
 
 /**
@@ -33,14 +21,34 @@ const handleChange = async (onChange: () => Promise<void>) => {
  * @param {() => Promise<void>} onChange - Function that handles a detected change.
  */
 export const startWatcher = (config: Config, onChange: () => Promise<void>) => {
+  let isRunning = false;
   const watcher = chokidar.watch(".", {
     ignored: config.watchIgnore ?? ["**/node_modules/**", "**/.git/**"],
     persistent: true,
     ignoreInitial: true,
   });
 
+  /**
+   * Executes change handling work when the watcher observes a change.
+   *
+   * @returns {Promise<void>}
+   */
+  const handleChange = async () => {
+    if (isRunning) {
+      return;
+    }
+
+    isRunning = true;
+
+    try {
+      await onChange();
+    } finally {
+      isRunning = false;
+    }
+  };
+
   watcher.on("all", () => {
-    void handleChange(onChange);
+    void handleChange().catch(logWatcherError);
   });
 
   const handleExit = () => {

@@ -118,6 +118,43 @@ describe("startWatcher", () => {
     expect(runMock).toHaveBeenCalledTimes(2);
   });
 
+  it("logs rejected change handling without breaking future runs", async () => {
+    const config: Config = {
+      unsupportedTools: [],
+      tasks: [],
+      executionMode: "parallel",
+    };
+    const error = new Error("watch run failed");
+    const consoleErrorSpy: MockInstance<typeof console.error> = vi
+      .spyOn(console, "error")
+      .mockImplementation(() => {
+        return undefined;
+      });
+
+    runMock.mockRejectedValueOnce(error).mockResolvedValueOnce(undefined);
+
+    startWatcher(config, runMock);
+    expect(fileChangeHandler).toBeDefined();
+
+    fileChangeHandler?.();
+    await vi.waitFor(() => {
+      expect(consoleErrorSpy).toHaveBeenCalledTimes(2);
+    });
+
+    expect(consoleErrorSpy).toHaveBeenNthCalledWith(
+      1,
+      "Unexpected error while handling a watched file change."
+    );
+    expect(consoleErrorSpy).toHaveBeenNthCalledWith(2, error);
+
+    fileChangeHandler?.();
+    await Promise.resolve();
+
+    expect(runMock).toHaveBeenCalledTimes(2);
+
+    consoleErrorSpy.mockRestore();
+  });
+
   it("closes the watcher and exits with correct status when interrupted", () => {
     const config: Config = {
       unsupportedTools: [],
