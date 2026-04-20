@@ -1,48 +1,54 @@
 import chokidar from "chokidar";
 
 import { type Config } from "../config/types";
-import { type RunOptions } from "../runOptions/types";
 
-import { hasTaskFailures, runTasks } from "./execute";
-
-let isRunning = false;
+import { hasTaskFailures } from "./execute";
 
 /**
- * Reruns the specified tasks with the given run options.
+ * Logs watcher change handler failures without letting them escape as unhandled rejections.
  *
- * @param {Config} config - The configuration containing the tasks to rerun.
- * @param {RunOptions} runOptions - The options to use when rerunning the tasks.
- * @returns {Promise<void>}
+ * @param {unknown} error - The failure raised while handling a file change.
  */
-const rerunTasks = async (config: Config, runOptions: RunOptions) => {
-  if (isRunning) {
-    return;
-  }
-
-  isRunning = true;
-
-  try {
-    await runTasks(config, runOptions);
-  } finally {
-    isRunning = false;
-  }
+const logWatcherError = (error: unknown) => {
+  console.error("Unexpected error while handling a watched file change.");
+  console.error(error);
 };
 
 /**
- * Starts the file watcher for the specified tasks.
+ * Starts watching files and invokes the provided change handler.
  *
- * @param {Config} config - The configuration containing the tasks to watch.
- * @param {RunOptions} runOptions - The options to use when running the tasks.
+ * @param {Config} config - The configuration containing watcher settings.
+ * @param {() => Promise<void>} onChange - Function that handles a detected change.
  */
-export const startWatcher = (config: Config, runOptions: RunOptions) => {
+export const startWatcher = (config: Config, onChange: () => Promise<void>) => {
+  let isRunning = false;
   const watcher = chokidar.watch(".", {
     ignored: config.watchIgnore ?? ["**/node_modules/**", "**/.git/**"],
     persistent: true,
     ignoreInitial: true,
   });
 
+  /**
+   * Executes change handling work when the watcher observes a change.
+   *
+   * @returns {Promise<void>}
+   */
+  const handleChange = async () => {
+    if (isRunning) {
+      return;
+    }
+
+    isRunning = true;
+
+    try {
+      await onChange();
+    } finally {
+      isRunning = false;
+    }
+  };
+
   watcher.on("all", () => {
-    void rerunTasks(config, runOptions);
+    void handleChange().catch(logWatcherError);
   });
 
   const handleExit = () => {
