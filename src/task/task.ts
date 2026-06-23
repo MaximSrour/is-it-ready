@@ -172,9 +172,15 @@ export class Task {
   }
 
   getDuration() {
-    return this.endTime !== null && this.startTime !== null
-      ? this.endTime - this.startTime
-      : null;
+    if (this.startTime === null) {
+      return null;
+    }
+
+    if (this.endTime === null) {
+      return Date.now() - this.startTime;
+    }
+
+    return this.endTime - this.startTime;
   }
 
   getFailures() {
