@@ -68,9 +68,9 @@
     "@stryker-mutator/core": "9.6.1",
     "@stryker-mutator/vitest-runner": "9.6.1",
     "@trivago/prettier-plugin-sort-imports": "6.0.2",
-    "@types/node": "24.12.2",
-    "@typescript-eslint/eslint-plugin": "8.58.2",
-    "@typescript-eslint/parser": "8.58.2",
+    "@types/node": "24.13.2",
+    "@typescript-eslint/eslint-plugin": "8.62.0",
+    "@typescript-eslint/parser": "8.62.0",
     "@vitest/coverage-v8": "4.1.4",
     "chokidar-cli": "3.0.0",
     "conventional-changelog-conventionalcommits": "9.3.0",
@@ -87,7 +87,7 @@
     "ts-node": "10.9.2",
     "tsconfig-paths": "4.2.0",
     "typescript": "5.9.3",
-    "typescript-eslint": "8.58.2",
+    "typescript-eslint": "8.62.0",
     "vitest": "4.1.4"
   },
   "eslintConfig": {
