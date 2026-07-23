@@ -3,7 +3,10 @@
 import chalk from "chalk";
 
 import { loadUserConfig } from "./config";
+import { type Config } from "./config/types";
+import { startRenderer } from "./renderers";
 import { getRunOptions } from "./runOptions/runOptions";
+import { type RunOptions } from "./runOptions/types";
 import { hasTaskFailures, runTasks, startWatcher } from "./task";
 
 void main().catch((error) => {
@@ -11,6 +14,16 @@ void main().catch((error) => {
   console.error(error);
   process.exit(1);
 });
+
+const executeRun = async (config: Config, runOptions: RunOptions) => {
+  const stopRenderer = startRenderer(config, runOptions);
+
+  try {
+    await runTasks(config);
+  } finally {
+    stopRenderer();
+  }
+};
 
 /**
  * Main entry point for executing tasks.
@@ -34,12 +47,14 @@ async function main() {
   }
 
   if (!runOptions.isWatchMode) {
-    await runTasks(config, runOptions);
+    await executeRun(config, runOptions);
 
     process.exit(hasTaskFailures(config.tasks) ? 1 : 0);
   }
 
-  await runTasks(config, runOptions);
+  await executeRun(config, runOptions);
 
-  startWatcher(config, runOptions);
+  startWatcher(config, () => {
+    return executeRun(config, runOptions);
+  });
 }
