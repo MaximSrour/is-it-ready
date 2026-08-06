@@ -107,6 +107,8 @@ export const formatUnsupportedTools = (unsupportedTools: string[]) => {
 export const render = (config: Config, runOptions: RunOptions) => {
   const { tasks, unsupportedTools } = config;
 
+  const timeNow = Date.now();
+
   if (process.stdout.isTTY) {
     console.clear();
   }
@@ -150,28 +152,38 @@ export const render = (config: Config, runOptions: RunOptions) => {
   );
 
   const { suiteStartTime, suiteDurationMs } = (() => {
-    let hasCompleteTask = false;
-    let startTime = Number.POSITIVE_INFINITY;
-    let endTime = Number.NEGATIVE_INFINITY;
+    const { hasStartedTask, startTime, effectiveEndTime } = tasks.reduce(
+      (acc, task) => {
+        const start = task.getStartTime();
+        const end = task.getEndTime();
 
-    for (const task of tasks) {
-      const start = task.getStartTime();
-      const end = task.getEndTime();
+        if (start !== null) {
+          return {
+            hasStartedTask: true,
+            startTime: Math.min(acc.startTime, start),
+            effectiveEndTime: Math.max(
+              acc.effectiveEndTime,
+              end ?? (suiteFinished ? start : timeNow)
+            ),
+          };
+        }
 
-      if (start !== null && end !== null) {
-        hasCompleteTask = true;
-        startTime = Math.min(startTime, start);
-        endTime = Math.max(endTime, end);
+        return acc;
+      },
+      {
+        hasStartedTask: false,
+        startTime: Number.POSITIVE_INFINITY,
+        effectiveEndTime: Number.NEGATIVE_INFINITY,
       }
-    }
+    );
 
-    if (!hasCompleteTask) {
+    if (!hasStartedTask) {
       return { suiteStartTime: null, suiteDurationMs: 0 };
     }
 
     return {
       suiteStartTime: startTime,
-      suiteDurationMs: endTime - startTime,
+      suiteDurationMs: effectiveEndTime - startTime,
     };
   })();
 
@@ -184,7 +196,7 @@ export const render = (config: Config, runOptions: RunOptions) => {
   const overallDurationMs = suiteFinished
     ? suiteDurationMs
     : suiteStartTime
-      ? Date.now() - suiteStartTime
+      ? timeNow - suiteStartTime
       : 0;
 
   const breakdownParts = [];

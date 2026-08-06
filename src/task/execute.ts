@@ -1,6 +1,4 @@
 import { type Config } from "../config/types";
-import { render } from "../renderers";
-import { type RunOptions } from "../runOptions/types";
 
 import { type Task } from "./task";
 
@@ -8,14 +6,11 @@ import { type Task } from "./task";
  * Runs the specified tasks with the given run options.
  *
  * @param {Config} config - The configuration containing the tasks to run.
- * @param {RunOptions} runOptions - The options to use when running the tasks.
  */
-export const runTasks = async (config: Config, runOptions: RunOptions) => {
+export const runTasks = async (config: Config) => {
   config.tasks.forEach((task) => {
     task.reset();
   });
-
-  render(config, runOptions);
 
   const remaining: Record<string, number> = Object.fromEntries(
     config.tasks.map((task) => {
@@ -44,7 +39,6 @@ export const runTasks = async (config: Config, runOptions: RunOptions) => {
       if (!completed.has(dependent.tool)) {
         dependent.cancel();
         completed.add(dependent.tool);
-        render(config, runOptions);
         cancelDependents(dependent);
       }
     }
@@ -64,17 +58,6 @@ export const runTasks = async (config: Config, runOptions: RunOptions) => {
         readyQueue.push(dependent);
       }
     }
-  };
-
-  const executeTask = (task: Task) => {
-    return task.execute({
-      onStart: () => {
-        render(config, runOptions);
-      },
-      onFinish: () => {
-        render(config, runOptions);
-      },
-    });
   };
 
   if (config.executionMode === "sequential") {
@@ -98,7 +81,7 @@ export const runTasks = async (config: Config, runOptions: RunOptions) => {
         );
       }
 
-      await executeTask(nextTask);
+      await nextTask.execute();
       onTaskComplete(nextTask);
       await runNextSequentialTask();
     };
@@ -114,7 +97,7 @@ export const runTasks = async (config: Config, runOptions: RunOptions) => {
       if (readyQueue.length > 0) {
         for (const task of readyQueue.splice(0)) {
           inFlight++;
-          Promise.resolve(executeTask(task))
+          Promise.resolve(task.execute())
             .then(() => {
               inFlight--;
               onTaskComplete(task);
